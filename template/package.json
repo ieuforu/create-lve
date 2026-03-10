@@ -7,8 +7,9 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "build-only": "vite build",
-    "lint": "eslint .",
     "preview": "vite preview",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
     "format": "oxfmt src/",
     "format:check": "oxfmt --check"
   },

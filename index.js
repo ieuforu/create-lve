@@ -10,20 +10,26 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 async function main() {
   console.clear();
-  
-  p.intro(`${pc.bgCyan(pc.black(' LVE-CLI '))}`);
 
-  // 1. 交互收集信息
+  p.intro(`${pc.bgCyan(pc.black(' LVE-CLI '))}${pc.gray(' - 快速构建 React + Tailwind 项目')}`);
+
   const project = await p.group(
     {
-      path: () => 
+      path: () =>
         p.text({
-          message: '项目名称（或路径）?',
-          placeholder: './lve-app',
-          validate: (value) => {
-            if (value.length === 0) return '路径不能为空';
-          }
+          message: '项目存储路径?',
+          placeholder: './lve-project',
+          defaultValue: 'lve-project',
         }),
+      shouldOverwrite: ({ results }) => {
+        const targetDir = path.resolve(process.cwd(), results.path);
+        if (fs.existsSync(targetDir) && fs.readdirSync(targetDir).length > 0) {
+          return p.confirm({
+            message: `⚠️  目录 ${pc.yellow(results.path)} 已存在且不为空，是否清空？`,
+            initialValue: false,
+          });
+        }
+      },
     },
     {
       onCancel: () => {
@@ -33,29 +39,35 @@ async function main() {
     }
   );
 
+  if (project.shouldOverwrite === false) {
+    p.cancel('操作终止：请更换目录名后再试');
+    process.exit(0);
+  }
+
   const targetDir = path.resolve(process.cwd(), project.path);
   const templateDir = path.resolve(__dirname, 'template');
 
   const s = p.spinner();
-  s.start('🚀 正在初始化项目模板...');
+  s.start('🚀 正在搬运模板...');
 
   try {
-    if (!fs.existsSync(targetDir)) {
+    if (project.shouldOverwrite) {
+      await fs.emptyDir(targetDir);
+    } else {
       await fs.ensureDir(targetDir);
     }
 
     await fs.copy(templateDir, targetDir);
 
-    const renameList = [
-      ['_package.json', 'package.json'],
-      ['_gitignore', '.gitignore']
-    ];
+    const renameMap = {
+      '_package.json': 'package.json',
+      '_gitignore': '.gitignore',
+    };
 
-    for (const [oldName, newName] of renameList) {
-      const oldPath = path.join(targetDir, oldName);
-      const newPath = path.join(targetDir, newName);
+    for (const [oldFile, newFile] of Object.entries(renameMap)) {
+      const oldPath = path.join(targetDir, oldFile);
       if (fs.existsSync(oldPath)) {
-        await fs.move(oldPath, newPath, { overwrite: true });
+        await fs.move(oldPath, path.join(targetDir, newFile), { overwrite: true });
       }
     }
 
@@ -66,24 +78,22 @@ async function main() {
       await fs.writeJson(pkgPath, pkg, { spaces: 2 });
     }
 
-    const lockFile = path.join(targetDir, 'pnpm-lock.yaml');
-    if (fs.existsSync(lockFile)) {
-      await fs.remove(lockFile);
-    }
+    await fs.remove(path.join(targetDir, 'pnpm-lock.yaml'));
 
-    s.stop('项目初始化成功！');
+    s.stop(pc.green('项目准备就绪！'));
 
-    const cdPath = path.relative(process.cwd(), targetDir);
-    
+    const relativePath = path.relative(process.cwd(), targetDir);
+    const cdCmd = relativePath === '' ? '' : `cd ${relativePath}\n`;
+
     p.note(
-      pc.cyan(`cd ${cdPath}\npnpm install\npnpm dev`),
-      '快速开始'
+      pc.cyan(`${cdCmd}pnpm install\npnpm dev`),
+      '快速开始指南'
     );
 
-    p.outro(`✨ 祝你开发愉快！如有问题请反馈。`);
+    p.outro(pc.magenta('✨ Happy Coding with LVE + Tailwind!'));
 
   } catch (err) {
-    s.stop('初始化失败');
+    s.stop('失败');
     console.error(pc.red(err));
     process.exit(1);
   }
