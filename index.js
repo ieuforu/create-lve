@@ -11,15 +11,25 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 async function main() {
   console.clear();
 
-  p.intro(`${pc.bgCyan(pc.black(' LVE-CLI '))}${pc.gray(' - 快速构建 React + Tailwind 项目')}`);
+  p.intro(
+    `${pc.bgCyan(pc.black(' LVE-CLI '))} ` +
+    pc.gray('The Ultra-Fast React Stack (') +
+    pc.blue('Vite') + pc.gray(' + ') +
+    pc.yellow('Oxc') + pc.gray(' + ') +
+    pc.cyan('Tailwind') + pc.gray(')')
+  );
 
   const project = await p.group(
     {
       path: () =>
         p.text({
-          message: '项目存储路径?',
-          placeholder: './lve-project',
-          defaultValue: 'lve-project',
+          message: '你的项目叫什么名字？',
+          placeholder: 'react-app',
+          defaultValue: 'react-app',
+          validate: (value) => {
+            if (!value || value.length === 0) return;
+            if (value.match(/[<>:"|?*]/)) return '路径包含非法字符';
+          }
         }),
       shouldOverwrite: ({ results }) => {
         const targetDir = path.resolve(process.cwd(), results.path);
@@ -62,6 +72,9 @@ async function main() {
     const renameMap = {
       '_package.json': 'package.json',
       '_gitignore': '.gitignore',
+      '_oxfmtrc.json': '.oxfmtrc.json',
+      '_oxlintrc.json': '.oxlintrc.json',
+      '_vscode': '.vscode',
     };
 
     for (const [oldFile, newFile] of Object.entries(renameMap)) {
@@ -78,7 +91,8 @@ async function main() {
       await fs.writeJson(pkgPath, pkg, { spaces: 2 });
     }
 
-    await fs.remove(path.join(targetDir, 'pnpm-lock.yaml'));
+    const toRemove = ['pnpm-lock.yaml', 'node_modules', 'dist'];
+    await Promise.all(toRemove.map(file => fs.remove(path.join(targetDir, file))));
 
     s.stop(pc.green('项目准备就绪！'));
 
@@ -90,7 +104,10 @@ async function main() {
       '快速开始指南'
     );
 
-    p.outro(pc.magenta('✨ Happy Coding with LVE + Tailwind!'));
+    p.outro(
+      `${pc.magenta('✨ Happy Coding!')}\n` +
+      `${pc.gray('已为你配置 OXC 规则：享受秒级校验与格式化。')}`
+    );
 
   } catch (err) {
     s.stop('失败');

@@ -1,14 +1,13 @@
 {
   "name": "create-lve",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "type": "module",
   "bin": {
     "create-lve": "index.js"
   },
   "files": [
     "index.js",
-    "template",
-    "dist"
+    "template"
   ],
   "dependencies": {
     "@clack/prompts": "^1.1.0",
