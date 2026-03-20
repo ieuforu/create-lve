@@ -10,7 +10,13 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 async function main() {
   console.clear();
+  const logo = `
+ ${pc.cyan('█    █  █ █▀▀▀')}
+ ${pc.cyan('█    █  █ █▀▀ ')} 
+ ${pc.cyan('█▄▄▄  ▀▄▀ █▄▄▄')}  ${pc.gray('THE ULTRA-FAST STACK')}
+  `;
 
+  console.log(logo);
   p.intro(
     `${pc.bgCyan(pc.black(' LVE-CLI '))} ` +
     pc.gray('The Ultra-Fast React Stack (') +
@@ -72,8 +78,6 @@ async function main() {
     const renameMap = {
       '_package.json': 'package.json',
       '_gitignore': '.gitignore',
-      '_oxfmtrc.json': '.oxfmtrc.json',
-      '_oxlintrc.json': '.oxlintrc.json',
       '_vscode': '.vscode',
     };
 
@@ -88,6 +92,25 @@ async function main() {
     if (fs.existsSync(pkgPath)) {
       const pkg = await fs.readJson(pkgPath);
       pkg.name = path.basename(targetDir);
+
+      pkg.dependencies = {
+        ...pkg.dependencies,
+        "react": "latest",
+        "react-dom": "latest",
+      };
+
+      pkg.devDependencies = {
+      ...pkg.devDependencies,
+      "vite-plus": "latest",
+      "tailwindcss": "latest",
+      "@tailwindcss/vite": "latest",
+      "babel-plugin-react-compiler": "latest"
+      };
+      
+      if (pkg.pnpm && pkg.pnpm.overrides) {
+        pkg.pnpm.overrides.vite = "npm:@voidzero-dev/vite-plus-core@latest";
+        pkg.pnpm.overrides.vitest = "npm:@voidzero-dev/vite-plus-test@latest";
+      }
       await fs.writeJson(pkgPath, pkg, { spaces: 2 });
     }
 
@@ -100,13 +123,13 @@ async function main() {
     const cdCmd = relativePath === '' ? '' : `cd ${relativePath}\n`;
 
     p.note(
-      pc.cyan(`${cdCmd}pnpm install\npnpm dev`),
+      pc.cyan(`${cdCmd}vp install\nvp dev`),
       '快速开始指南'
     );
 
     p.outro(
       `${pc.magenta('✨ Happy Coding!')}\n` +
-      `${pc.gray('已为你配置 OXC 规则：享受秒级校验与格式化。')}`
+      `${pc.gray(' ==== VitePlus + OXC + React ====')}`
     );
 
   } catch (err) {

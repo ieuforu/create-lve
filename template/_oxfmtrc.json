@@ -1,9 +1,0 @@
-{
-  "$schema": "./node_modules/oxfmt/configuration_schema.json",
-  "semi": false,
-  "singleQuote": true,
-  "bracketSpacing": true,
-  "tabWidth": 2,
-  "useTabs": false,
-  "ignorePatterns": ["node_modules/**", "dist/**", "public/**", "*.min.js"]
-}
