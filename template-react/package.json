@@ -1,12 +1,11 @@
 {
-  "name": "react-project",
+  "name": "react-app",
   "version": "0.0.0",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vp dev",
     "build": "tsc -b && vp build",
-    "lint": "eslint .",
     "preview": "vp preview",
     "prepare": "vp config"
   },
@@ -24,8 +23,8 @@
     "vite": "npm:@voidzero-dev/vite-plus-core@latest",
     "vite-plus": "latest"
   },
-    "packageManager": "pnpm@10.32.1",
-    "pnpm": {
+  "packageManager": "pnpm@10.32.1",
+  "pnpm": {
     "overrides": {
       "vite": "npm:@voidzero-dev/vite-plus-core@latest",
       "vitest": "npm:@voidzero-dev/vite-plus-test@latest"

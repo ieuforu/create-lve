@@ -8,5 +8,8 @@ export default defineConfig({
     '*': 'vp check --fix',
   },
   lint: { options: { typeAware: true, typeCheck: true } },
-  plugins: [vue()],
+  plugins: [
+    vue(),
+    /* VITE_PLUS_PLUGINS */
+  ],
 })
