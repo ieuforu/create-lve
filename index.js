@@ -120,25 +120,29 @@ async function main() {
           message: '选择框架',
           options: [
             { value: 'react', label: 'React 19', hint: 'VitePlus + Compiler' },
+            { value: 'next', label: 'Next.js 16', hint: 'Oxc + Server Components (Fullstack)' },
             { value: 'vue', label: 'Vue 3', hint: 'VitePlus + Optimized' },
           ],
         }),
-      cssEngine: () =>
-        p.select({
-          message: '选择 CSS 引擎',
-          options: [
+      cssEngine: ({ results }) =>
+        results.framework === 'next' ?
+          undefined :
+          p.select(
             {
-              value: 'unocss',
-              label: 'UnoCSS',
-              hint: '⚡️ 战机级性能：动态代码注入，实现源码级‘无感’混淆',
-            },
-            {
-              value: 'tailwind',
-              label: 'Tailwind v4',
-              hint: '🛡️ 装甲级稳定：v4 引擎重构，完美适配所有主流 UI 库',
-            },
-          ],
-        }),
+              message: '选择 CSS 引擎',
+              options: [
+                {
+                  value: 'tailwind',
+                  label: 'Tailwind v4',
+                  hint: '🛡️ 装甲级稳定：v4 引擎重构，完美适配所有主流 UI 库',
+                },
+                {
+                  value: 'unocss',
+                  label: 'UnoCSS',
+                  hint: '⚡️ 战机级性能：动态代码注入，实现源码级‘无感’混淆',
+                },
+              ],
+            }),
       install: () =>
         p.confirm({
           message: '是否现在自动安装依赖？',
@@ -160,17 +164,19 @@ async function main() {
   const isUno = project.cssEngine === 'unocss'
   const s = p.spinner()
 
-  try {
-    execSync('vp --version', { stdio: 'ignore' })
-  } catch {
-    p.log.error(pc.red('未检测到 VitePlus (vp) 环境'))
-    p.note(
-      pc.white(
-        `请先安装 vp 工具链:\n${pc.cyan('npm install -g @voidzero-dev/vite-plus')}\n\n详情请参考: ${pc.underline('https://viteplus.dev/guide/')}`,
-      ),
-      '环境缺失',
-    )
-    process.exit(1)
+  const checkVp = () => {
+    try {
+      execSync('vp --version', { stdio: 'ignore' })
+    } catch {
+      p.log.error(pc.red('未检测到 VitePlus (vp) 环境'))
+      p.note(
+        pc.white(
+          `请先安装 vp 工具链:\n${pc.cyan('npm install -g @voidzero-dev/vite-plus')}`
+        ),
+        '环境缺失',
+      )
+      process.exit(1)
+    }
   }
 
   s.start('🛠️  正在按需装配架构...')
@@ -183,7 +189,7 @@ async function main() {
 
     try {
       execSync('git init', { cwd: targetDir, stdio: 'ignore' })
-    } catch {}
+    } catch { }
 
     const oldGit = path.join(targetDir, '_gitignore')
     if (fs.existsSync(oldGit)) await fs.move(oldGit, path.join(targetDir, '.gitignore'))
@@ -191,6 +197,31 @@ async function main() {
     const pkgPath = path.join(targetDir, 'package.json')
     const pkg = await fs.readJson(pkgPath)
     pkg.name = path.basename(targetDir)
+
+    // ================= Next.js 分支逻辑 =================
+    if (project.framework === 'next') {
+      await fs.writeJson(pkgPath, pkg, { spaces: 2 })
+
+      s.message(pc.green('检测到全栈环境，正在执行 pnpm install'))
+
+      const installCmd = 'pnpm'
+      try {
+        execSync(`${installCmd} install`, { cwd: targetDir, stdio: 'ignore' })
+
+        s.message(pc.green('使用 oxfmt 优化全栈代码结构'))
+        execSync(`${installCmd} fmt`, { cwd: targetDir, stdio: 'ignore' })
+
+        s.stop(pc.green('Next.js 全栈环境装配就绪'))
+      } catch {
+        s.stop(pc.red('依赖安装失败，请进入目录后手动安装'))
+      }
+
+      p.note(pc.cyan(`cd ${project.path}\npnpm dev`), '快速开始')
+      p.outro(pc.magenta('✨ 极致全栈环境已就绪!'))
+      return
+    }
+
+    checkVp()
 
     if (isUno) {
       pkg.devDependencies['unocss'] = 'latest'
@@ -295,7 +326,7 @@ export default defineConfig({
 
       try {
         execSync('vp fmt', { cwd: targetDir, stdio: 'ignore' })
-      } catch {}
+      } catch { }
 
       s.stop(pc.green('全套环境装配就绪'))
     } catch {
@@ -310,7 +341,7 @@ export default defineConfig({
     p.note(pc.cyan(nextSteps), '快速开始')
     p.outro(
       `${pc.magenta('✨ 已经为你准备好了极致的开发环境!')}\n` +
-        `${pc.gray(`==== ${project.framework} + ${project.cssEngine} ====`)}`,
+      `${pc.gray(`==== ${project.framework} + ${project.cssEngine} ====`)}`,
     )
   } catch (err) {
     s.stop(pc.red('手术失败'))
