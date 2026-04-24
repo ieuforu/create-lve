@@ -1,0 +1,16 @@
+# .npmignore
+node_modules/
+.next/
+.vscode/
+.DS_Store
+*.log
+pnpm-lock.yaml
+
+# 排除测试生成的文件夹，但千万不要排除模板！
+next-app/
+my-app/
+
+# 确保以下模板被包含（如果之前被忽略了，这里可以加 ! 来强制包含）
+!template-next/
+!template-react/
+!template-vue/
