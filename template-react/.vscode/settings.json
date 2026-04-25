@@ -37,22 +37,6 @@
     "editor.defaultFormatter": "oxc.oxc-vscode"
   },
 
-  // ==================== Next.js 专用 ====================
-  "workbench.editor.customLabels.patterns": {
-    "**/app/**/layout.{js,jsx,ts,tsx}": "${dirname}/layout",
-    "**/app/**/page.{js,jsx,ts,tsx}": "${dirname}/page",
-    "**/app/**/route.{js,jsx,ts,tsx}": "${dirname}/route",
-    "**/app/**/loading.{js,jsx,ts,tsx}": "${dirname}/loading",
-    "**/app/**/template.{js,jsx,ts,tsx}": "${dirname}/template",
-    "**/app/**/default.{js,jsx,ts,tsx}": "${dirname}/default",
-    "**/app/**/error.{js,jsx,ts,tsx}": "${dirname}/error",
-    "**/app/**/not-found.{js,jsx,ts,tsx}": "${dirname}/not-found"
-  },
-
-  // ==================== TypeScript（解决 Next.js TS 问题）===================
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "typescript.enablePromptUseWorkspaceTsdk": true,
-
   // ==================== Tailwind + shadcn/ui（强烈推荐）===================
   "tailwindCSS.experimental.classRegex": [["cn\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]],
   "tailwindCSS.includeLanguages": {
@@ -68,9 +52,5 @@
   "js/ts.updateImportsOnFileMove.enabled": "always",
   "diffEditor.ignoreTrimWhitespace": true,
   "diffEditor.hideUnchangedRegions.enabled": true,
-
-  "editor.codeActionsOnSave": {
-    "source.format.oxc": "always"
-  },
   "editor.inlayHints.enabled": "on"
 }

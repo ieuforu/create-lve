@@ -68,10 +68,6 @@
   "js/ts.updateImportsOnFileMove.enabled": "always",
   "diffEditor.ignoreTrimWhitespace": true,
   "diffEditor.hideUnchangedRegions.enabled": true,
-
-  "editor.codeActionsOnSave": {
-    "source.format.oxc": "always"
-  },
   "editor.inlayHints.enabled": "on",
   "js/ts.tsdk.path": "node_modules/typescript/lib"
 }

@@ -79,7 +79,7 @@ async function main() {
     }),
     cssEngine: ({ results }) => {
       if (results.framework === 'next') return;
-      p.select({
+      return p.select({
         message: '选择 CSS',
         options: [
           { value: 'unocss', label: 'UnoCSS', hint: '⚡️ 战机级性能' },
@@ -221,7 +221,7 @@ export default defineConfig({
     const fmtCmd = isNext ? 'pnpm fmt' : 'vp fmt'
 
     if (project.install) {
-      s.message(pc.green(`正在执行 ${pkgManager} install...`))
+      s.message(pc.green(`正在执行 ${pkgManager} install`))
       try {
         await new Promise((resolve, reject) => {
           const child = spawn(pkgManager, ['install'], {
