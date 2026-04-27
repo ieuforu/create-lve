@@ -6,6 +6,7 @@
   },
   "files": [
     "index.js",
+    "config.js",
     "template-react",
     "template-next",
     "template-vue"
