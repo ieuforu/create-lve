@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite-plus'
 import react from '@vitejs/plugin-react'
+import { fileURLToPath, URL } from 'node:url'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -14,6 +15,11 @@ export default defineConfig({
         plugins: [['babel-plugin-react-compiler', { target: '19' }]],
       },
     }),
+    resolve: {
+      alias: {
+        '@': fileURLToPath(new URL('./src', import.meta.url)),
+      },
+    },
     /* VITE_PLUS_PLUGINS */
   ],
 })

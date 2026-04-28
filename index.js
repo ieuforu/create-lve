@@ -49,8 +49,8 @@ async function main() {
         return p.select({
           message: '选择 CSS',
           options: [
-            { value: 'unocss', label: 'UnoCSS', hint: '⚡️ 战机级性能' },
             { value: 'tailwind', label: 'Tailwind v4', hint: '🛡️ 装甲级稳定' },
+            { value: 'unocss', label: 'UnoCSS', hint: '⚡️ 战机级性能' },
           ],
         })
       },
