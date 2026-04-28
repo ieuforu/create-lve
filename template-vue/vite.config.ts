@@ -1,5 +1,9 @@
-import { defineConfig } from 'vite-plus'
+import { defineConfig, loadEnv } from 'vite-plus'
 import vue from '@vitejs/plugin-vue'
+import { fileURLToPath, URL } from 'node:url'
+
+const mode = process.env.NODE_ENV || 'development'
+const env = loadEnv(mode, process.cwd(), '')
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -12,4 +16,18 @@ export default defineConfig({
     vue(),
     /* VITE_PLUS_PLUGINS */
   ],
+  resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+    },
+  },
+  server: {
+    proxy: {
+      '/api': {
+        target: env.VITE_DIFY_API_URL,
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+    },
+  },
 })
