@@ -23,7 +23,7 @@ async function main() {
         p.text({
           message: '项目名称',
           placeholder: 'my-app',
-          defaultValue: 'my-app',
+          defaultValue: 'react-app',
           validate: (value) => {
             if (!value || value.length === 0) return
             if (value.match(/[<>:"|?*]/)) return '路径包含非法字符'
@@ -39,8 +39,8 @@ async function main() {
         p.select({
           message: '选择框架',
           options: [
-            { value: 'next', label: 'Next.js 16', hint: 'React 19 + Tailwind v4 + Shadcn UI' },
             { value: 'react', label: 'React 19', hint: 'VitePlus + Compiler' },
+            { value: 'next', label: 'Next.js 16', hint: 'React 19 + Tailwind v4 + Shadcn UI' },
             { value: 'vue', label: 'Vue 3', hint: 'VitePlus + Optimized' },
           ],
         }),
@@ -93,7 +93,7 @@ async function main() {
     }
   }
 
-  s.start('🛠️  正在按需装配架构...')
+  s.start('🛠️  正在按需装配架构')
 
   try {
     if (project.shouldOverwrite) await fs.emptyDir(ctx.targetDir)
