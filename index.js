@@ -38,6 +38,7 @@ async function main() {
       framework: () =>
         p.select({
           message: '选择框架',
+          initialValue: 'react',
           options: [
             { value: 'react', label: 'React 19', hint: 'VitePlus + Compiler' },
             { value: 'next', label: 'Next.js 16', hint: 'React 19 + Tailwind v4 + Shadcn UI' },
