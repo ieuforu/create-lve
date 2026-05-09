@@ -29,21 +29,24 @@ async function main() {
             if (value.match(/[<>:"|?*]/)) return '路径包含非法字符'
           },
         }),
+
       shouldOverwrite: ({ results }) => {
         const targetDir = path.resolve(process.cwd(), results.path)
         if (fs.existsSync(targetDir) && fs.readdirSync(targetDir).length > 0) {
           return p.confirm({ message: `目录已存在，是否清空？`, initialValue: false })
         }
       },
+
       framework: () =>
         p.select({
           message: '选择框架',
           options: [
-            { value: 'react', label: 'React 19', hint: 'VitePlus + Compiler' },
-            { value: 'vue', label: 'Vue 3', hint: 'VitePlus + Optimized' },
-            { value: 'next', label: 'Next.js 16', hint: 'React 19 + Tailwind v4 + Shadcn UI' },
+            { value: 'react', label: 'React 19', hint: '' },
+            { value: 'vue', label: 'Vue 3', hint: '' },
+            { value: 'next', label: 'Next.js 16', hint: '' },
           ],
         }),
+
       cssEngine: ({ results }) =>
         results.framework === 'next'
           ? p.note('Next.js 已内置 Tailwind，无需选择')
@@ -54,6 +57,7 @@ async function main() {
                 { value: 'unocss', label: 'UnoCSS' },
               ],
             }),
+
       install: () => p.confirm({ message: '是否现在自动安装依赖？', initialValue: true }),
     },
     {
