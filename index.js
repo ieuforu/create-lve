@@ -23,7 +23,7 @@ async function main() {
       path: () =>
         p.text({
           message: '项目名称',
-          placeholder: 'my-app',
+          placeholder: 'react-app',
           defaultValue: 'react-app',
           validate: (value) => {
             if (!value || value.length === 0) return
