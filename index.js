@@ -8,6 +8,7 @@ import { execSync } from 'node:child_process'
 import { __dirname, applyProjectTransform, cleanupTemplate, installDependencies } from './config.js'
 
 async function main() {
+  process.stdout.write('\u001b[3J\u001b[2J\u001b[1J')
   console.clear()
   const logo = `
     ${pc.cyan('█    █  █ █▀▀▀')}
