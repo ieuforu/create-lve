@@ -58,8 +58,6 @@ async function main() {
                 { value: 'unocss', label: 'UnoCSS' },
               ],
             }),
-
-      install: () => p.confirm({ message: '是否现在自动安装依赖？', initialValue: true }),
     },
     {
       onCancel: () => {
@@ -73,7 +71,7 @@ async function main() {
     name: project.path,
     framework: project.framework,
     css: project.cssEngine,
-    shouldInstall: project.install,
+    shouldInstall: true,
     targetDir: path.resolve(process.cwd(), project.path),
     templateDir: path.resolve(__dirname, `template-${project.framework}`),
     isNext: project.framework === 'next',
@@ -98,31 +96,37 @@ async function main() {
     }
   }
 
-  s.start('🛠️  正在按需装配架构')
-
   try {
+    s.start('Creating project')
+    const startScaffold = Date.now()
+
     if (project.shouldOverwrite) await fs.emptyDir(ctx.targetDir)
     await fs.ensureDir(ctx.targetDir)
     await fs.copy(ctx.templateDir, ctx.targetDir)
-
     await cleanupTemplate(ctx)
-
     await applyProjectTransform(ctx)
 
-    if (ctx.shouldInstall) {
-      await installDependencies(ctx, s)
-    }
+    const costScaffold = ((Date.now() - startScaffold) / 1000).toFixed(1)
+    s.stop(pc.green(`Creating project in ${costScaffold}s`))
 
-    s.stop(pc.green('全套环境装配就绪'))
+    s.start('Installing dependencies')
+    const startInstall = Date.now()
+    await installDependencies(ctx, s)
 
-    const nextSteps = ctx.shouldInstall
-      ? `cd ${ctx.name}\n${ctx.devCmd}`
-      : `cd ${ctx.name}\n${ctx.pkgManager} install\n${ctx.devCmd}`
+    const costInstall = ((Date.now() - startInstall) / 1000).toFixed(1)
+    s.stop(pc.green(`Dependencies installed in ${costInstall}s`))
 
-    p.note(pc.cyan(nextSteps), '下一步操作')
-    p.outro(pc.magenta('✨ 已经为你准备好了极致的开发环境!'))
+    console.log(pc.gray(`◇ Scaffolded ${ctx.name} with Vite application`))
+    console.log(
+      pc.gray(
+        `• Node ${process.version.slice(1)}  ${ctx.pkgManager} ${execSync(ctx.pkgManager + ' -v')
+          .toString()
+          .trim()}`,
+      ),
+    )
+    console.log(pc.green(`→ Next: cd ${ctx.name} && ${ctx.devCmd.replace(' ', ' run ')}`))
   } catch (err) {
-    s.stop(pc.red('手术失败'))
+    s.stop(pc.red('Failed'))
 
     if (ctx && ctx.targetDir && fs.existsSync(ctx.targetDir)) {
       p.log.warn(pc.yellow(`正在清理残留文件: ${ctx.targetDir}...`))

@@ -49,6 +49,7 @@ const FRAMEWORK_CONFIG = {
   },
   react: {
     deps: (isUno) => ({
+      dependencies: isUno ? { '@unocss/reset': 'latest' } : {},
       devDependencies: isUno
         ? { unocss: 'latest' }
         : { tailwindcss: 'latest', '@tailwindcss/vite': 'latest' },
@@ -70,7 +71,7 @@ const CSS_STRATEGIES = {
   unocss: {
     pluginImport: "import UnoCSS from 'unocss/vite'\n",
     pluginCode: 'UnoCSS(), ',
-    entryImport: "import 'virtual:uno.css'\n",
+    entryImport: "import '@unocss/reset/tailwind.css'\nimport 'virtual:uno.css'\n",
     async setup(ctx) {
       const unoConfig = `
 import { defineConfig, presetWind3, transformerCompileClass } from 'unocss'
@@ -81,7 +82,9 @@ export default defineConfig({
     {
       name: 'auto-uno-injector',
       enforce: 'pre',
-      idFilter(id) { return /\\.[tj]sx$|\\.vue$/.test(id) },
+      idFilter(id) {
+        return /\\.[tj]sx$|\\.vue$/.test(id)
+      },
       async transform(code) {
         const classRegex = /(?:class|className)=["']([^"']+)["']/g
         let match
@@ -94,9 +97,14 @@ export default defineConfig({
         }
       },
     },
-    transformerCompileClass({ classPrefix: 'kfc-' }),
+    transformerCompileClass({
+      classPrefix: '',
+      hashFn: (str) => btoa(str).slice(0, 6),
+      keepUnknown: false,
+    }),
   ],
-})`.trim()
+})
+`.trim()
       await fs.writeFile(path.join(ctx.targetDir, 'uno.config.ts'), unoConfig + '\n')
       const stylePath = path.join(ctx.targetDir, 'src/style.css')
       if (fs.existsSync(stylePath)) await fs.remove(stylePath)
@@ -139,6 +147,7 @@ async function applyProjectTransform(ctx) {
   const config = FRAMEWORK_CONFIG[framework]
   pkg.name = ctx.name
   const extraConfig = config.deps(isUno)
+  pkg.dependencies = { ...pkg.dependencies, ...extraConfig.dependencies }
   pkg.devDependencies = { ...pkg.devDependencies, ...extraConfig.devDependencies }
   if (extraConfig.pnpm) pkg.pnpm = { ...pkg.pnpm, ...extraConfig.pnpm }
   await fs.writeJson(pkgPath, pkg, { spaces: 2 })
