@@ -98,7 +98,6 @@ async function main() {
 
   try {
     s.start('Creating project')
-    const startScaffold = Date.now()
 
     if (project.shouldOverwrite) await fs.emptyDir(ctx.targetDir)
     await fs.ensureDir(ctx.targetDir)
@@ -106,20 +105,13 @@ async function main() {
     await cleanupTemplate(ctx)
     await applyProjectTransform(ctx)
 
-    const costScaffold = ((Date.now() - startScaffold) / 1000).toFixed(1)
-    s.stop(pc.green(`Creating project in ${costScaffold}s`))
-
     s.start('Installing dependencies')
-    const startInstall = Date.now()
     await installDependencies(ctx, s)
-
-    const costInstall = ((Date.now() - startInstall) / 1000).toFixed(1)
-    s.stop(pc.green(`Dependencies installed in ${costInstall}s`))
 
     console.log(pc.gray(`◇ Scaffolded ${ctx.name} with Vite application`))
     console.log(
       pc.gray(
-        `• Node ${process.version.slice(1)}  ${ctx.pkgManager} ${execSync(ctx.pkgManager + ' -v')
+        `• Node ${process.version.slice(1)}  ${ctx.pkgManager} ${execSync(ctx.pkgManager + ' -V')
           .toString()
           .trim()}`,
       ),
