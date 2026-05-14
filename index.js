@@ -97,8 +97,6 @@ async function main() {
   }
 
   try {
-    s.start('Creating project')
-
     if (project.shouldOverwrite) await fs.emptyDir(ctx.targetDir)
     await fs.ensureDir(ctx.targetDir)
     await fs.copy(ctx.templateDir, ctx.targetDir)
@@ -107,15 +105,7 @@ async function main() {
 
     s.start('Installing dependencies')
     await installDependencies(ctx)
-
-    console.log(pc.gray(`◇ Scaffolded ${ctx.name} with Vite application`))
-    console.log(
-      pc.gray(
-        `• Node ${process.version.slice(1)}  ${ctx.pkgManager} ${execSync(ctx.pkgManager + ' -V')
-          .toString()
-          .trim()}`,
-      ),
-    )
+    s.stop()
     console.log(pc.green(`→ Next: cd ${ctx.name} && ${ctx.devCmd.replace(' ', ' run ')}`))
   } catch (err) {
     s.stop(pc.red('Failed'))
