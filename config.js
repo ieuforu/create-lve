@@ -191,14 +191,9 @@ async function cleanupTemplate(ctx) {
   }
 }
 
-async function installDependencies(ctx, s) {
-  s.stop(pc.cyan(`准备安装依赖`))
+async function installDependencies(ctx) {
   try {
     await runTask(ctx.pkgManager, ['install'], ctx.targetDir)
-
-    s.start(pc.green(`正在执行 ${ctx.fmtCmd} 优化代码结构`))
-    await new Promise((r) => setTimeout(r, 300))
-
     const [cmd, ...args] = ctx.fmtCmd.split(' ')
     await runTask(cmd, args, ctx.targetDir)
   } catch (err) {

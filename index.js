@@ -106,7 +106,7 @@ async function main() {
     await applyProjectTransform(ctx)
 
     s.start('Installing dependencies')
-    await installDependencies(ctx, s)
+    await installDependencies(ctx)
 
     console.log(pc.gray(`◇ Scaffolded ${ctx.name} with Vite application`))
     console.log(
