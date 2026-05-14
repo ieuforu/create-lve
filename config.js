@@ -70,7 +70,7 @@ const FRAMEWORK_CONFIG = {
 const CSS_STRATEGIES = {
   unocss: {
     pluginImport: "import UnoCSS from 'unocss/vite'\n",
-    pluginCode: 'UnoCSS(), ',
+    pluginCode: 'UnoCSS({ hmrTopLevelAwait: true }), ',
     entryImport: "import '@unocss/reset/tailwind.css'\nimport 'virtual:uno.css'\n",
     async setup(ctx) {
       const unoConfig = `
