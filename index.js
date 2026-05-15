@@ -54,8 +54,8 @@ async function main() {
           : p.select({
               message: '选择 CSS',
               options: [
-                { value: 'unocss', label: 'UnoCSS' },
                 { value: 'tailwind', label: 'Tailwind v4' },
+                { value: 'unocss', label: 'UnoCSS' },
               ],
             }),
     },
