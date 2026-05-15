@@ -74,7 +74,12 @@ const CSS_STRATEGIES = {
     entryImport: "import '@unocss/reset/tailwind.css'\nimport 'virtual:uno.css'\n",
     async setup(ctx) {
       const unoConfig = `
-import { defineConfig, presetWind3, transformerCompileClass, SourceCodeTransformer } from 'unocss'
+import {
+  defineConfig,
+  presetWind3,
+  transformerCompileClass,
+  type SourceCodeTransformer,
+} from 'unocss'
 import { createHash } from 'node:crypto'
 
 declare const process: { env: { NODE_ENV: string } }
@@ -115,8 +120,24 @@ export default defineConfig({
       ]
     : []) as SourceCodeTransformer[],
 })
+
 `.trim()
       await fs.writeFile(path.join(ctx.targetDir, 'uno.config.ts'), unoConfig + '\n')
+
+      const tsconfigPath = path.join(ctx.targetDir, 'tsconfig.node.json')
+      if (fs.existsSync(tsconfigPath)) {
+        try {
+          const tsconfig = await fs.readJson(tsconfigPath)
+          if (!tsconfig.include) {
+            tsconfig.include = []
+          }
+          if (Array.isArray(tsconfig.include) && !tsconfig.include.includes('uno.config.ts')) {
+            tsconfig.include.push('uno.config.ts')
+            await fs.writeJson(tsconfigPath, tsconfig, { spaces: 2 })
+          }
+        } catch {}
+      }
+
       const stylePath = path.join(ctx.targetDir, 'src/style.css')
       if (fs.existsSync(stylePath)) await fs.remove(stylePath)
     },
