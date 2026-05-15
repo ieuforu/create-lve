@@ -13,12 +13,12 @@ export default defineConfig({
   },
   lint: { options: { typeAware: true, typeCheck: true } },
   plugins: [
+    /* VITE_PLUS_PLUGINS */
     react({
       babel: {
         plugins: [['babel-plugin-react-compiler', { target: '19' }]],
       },
     }),
-    /* VITE_PLUS_PLUGINS */
   ],
   resolve: {
     alias: {
