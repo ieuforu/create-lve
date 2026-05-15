@@ -74,36 +74,44 @@ const CSS_STRATEGIES = {
     entryImport: "import '@unocss/reset/tailwind.css'\nimport 'virtual:uno.css'\n",
     async setup(ctx) {
       const unoConfig = `
-import { defineConfig, presetWind3, transformerCompileClass } from 'unocss'
+import { defineConfig, presetWind3, transformerCompileClass, SourceCodeTransformer } from 'unocss'
+
+declare const process: { env: { NODE_ENV: string } }
+
+const isBuild = process.env.NODE_ENV === 'production'
 
 export default defineConfig({
   presets: [presetWind3()],
-  transformers: [
-    {
-      name: 'auto-uno-injector',
-      enforce: 'pre',
-      idFilter(id) {
-        return /\\.[tj]sx$|\\.vue$/.test(id)
-      },
-      async transform(code) {
-        const classRegex = /(?:class|className)=["']([^"']+)["']/g
-        let match
-        while ((match = classRegex.exec(code.original))) {
-          const content = match[1]
-          if (content.trim() && !content.includes(':uno:')) {
-            const insertPos = match.index + match[0].indexOf(content)
-            code.appendLeft(insertPos, ':uno: ')
-          }
-        }
-      },
-    },
-    transformerCompileClass({
-      classPrefix: '',
-      hashFn: (str) => btoa(str).slice(0, 6),
-      keepUnknown: false,
-    }),
-  ],
+  transformers: (isBuild
+    ? [
+        {
+          name: 'auto-uno-injector',
+          enforce: 'pre',
+          idFilter(id) {
+            return /\\.[tj]sx$|\\.vue$/.test(id)
+          },
+          async transform(code) {
+            const s = code as any
+            const classRegex = /(?:class|className)=["']([^"']+)["']/g
+            let match
+            while ((match = classRegex.exec(s.original))) {
+              const content = match[1]
+              if (content.trim() && !content.includes(':uno:')) {
+                const insertPos = match.index + match[0].indexOf(content)
+                s.appendLeft(insertPos, ':uno: ')
+              }
+            }
+          },
+        },
+        transformerCompileClass({
+          classPrefix: '',
+          hashFn: (str) => btoa(str).slice(0, 6),
+          keepUnknown: false,
+        }),
+      ]
+    : []) as SourceCodeTransformer[],
 })
+
 `.trim()
       await fs.writeFile(path.join(ctx.targetDir, 'uno.config.ts'), unoConfig + '\n')
       const stylePath = path.join(ctx.targetDir, 'src/style.css')
