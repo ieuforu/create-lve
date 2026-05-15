@@ -127,13 +127,11 @@ export default defineConfig({
       const tsconfigPath = path.join(ctx.targetDir, 'tsconfig.node.json')
       if (fs.existsSync(tsconfigPath)) {
         try {
-          const tsconfig = await fs.readJson(tsconfigPath)
-          if (!tsconfig.include) {
-            tsconfig.include = []
-          }
-          if (Array.isArray(tsconfig.include) && !tsconfig.include.includes('uno.config.ts')) {
-            tsconfig.include.push('uno.config.ts')
-            await fs.writeJson(tsconfigPath, tsconfig, { spaces: 2 })
+          let content = await fs.readFile(tsconfigPath, 'utf-8')
+
+          if (content.includes('/* UNO_CONFIG */')) {
+            content = content.replace('/* UNO_CONFIG */', ', "uno.config.ts"')
+            await fs.writeFile(tsconfigPath, content)
           }
         } catch {}
       }
