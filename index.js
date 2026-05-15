@@ -23,8 +23,8 @@ async function main() {
       path: () =>
         p.text({
           message: '项目名称',
-          placeholder: 'vue-app',
-          defaultValue: 'vue-app',
+          placeholder: 'react-app',
+          defaultValue: 'react-app',
           validate: (value) => {
             if (!value || value.length === 0) return
             if (value.match(/[<>:"|?*]/)) return '路径包含非法字符'
@@ -42,8 +42,8 @@ async function main() {
         p.select({
           message: '选择框架',
           options: [
-            { value: 'vue', label: 'Vue 3', hint: '' },
             { value: 'react', label: 'React 19', hint: '' },
+            { value: 'vue', label: 'Vue 3', hint: '' },
             { value: 'next', label: 'Next.js 16', hint: '' },
           ],
         }),
