@@ -70,14 +70,14 @@ const FRAMEWORK_CONFIG = {
 const CSS_STRATEGIES = {
   unocss: {
     pluginImport: "import UnoCSS from 'unocss/vite'\n",
-    pluginCode: 'UnoCSS({ hmrTopLevelAwait: true }), ',
+    pluginCode: 'UnoCSS(), ',
     entryImport: "import '@unocss/reset/tailwind.css'\nimport 'virtual:uno.css'\n",
     async setup(ctx) {
       const unoConfig = `
 import { defineConfig, presetWind3, transformerCompileClass, SourceCodeTransformer } from 'unocss'
+import { createHash } from 'node:crypto'
 
 declare const process: { env: { NODE_ENV: string } }
-
 const isBuild = process.env.NODE_ENV === 'production'
 
 export default defineConfig({
@@ -105,13 +105,16 @@ export default defineConfig({
         },
         transformerCompileClass({
           classPrefix: '',
-          hashFn: (str) => btoa(str).slice(0, 6),
-          keepUnknown: false,
+          hashFn: (str) => {
+            // return createHash('md5').update(str).digest('hex').slice(0, 8)
+            const hash = createHash('md5').update(str).digest('hex').slice(0, 8)
+            return /^\\d/.test(hash) ? 'v' + hash.slice(1, 8) : hash.slice(0, 8)
+          },
+          keepUnknown: true,
         }),
       ]
     : []) as SourceCodeTransformer[],
 })
-
 `.trim()
       await fs.writeFile(path.join(ctx.targetDir, 'uno.config.ts'), unoConfig + '\n')
       const stylePath = path.join(ctx.targetDir, 'src/style.css')

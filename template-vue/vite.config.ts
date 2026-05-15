@@ -13,8 +13,8 @@ export default defineConfig({
   },
   lint: { options: { typeAware: true, typeCheck: true } },
   plugins: [
-    vue(),
     /* VITE_PLUS_PLUGINS */
+    vue(),
   ],
   resolve: {
     alias: {
