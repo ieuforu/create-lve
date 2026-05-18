@@ -50,9 +50,19 @@ const FRAMEWORK_CONFIG = {
   react: {
     deps: (isUno) => ({
       dependencies: isUno ? { '@unocss/reset': 'latest' } : {},
-      devDependencies: isUno
-        ? { unocss: 'latest' }
-        : { tailwindcss: 'latest', '@tailwindcss/vite': 'latest' },
+      devDependencies: {
+        'vite-plus': 'latest',
+        '@vitejs/plugin-react': 'latest',
+        '@rolldown/plugin-babel': 'latest',
+        '@babel/core': 'latest',
+        'babel-plugin-react-compiler': 'latest',
+        '@types/babel__core': 'latest',
+        typescript: 'latest',
+
+        ...(isUno
+          ? { unocss: 'latest' }
+          : { tailwindcss: 'latest', '@tailwindcss/vite': 'latest' }),
+      },
 
       pnpm: {
         overrides: {

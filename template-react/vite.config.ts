@@ -1,5 +1,5 @@
-import { defineConfig, loadEnv } from 'vite-plus'
-import react from '@vitejs/plugin-react'
+import { defineConfig, loadEnv, lazyPlugins } from 'vite-plus'
+import react, { reactCompilerPreset } from '@vitejs/plugin-react'
 import { fileURLToPath, URL } from 'node:url'
 
 const mode = process.env.NODE_ENV || 'development'
@@ -14,10 +14,14 @@ export default defineConfig({
   lint: { options: { typeAware: true, typeCheck: true } },
   plugins: [
     /* VITE_PLUS_PLUGINS */
-    react({
-      babel: {
-        plugins: [['babel-plugin-react-compiler', { target: '19' }]],
-      },
+    react(),
+    lazyPlugins(async () => {
+      const { default: babel } = await import('@rolldown/plugin-babel')
+      return [
+        babel({
+          presets: [reactCompilerPreset()],
+        }),
+      ]
     }),
   ],
   resolve: {
