@@ -1,6 +1,6 @@
 import { defineConfig, loadEnv, lazyPlugins } from 'vite-plus'
 import react, { reactCompilerPreset } from '@vitejs/plugin-react'
-import { fileURLToPath, URL } from 'node:url'
+// import { fileURLToPath, URL } from 'node:url'
 
 const mode = process.env.NODE_ENV || 'development'
 const env = loadEnv(mode, process.cwd(), '')
@@ -25,9 +25,10 @@ export default defineConfig({
     }),
   ],
   resolve: {
-    alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url)),
-    },
+    // alias: {
+    //   '@': fileURLToPath(new URL('./src', import.meta.url)),
+    // },
+    tsconfigPaths: true,
   },
   server: {
     proxy: {
