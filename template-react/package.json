@@ -19,7 +19,7 @@
     "@types/react-dom": "latest",
     "@vitejs/plugin-react": "latest",
     "babel-plugin-react-compiler": "latest",
-    "typescript": "~5.9.3",
+    "typescript": "latest",
     "vite": "latest",
     "vite-plus": "latest"
   },
