@@ -162,6 +162,30 @@ export default defineConfig({
   },
 }
 
+async function resolveLatestVersions(pkgPath) {
+  const pkg = await fs.readJson(pkgPath)
+  const sections = ['dependencies', 'devDependencies']
+
+  for (const section of sections) {
+    if (!pkg[section]) continue
+    for (const [name, version] of Object.entries(pkg[section])) {
+      if (version === 'latest') {
+        try {
+          const resolved = execSync(`npm view ${name} version`, {
+            encoding: 'utf-8',
+            timeout: 10000,
+          }).trim()
+          pkg[section][name] = `^${resolved}`
+        } catch {
+          // resolution failed, keep latest
+        }
+      }
+    }
+  }
+
+  await fs.writeJson(pkgPath, pkg, { spaces: 2 })
+}
+
 async function runTask(command, args, cwd) {
   return new Promise((resolve, reject) => {
     const child = spawn(command, args, {
@@ -191,6 +215,8 @@ async function applyProjectTransform(ctx) {
   pkg.devDependencies = { ...pkg.devDependencies, ...extraConfig.devDependencies }
   if (extraConfig.pnpm) pkg.pnpm = { ...pkg.pnpm, ...extraConfig.pnpm }
   await fs.writeJson(pkgPath, pkg, { spaces: 2 })
+
+  await resolveLatestVersions(pkgPath)
 
   if (isNext) return
 
