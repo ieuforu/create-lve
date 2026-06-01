@@ -35,5 +35,6 @@
       "oxlint --fix"
     ],
     "*.json": "oxfmt --write"
-  }
+  },
+  "packageManager": "pnpm@11.5.0"
 }

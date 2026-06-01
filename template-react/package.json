@@ -10,15 +10,26 @@
     "prepare": "vp config"
   },
   "dependencies": {
+    "@tanstack/react-query": "latest",
+    "class-variance-authority": "latest",
+    "clsx": "latest",
+    "jotai": "latest",
     "react": "latest",
-    "react-dom": "latest"
+    "react-dom": "latest",
+    "react-router": "latest",
+    "tailwind-merge": "latest",
+    "zustand": "latest"
   },
   "devDependencies": {
+    "@babel/core": "latest",
+    "@rolldown/plugin-babel": "latest",
+    "@tailwindcss/vite": "latest",
     "@types/node": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "@vitejs/plugin-react": "latest",
     "babel-plugin-react-compiler": "latest",
+    "tailwindcss": "latest",
     "typescript": "latest",
     "vite": "latest",
     "vite-plus": "latest"
