@@ -1,12 +1,15 @@
+import { lazy, Suspense } from 'react'
 import { createBrowserRouter, Outlet, Navigate } from 'react-router'
 
 // ── 懒加载 ──
-const lazyRoute = (loader: () => Promise<{ default: React.ComponentType }>) => ({
-  lazy: async () => {
-    const { default: Component } = await loader()
-    return { Component }
-  },
-})
+const lazyPage = (loader: () => Promise<{ default: React.ComponentType }>) => {
+  const Component = lazy(loader)
+  return (
+    <Suspense fallback={null}>
+      <Component />
+    </Suspense>
+  )
+}
 
 // ── 路由守卫 ──
 function ProtectedRoute() {
@@ -34,16 +37,16 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        ...lazyRoute(() => import('@/features/_example/pages/Example')),
+        element: lazyPage(() => import('@/features/_example/pages/Example')),
       },
       // TODO: 在这里添加你的路由
-      // { path: 'users', ...lazyRoute(() => import('@/features/user/pages/UserList')) },
-      // { path: 'users/:id', ...lazyRoute(() => import('@/features/user/pages/UserDetail')) },
+      // { path: 'users', element: lazyPage(() => import('@/features/user/pages/UserList')) },
+      // { path: 'users/:id', element: lazyPage(() => import('@/features/user/pages/UserDetail')) },
       // {
       //   path: 'dashboard',
       //   element: <ProtectedRoute />,
       //   children: [
-      //     { index: true, ...lazyRoute(() => import('@/features/dashboard/pages/Dashboard')) },
+      //     { index: true, element: lazyPage(() => import('@/features/dashboard/pages/Dashboard')) },
       //   ],
       // },
     ],
