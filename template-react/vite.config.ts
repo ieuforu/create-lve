@@ -1,6 +1,5 @@
 import { defineConfig, loadEnv, lazyPlugins } from 'vite-plus'
 import react, { reactCompilerPreset } from '@vitejs/plugin-react'
-// import { fileURLToPath, URL } from 'node:url'
 
 const mode = process.env.NODE_ENV || 'development'
 const env = loadEnv(mode, process.cwd(), '')
@@ -25,10 +24,23 @@ export default defineConfig({
     }),
   ],
   resolve: {
-    // alias: {
-    //   '@': fileURLToPath(new URL('./src', import.meta.url)),
-    // },
     tsconfigPaths: true,
+  },
+  build: {
+    rolldownOptions: {
+      output: {
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return
+          if (id.includes('react') && !id.includes('react-router')) return 'vendor-react'
+          if (id.includes('react-dom')) return 'vendor-react-dom'
+          if (id.includes('react-router')) return 'vendor-router'
+          if (id.includes('@tanstack')) return 'vendor-query'
+          if (id.includes('zustand')) return 'vendor-state'
+          if (id.includes('jotai')) return 'vendor-atom'
+          return 'vendor'
+        },
+      },
+    },
   },
   server: {
     proxy: {

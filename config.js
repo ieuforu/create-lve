@@ -7,40 +7,6 @@ import { execSync, spawn } from 'node:child_process'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
-const getReactAppTemplate = (isUno) => {
-  const logoClass = isUno
-    ? 'animate-spin animate-duration-20s animate-linear animate-infinite'
-    : 'animate-[spin_20s_linear_infinite]'
-
-  return `
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-
-export function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <div className="max-w-7xl mx-auto p-8 text-center font-sans antialiased text-[#213547] dark:text-zinc-200 min-h-dvh flex flex-col justify-center items-center">
-      <div className="flex justify-center gap-12 mb-12">
-        <a href="https://viteplus.dev" target="_blank" rel="noreferrer" className="transition-all duration-300 hover:drop-shadow-[0_0_2em_#646cffaa]">
-          <img src="/favicon.svg" className="h-24 p-6" alt="VitePlus logo" />
-        </a>
-        <a href="https://react.dev" target="_blank" rel="noreferrer" className="transition-all duration-300 hover:drop-shadow-[0_0_2em_#61dafbaa]">
-          <img src={reactLogo} className="h-24 p-6 ${logoClass}" alt="React logo" />
-        </a>
-      </div>
-      <h1 className="text-5xl font-bold leading-[1.1] mb-8">VitePlus + React</h1>
-      <div className="p-8 space-y-4 flex flex-col items-center">
-        <button onClick={() => setCount((count) => count + 1)} className="rounded-lg border border-transparent px-5 py-2.5 text-base font-medium bg-[#f9f9f9] dark:bg-zinc-800 cursor-pointer transition-colors hover:border-[#646cff] outline-none">
-          count is {count}
-        </button>
-      </div>
-    </div>
-  )
-}
-`.trim()
-}
-
 const FRAMEWORK_CONFIG = {
   next: {
     deps: (isUno) => ({
@@ -64,11 +30,9 @@ const FRAMEWORK_CONFIG = {
           : { tailwindcss: 'latest', '@tailwindcss/vite': 'latest' }),
       },
 
-      pnpm: {
-        overrides: {
-          vite: 'npm:@voidzero-dev/vite-plus-core@latest',
-          vitest: 'npm:@voidzero-dev/vite-plus-test@latest',
-        },
+      overrides: {
+        vite: 'npm:@voidzero-dev/vite-plus-core@latest',
+        vitest: 'npm:@voidzero-dev/vite-plus-test@latest',
       },
     }),
   },
@@ -199,7 +163,9 @@ async function runTask(command, args, cwd) {
       reject(err)
     })
 
-    child.on('close', (code) => (code === 0 ? resolve() : reject()))
+    child.on('close', (code) =>
+      code === 0 ? resolve() : reject(new Error(`${command} exited with code ${code}`)),
+    )
   })
 }
 
@@ -213,7 +179,11 @@ async function applyProjectTransform(ctx) {
   const extraConfig = config.deps(isUno)
   pkg.dependencies = { ...pkg.dependencies, ...extraConfig.dependencies }
   pkg.devDependencies = { ...pkg.devDependencies, ...extraConfig.devDependencies }
-  if (extraConfig.pnpm) pkg.pnpm = { ...pkg.pnpm, ...extraConfig.pnpm }
+  if (extraConfig.overrides) pkg.overrides = { ...pkg.overrides, ...extraConfig.overrides }
+  try {
+    const version = execSync('pnpm --version', { encoding: 'utf-8', timeout: 5000 }).trim()
+    pkg.packageManager = `pnpm@${version}`
+  } catch {}
   await fs.writeJson(pkgPath, pkg, { spaces: 2 })
 
   await resolveLatestVersions(pkgPath)
@@ -225,11 +195,6 @@ async function applyProjectTransform(ctx) {
   const paths = {
     main: path.join(targetDir, isVue ? 'src/main.ts' : 'src/main.tsx'),
     vite: path.join(targetDir, 'vite.config.ts'),
-    app: path.join(targetDir, isVue ? 'src/App.vue' : 'src/App.tsx'),
-  }
-
-  if (framework === 'react') {
-    await fs.writeFile(paths.app, getReactAppTemplate(isUno))
   }
 
   let viteContent = await fs.readFile(paths.vite, 'utf-8')

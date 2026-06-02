@@ -1,6 +1,5 @@
 import { defineConfig, loadEnv } from 'vite-plus'
 import vue from '@vitejs/plugin-vue'
-import { fileURLToPath, URL } from 'node:url'
 
 const mode = process.env.NODE_ENV || 'development'
 const env = loadEnv(mode, process.cwd(), '')
@@ -17,8 +16,21 @@ export default defineConfig({
     vue(),
   ],
   resolve: {
-    alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url)),
+    tsconfigPaths: true,
+  },
+  build: {
+    rolldownOptions: {
+      output: {
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return
+          if (id.includes('vue') && !id.includes('vue-router'))
+            return 'vendor-vue'
+          if (id.includes('vue-router')) return 'vendor-router'
+          if (id.includes('pinia')) return 'vendor-pinia'
+          if (id.includes('@vueuse')) return 'vendor-vueuse'
+          return 'vendor'
+        },
+      },
     },
   },
   server: {

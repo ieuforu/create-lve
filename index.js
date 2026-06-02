@@ -7,6 +7,11 @@ import path from 'node:path'
 import { execSync } from 'node:child_process'
 import { __dirname, applyProjectTransform, cleanupTemplate, installDependencies } from './config.js'
 
+function randomName() {
+  const hash = Math.random().toString(36).slice(2, 6)
+  return `vite-app-${hash}`
+}
+
 async function main() {
   process.stdout.write('\u001b[3J\u001b[2J\u001b[1J')
   console.clear()
@@ -23,8 +28,8 @@ async function main() {
       path: () =>
         p.text({
           message: '项目名称',
-          placeholder: 'react-app',
-          defaultValue: 'react-app',
+          placeholder: 'your-project-name',
+          defaultValue: randomName(),
           validate: (value) => {
             if (!value || value.length === 0) return
             if (value.match(/[<>:"|?*]/)) return '路径包含非法字符'
@@ -106,7 +111,7 @@ async function main() {
     s.start('Installing dependencies')
     await installDependencies(ctx)
     s.stop()
-    console.log(pc.green(`→ Next: cd ${ctx.name} && ${ctx.devCmd.replace(' ', ' run ')}`))
+    console.log(pc.green(`→ Next: cd ${ctx.name} && ${ctx.devCmd}`))
   } catch (err) {
     s.stop(pc.red('Failed'))
 
