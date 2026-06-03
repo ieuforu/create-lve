@@ -119,9 +119,13 @@ export default defineConfig({
     pluginCode: 'tailwindcss(), ',
     entryImport: "import './style.css'\n",
     async setup(ctx) {
+      // 模板自带 style.css（含 @import 'tailwindcss' + base UX），不覆盖
+      // 仅确保文件存在
       const stylePath = path.join(ctx.targetDir, 'src/style.css')
-      await fs.ensureDir(path.dirname(stylePath))
-      await fs.writeFile(stylePath, `@import "tailwindcss";`)
+      if (!fs.existsSync(stylePath)) {
+        await fs.ensureDir(path.dirname(stylePath))
+        await fs.writeFile(stylePath, `@import "tailwindcss";`)
+      }
     },
   },
 }
