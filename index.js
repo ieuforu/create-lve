@@ -7,6 +7,10 @@ import path from 'node:path'
 import { execSync } from 'node:child_process'
 import { __dirname, applyProjectTransform, cleanupTemplate, installDependencies } from './config.js'
 
+const version = JSON.parse(
+  fs.readFileSync(new URL('./package.json', import.meta.url), 'utf-8'),
+).version
+
 function parseArgs() {
   const args = process.argv.slice(2)
   const flags = {}
@@ -23,59 +27,70 @@ function randomName() {
   return `vite-app-${hash}`
 }
 
+function onCancel() {
+  p.cancel('操作取消')
+  process.exit(0)
+}
+
 async function main() {
   const { flags, positional } = parseArgs()
   process.stdout.write('\u001b[3J\u001b[2J\u001b[1J')
   console.clear()
   const logo = `
     ${pc.cyan('█    █  █ █▀▀▀')}
-    ${pc.cyan('█    █  █ █▀▀ ')} 
+    ${pc.cyan('█    █  █ █▀▀ ')}
     ${pc.cyan('█▄▄▄  ▀▄▀ █▄▄▄')}  ${pc.gray('THE ULTRA-FAST FRONTEND STACK')}
   `
   console.log(logo)
-  p.intro(`${pc.bgCyan(pc.black(' LVE-CLI '))}`)
+  p.intro(`${pc.bgCyan(pc.black(` LVE-CLI v${version} `))}`)
 
-  const defaultName = positional[0] || randomName()
+  let project
 
-  const project = await p.group(
-    {
-      path: () =>
-        flags.default
-          ? defaultName
-          : p.text({
-              message: '项目名称',
-              placeholder: 'your-project-name',
-              defaultValue: randomName(),
-              validate: (value) => {
-                if (!value || value.length === 0) return
-                if (value.match(/[<>:"|?*]/)) return '路径包含非法字符'
-              },
-            }),
+  if (flags.default) {
+    // --default: React + Tailwind，跳过所有 prompt
+    const name = positional[0] || randomName()
+    const targetDir = path.resolve(process.cwd(), name)
+    let shouldOverwrite = false
+    if (fs.existsSync(targetDir) && fs.readdirSync(targetDir).length > 0) {
+      shouldOverwrite = await p.confirm({ message: `目录已存在，是否清空？`, initialValue: false })
+      if (p.isCancel(shouldOverwrite)) onCancel()
+    }
+    project = { path: name, framework: 'react', cssEngine: 'tailwind', shouldOverwrite }
+  } else {
+    // 交互模式
+    project = await p.group(
+      {
+        path: () =>
+          p.text({
+            message: '项目名称',
+            placeholder: 'your-project-name',
+            defaultValue: randomName(),
+            validate: (value) => {
+              if (!value || value.length === 0) return
+              if (value.match(/[<>:"|?*]/)) return '路径包含非法字符'
+            },
+          }),
 
-      shouldOverwrite: ({ results }) => {
-        const targetDir = path.resolve(process.cwd(), results.path)
-        if (fs.existsSync(targetDir) && fs.readdirSync(targetDir).length > 0) {
-          return p.confirm({ message: `目录已存在，是否清空？`, initialValue: false })
-        }
-      },
+        shouldOverwrite: ({ results }) => {
+          const targetDir = path.resolve(process.cwd(), results.path)
+          if (fs.existsSync(targetDir) && fs.readdirSync(targetDir).length > 0) {
+            return p.confirm({ message: `目录已存在，是否清空？`, initialValue: false })
+          }
+        },
 
-      framework: () =>
-        flags.default
-          ? 'react'
-          : p.select({
-              message: '选择框架',
-              options: [
-                { value: 'react', label: 'React 19', hint: '' },
-                { value: 'vue', label: 'Vue 3', hint: '' },
-                { value: 'next', label: 'Next.js 16', hint: '' },
-              ],
-            }),
+        framework: () =>
+          p.select({
+            message: '选择框架',
+            options: [
+              { value: 'react', label: 'React 19', hint: '' },
+              { value: 'vue', label: 'Vue 3', hint: '' },
+              { value: 'next', label: 'Next.js 16', hint: '' },
+            ],
+          }),
 
-      cssEngine: ({ results }) =>
-        results.framework === 'next'
-          ? p.note('Next.js 已内置 Tailwind，无需选择')
-          : flags.default
-            ? 'tailwind'
+        cssEngine: ({ results }) =>
+          results.framework === 'next'
+            ? p.note('Next.js 已内置 Tailwind，无需选择')
             : p.select({
                 message: '选择 CSS',
                 options: [
@@ -83,14 +98,10 @@ async function main() {
                   { value: 'unocss', label: 'UnoCSS' },
                 ],
               }),
-    },
-    {
-      onCancel: () => {
-        p.cancel('操作取消')
-        process.exit(0)
       },
-    },
-  )
+      { onCancel },
+    )
+  }
 
   const ctx = {
     name: project.path,
