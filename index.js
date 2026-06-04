@@ -7,12 +7,24 @@ import path from 'node:path'
 import { execSync } from 'node:child_process'
 import { __dirname, applyProjectTransform, cleanupTemplate, installDependencies } from './config.js'
 
+function parseArgs() {
+  const args = process.argv.slice(2)
+  const flags = {}
+  const positional = []
+  for (const arg of args) {
+    if (arg === '--default') flags.default = true
+    else if (!arg.startsWith('-')) positional.push(arg)
+  }
+  return { flags, positional }
+}
+
 function randomName() {
   const hash = Math.random().toString(36).slice(2, 6)
   return `vite-app-${hash}`
 }
 
 async function main() {
+  const { flags, positional } = parseArgs()
   process.stdout.write('\u001b[3J\u001b[2J\u001b[1J')
   console.clear()
   const logo = `
@@ -23,18 +35,22 @@ async function main() {
   console.log(logo)
   p.intro(`${pc.bgCyan(pc.black(' LVE-CLI '))}`)
 
+  const defaultName = positional[0] || randomName()
+
   const project = await p.group(
     {
       path: () =>
-        p.text({
-          message: '项目名称',
-          placeholder: 'your-project-name',
-          defaultValue: randomName(),
-          validate: (value) => {
-            if (!value || value.length === 0) return
-            if (value.match(/[<>:"|?*]/)) return '路径包含非法字符'
-          },
-        }),
+        flags.default
+          ? defaultName
+          : p.text({
+              message: '项目名称',
+              placeholder: 'your-project-name',
+              defaultValue: randomName(),
+              validate: (value) => {
+                if (!value || value.length === 0) return
+                if (value.match(/[<>:"|?*]/)) return '路径包含非法字符'
+              },
+            }),
 
       shouldOverwrite: ({ results }) => {
         const targetDir = path.resolve(process.cwd(), results.path)
@@ -44,25 +60,29 @@ async function main() {
       },
 
       framework: () =>
-        p.select({
-          message: '选择框架',
-          options: [
-            { value: 'react', label: 'React 19', hint: '' },
-            { value: 'vue', label: 'Vue 3', hint: '' },
-            { value: 'next', label: 'Next.js 16', hint: '' },
-          ],
-        }),
+        flags.default
+          ? 'react'
+          : p.select({
+              message: '选择框架',
+              options: [
+                { value: 'react', label: 'React 19', hint: '' },
+                { value: 'vue', label: 'Vue 3', hint: '' },
+                { value: 'next', label: 'Next.js 16', hint: '' },
+              ],
+            }),
 
       cssEngine: ({ results }) =>
         results.framework === 'next'
           ? p.note('Next.js 已内置 Tailwind，无需选择')
-          : p.select({
-              message: '选择 CSS',
-              options: [
-                { value: 'tailwind', label: 'Tailwind v4' },
-                { value: 'unocss', label: 'UnoCSS' },
-              ],
-            }),
+          : flags.default
+            ? 'tailwind'
+            : p.select({
+                message: '选择 CSS',
+                options: [
+                  { value: 'tailwind', label: 'Tailwind v4' },
+                  { value: 'unocss', label: 'UnoCSS' },
+                ],
+              }),
     },
     {
       onCancel: () => {
