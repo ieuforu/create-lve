@@ -7,38 +7,102 @@ import { execSync, spawn } from 'node:child_process'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
+const BASE_STYLE = `@layer base {
+  /* Scrollbar */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+  }
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .dark * {
+    scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+  }
+  .dark ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  /* 文本渲染 */
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* 选中色 */
+  ::selection {
+    background: rgba(59, 130, 246, 0.2);
+  }
+
+  /* 触摸优化 */
+  body {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* 链接和图片禁止拖拽 + 长按菜单 + 点击高亮 */
+a,
+img {
+  -webkit-user-drag: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+/* input number 去掉上下箭头 */
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* textarea 禁止拖拽调整大小 */
+textarea {
+  resize: none;
+}
+
+/* details/summary 去掉默认三角 */
+summary {
+  list-style: none;
+}
+summary::marker {
+  display: none;
+  content: '';
+}
+
+/* focus 焦点环 */
+a:focus-visible {
+  outline: 2px solid var(--color-primary, #3b82f6);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+`
+
+const vitePlusDeps = (isUno) => ({
+  dependencies: isUno ? { '@unocss/reset': 'latest' } : undefined,
+  devDependencies: isUno ? { unocss: 'latest' } : undefined,
+  overrides: {
+    vite: 'npm:@voidzero-dev/vite-plus-core@latest',
+    vitest: 'npm:@voidzero-dev/vite-plus-test@latest',
+  },
+})
+
 const FRAMEWORK_CONFIG = {
   next: {
     deps: (isUno) => ({
       devDependencies: isUno ? { unocss: 'latest' } : { tailwindcss: 'latest' },
     }),
   },
-  react: {
-    deps: (isUno) => ({
-      dependencies: isUno ? { '@unocss/reset': 'latest' } : {},
-      devDependencies: {
-        'vite-plus': 'latest',
-        '@vitejs/plugin-react': 'latest',
-        '@rolldown/plugin-babel': 'latest',
-        '@babel/core': 'latest',
-        'babel-plugin-react-compiler': 'latest',
-        '@types/babel__core': 'latest',
-        typescript: 'latest',
-
-        ...(isUno
-          ? { unocss: 'latest' }
-          : { tailwindcss: 'latest', '@tailwindcss/vite': 'latest' }),
-      },
-
-      overrides: {
-        vite: 'npm:@voidzero-dev/vite-plus-core@latest',
-        vitest: 'npm:@voidzero-dev/vite-plus-test@latest',
-      },
-    }),
-  },
-  vue: {
-    deps: (isUno) => FRAMEWORK_CONFIG.react.deps(isUno),
-  },
+  react: { deps: vitePlusDeps },
+  vue: { deps: vitePlusDeps },
 }
 
 const CSS_STRATEGIES = {
@@ -119,8 +183,7 @@ export default defineConfig({
     pluginCode: 'tailwindcss(), ',
     entryImport: "import './style.css'\n",
     async setup(ctx) {
-      // 模板自带 style.css（含 @import 'tailwindcss' + base UX），不覆盖
-      // 仅确保文件存在
+      // style.css 已由 applyProjectTransform 写入，此处仅兜底
       const stylePath = path.join(ctx.targetDir, 'src/style.css')
       if (!fs.existsSync(stylePath)) {
         await fs.ensureDir(path.dirname(stylePath))
@@ -183,6 +246,10 @@ async function applyProjectTransform(ctx) {
   const extraConfig = config.deps(isUno)
   pkg.dependencies = { ...pkg.dependencies, ...extraConfig.dependencies }
   pkg.devDependencies = { ...pkg.devDependencies, ...extraConfig.devDependencies }
+  if (isUno) {
+    delete pkg.devDependencies?.['tailwindcss']
+    delete pkg.devDependencies?.['@tailwindcss/vite']
+  }
   if (extraConfig.overrides) pkg.overrides = { ...pkg.overrides, ...extraConfig.overrides }
   try {
     const version = execSync('pnpm --version', { encoding: 'utf-8', timeout: 5000 }).trim()
@@ -191,6 +258,13 @@ async function applyProjectTransform(ctx) {
   await fs.writeJson(pkgPath, pkg, { spaces: 2 })
 
   await resolveLatestVersions(pkgPath)
+
+  const indexPath = path.join(targetDir, 'index.html')
+  if (fs.existsSync(indexPath)) {
+    let indexContent = await fs.readFile(indexPath, 'utf-8')
+    indexContent = indexContent.replace(/<title>.*?<\/title>/, `<title>${ctx.name}</title>`)
+    await fs.writeFile(indexPath, indexContent)
+  }
 
   if (isNext) return
 
@@ -208,6 +282,10 @@ async function applyProjectTransform(ctx) {
 
   let mainContent = await fs.readFile(paths.main, 'utf-8')
   await fs.writeFile(paths.main, strategy.entryImport + mainContent)
+
+  const stylePath = path.join(targetDir, 'src/style.css')
+  await fs.ensureDir(path.dirname(stylePath))
+  await fs.writeFile(stylePath, `@import 'tailwindcss';\n\n${BASE_STYLE}\n`)
 
   await strategy.setup(ctx)
 }

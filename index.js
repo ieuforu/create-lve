@@ -76,7 +76,6 @@ async function main() {
     name: project.path,
     framework: project.framework,
     css: project.cssEngine,
-    shouldInstall: true,
     targetDir: path.resolve(process.cwd(), project.path),
     templateDir: path.resolve(__dirname, `template-${project.framework}`),
     isNext: project.framework === 'next',

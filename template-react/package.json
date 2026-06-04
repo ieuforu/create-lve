@@ -18,7 +18,10 @@
     "zustand": "latest"
   },
   "devDependencies": {
+    "@babel/core": "latest",
+    "@rolldown/plugin-babel": "latest",
     "@tailwindcss/vite": "latest",
+    "@types/babel__core": "latest",
     "@types/node": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest",

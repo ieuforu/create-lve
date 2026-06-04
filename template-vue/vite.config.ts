@@ -23,8 +23,7 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (!id.includes('node_modules')) return
-          if (id.includes('vue') && !id.includes('vue-router'))
-            return 'vendor-vue'
+          if (id.includes('vue') && !id.includes('vue-router')) return 'vendor-vue'
           if (id.includes('vue-router')) return 'vendor-router'
           if (id.includes('pinia')) return 'vendor-pinia'
           if (id.includes('@vueuse')) return 'vendor-vueuse'
