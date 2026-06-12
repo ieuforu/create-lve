@@ -31,12 +31,14 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (!id.includes('node_modules')) return
-          if (id.includes('react') && !id.includes('react-router')) return 'vendor-react'
-          if (id.includes('react-dom')) return 'vendor-react-dom'
-          if (id.includes('react-router')) return 'vendor-router'
+          const pkg = id.match(/node_modules\/(?:@[^/]+\/)?([^/]+)/)?.[1]
+          if (pkg === 'react') return 'vendor-react'
+          if (pkg === 'react-dom') return 'vendor-react-dom'
+          if (pkg === 'react-router' || pkg === 'react-router-dom')
+            return 'vendor-router'
           if (id.includes('@tanstack')) return 'vendor-query'
-          if (id.includes('zustand')) return 'vendor-state'
-          if (id.includes('jotai')) return 'vendor-atom'
+          if (pkg === 'zustand') return 'vendor-state'
+          if (pkg === 'jotai') return 'vendor-atom'
           return 'vendor'
         },
       },
