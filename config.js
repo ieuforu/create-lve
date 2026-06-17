@@ -87,7 +87,6 @@ a:focus-visible {
 `
 
 const vitePlusDeps = (isUno) => ({
-  dependencies: isUno ? { '@unocss/reset': 'latest' } : undefined,
   devDependencies: isUno ? { unocss: 'latest' } : undefined,
   overrides: {
     vite: 'npm:@voidzero-dev/vite-plus-core@latest',
@@ -109,12 +108,12 @@ const CSS_STRATEGIES = {
   unocss: {
     pluginImport: "import UnoCSS from 'unocss/vite'\n",
     pluginCode: 'UnoCSS(), ',
-    entryImport: "import '@unocss/reset/tailwind.css'\nimport 'virtual:uno.css'\n",
+    entryImport: "import 'virtual:uno.css'\n",
     async setup(ctx) {
       const unoConfig = `
 import {
   defineConfig,
-  presetWind3,
+  presetWind4,
   transformerCompileClass,
   type SourceCodeTransformer,
 } from 'unocss'
@@ -124,7 +123,7 @@ declare const process: { env: { NODE_ENV: string } }
 const isBuild = process.env.NODE_ENV === 'production'
 
 export default defineConfig({
-  presets: [presetWind3()],
+  presets: [presetWind4()],
   transformers: (isBuild
     ? [
         {
@@ -174,8 +173,8 @@ export default defineConfig({
         } catch {}
       }
 
-      const stylePath = path.join(ctx.targetDir, 'src/style.css')
-      if (fs.existsSync(stylePath)) await fs.remove(stylePath)
+      // UnoCSS 不需要 style.css，utilities 通过 virtual:uno.css 注入
+      // BASE_STYLE 已在 applyProjectTransform 中写入，此处保留
     },
   },
   tailwind: {
@@ -285,7 +284,8 @@ async function applyProjectTransform(ctx) {
 
   const stylePath = path.join(targetDir, 'src/style.css')
   await fs.ensureDir(path.dirname(stylePath))
-  await fs.writeFile(stylePath, `@import 'tailwindcss';\n\n${BASE_STYLE}\n`)
+  const styleContent = isUno ? `${BASE_STYLE}\n` : `@import 'tailwindcss';\n\n${BASE_STYLE}\n`
+  await fs.writeFile(stylePath, styleContent)
 
   await strategy.setup(ctx)
 }
