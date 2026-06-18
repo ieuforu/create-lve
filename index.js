@@ -111,20 +111,20 @@ async function main() {
     templateDir: path.resolve(__dirname, `template-${project.framework}`),
     isNext: project.framework === 'next',
     isUno: project.cssEngine === 'unocss',
-    pkgManager: project.framework === 'next' ? 'pnpm' : 'vp',
-    devCmd: project.framework === 'next' ? 'pnpm dev' : 'vp dev',
-    fmtCmd: project.framework === 'next' ? 'pnpm fmt' : 'vp fmt',
+    pkgManager: project.framework === 'next' ? 'pnpm' : project.framework === 'vue' ? 'vp' : 'pnpm',
+    devCmd: project.framework === 'next' ? 'pnpm dev' : project.framework === 'vue' ? 'vp dev' : 'pnpm dev',
+    fmtCmd: project.framework === 'next' ? 'pnpm fmt' : project.framework === 'vue' ? 'vp fmt' : 'pnpm fmt',
   }
 
   const s = p.spinner()
 
-  if (!ctx.isNext) {
+  if (project.framework === 'vue') {
     try {
       execSync('vp --version', { stdio: 'ignore' })
     } catch {
       p.log.error(pc.red('未检测到 VitePlus (vp) 环境'))
       p.note(
-        pc.white(`React/Vue 模板依赖 vp 工具链:\n${pc.cyan('https://viteplus.dev/guide')}`),
+        pc.white(`Vue 模板依赖 vp 工具链:\n${pc.cyan('https://viteplus.dev/guide')}`),
         '环境缺失',
       )
       process.exit(1)

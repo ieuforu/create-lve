@@ -94,13 +94,17 @@ const vitePlusDeps = (isUno) => ({
   },
 })
 
+const reactDeps = (isUno) => ({
+  devDependencies: isUno ? { unocss: 'latest' } : undefined,
+})
+
 const FRAMEWORK_CONFIG = {
   next: {
     deps: (isUno) => ({
       devDependencies: isUno ? { unocss: 'latest' } : { tailwindcss: 'latest' },
     }),
   },
-  react: { deps: vitePlusDeps },
+  react: { deps: reactDeps },
   vue: { deps: vitePlusDeps },
 }
 
