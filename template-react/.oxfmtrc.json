@@ -1,0 +1,7 @@
+{
+  "semi": false,
+  "singleQuote": true,
+  "trailingComma": "all",
+  "sortImports": true,
+  "sortTailwindcss": true
+}

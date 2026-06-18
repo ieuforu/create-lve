@@ -1,1 +1,2 @@
-vp staged
+npx oxlint --fix
+npx oxfmt

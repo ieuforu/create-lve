@@ -4,10 +4,13 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vp dev",
-    "build": "tsc -b && vp build",
-    "preview": "vp preview",
-    "prepare": "vp config"
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check"
   },
   "dependencies": {
     "@tanstack/react-query": "latest",
@@ -18,18 +21,19 @@
     "zustand": "latest"
   },
   "devDependencies": {
-    "@babel/core": "latest",
     "@tailwindcss/vite": "latest",
-    "@types/babel__core": "latest",
     "@types/node": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "@vitejs/plugin-react": "latest",
-    "babel-plugin-react-compiler": "latest",
     "oxc-transform": "latest",
+    "oxfmt": "latest",
+    "oxlint": "latest",
     "tailwindcss": "latest",
     "typescript": "latest",
-    "vite": "latest",
-    "vite-plus": "latest"
+    "vite": "latest"
+  },
+  "lint-staged": {
+    "*": "oxfmt --no-error-on-unmatched-pattern"
   }
 }
