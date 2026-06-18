@@ -55,7 +55,7 @@ async function main() {
       shouldOverwrite = await p.confirm({ message: `目录已存在，是否清空？`, initialValue: false })
       if (p.isCancel(shouldOverwrite)) onCancel()
     }
-    project = { path: name, framework: 'vue', cssEngine: 'unocss', shouldOverwrite }
+    project = { path: name, framework: 'react', cssEngine: 'tailwind', shouldOverwrite }
   } else {
     // 交互模式
     project = await p.group(

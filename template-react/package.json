@@ -19,7 +19,6 @@
   },
   "devDependencies": {
     "@babel/core": "latest",
-    "@rolldown/plugin-babel": "latest",
     "@tailwindcss/vite": "latest",
     "@types/babel__core": "latest",
     "@types/node": "latest",
@@ -27,6 +26,7 @@
     "@types/react-dom": "latest",
     "@vitejs/plugin-react": "latest",
     "babel-plugin-react-compiler": "latest",
+    "oxc-transform": "latest",
     "tailwindcss": "latest",
     "typescript": "latest",
     "vite": "latest",
