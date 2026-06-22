@@ -14,6 +14,9 @@ export default defineConfig({
   plugins: [
     /* VITE_PLUS_PLUGINS */
     react(),
+    // lazyPlugins 返回类型与 Vite plugins 字段类型不兼容
+    // 上游 issue: vitejs/vite#22085，官方确认为已知问题
+    // see: https://github.com/voidzero-dev/vite-plus/pull/1215
     lazyPlugins(async () => {
       const { default: babel } = await import('@rolldown/plugin-babel')
       return [
@@ -21,7 +24,7 @@ export default defineConfig({
           presets: [reactCompilerPreset()],
         }),
       ]
-    }),
+    }) as any,
   ],
   resolve: {
     tsconfigPaths: true,
