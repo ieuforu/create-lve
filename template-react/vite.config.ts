@@ -1,3 +1,4 @@
+import tailwindcss from '@tailwindcss/vite'
 import { defineConfig, loadEnv, lazyPlugins } from 'vite-plus'
 import react, { reactCompilerPreset } from '@vitejs/plugin-react'
 
@@ -7,12 +8,12 @@ const env = loadEnv(mode, process.cwd(), '')
 // https://vite.dev/config/
 export default defineConfig({
   fmt: { semi: false, singleQuote: true },
+  lint: { options: { typeAware: true, typeCheck: true } },
   staged: {
     '*': 'vp check --fix',
   },
-  lint: { options: { typeAware: true, typeCheck: true } },
   plugins: [
-    /* VITE_PLUS_PLUGINS */
+    tailwindcss(),
     react(),
     // lazyPlugins 返回类型与 Vite plugins 字段类型不兼容
     // 上游 issue: vitejs/vite#22085，官方确认为已知问题
@@ -38,6 +39,7 @@ export default defineConfig({
           if (id.includes('react-dom')) return 'vendor-react-dom'
           if (id.includes('react-router')) return 'vendor-router'
           if (id.includes('@tanstack')) return 'vendor-query'
+          if (id.includes('radix-ui')) return 'vendor-radix'
           if (id.includes('zustand')) return 'vendor-state'
           if (id.includes('jotai')) return 'vendor-atom'
           return 'vendor'
