@@ -276,7 +276,9 @@ async function applyProjectTransform(ctx) {
   }
 
   let viteContent = await fs.readFile(paths.vite, 'utf-8')
-  viteContent = strategy.pluginImport + viteContent
+  if (!viteContent.includes(strategy.pluginImport.trim())) {
+    viteContent = strategy.pluginImport + viteContent
+  }
   viteContent = viteContent.replace('/* VITE_PLUS_PLUGINS */', strategy.pluginCode)
   await fs.writeFile(paths.vite, viteContent)
 
