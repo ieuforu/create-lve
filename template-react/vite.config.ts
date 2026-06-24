@@ -1,4 +1,3 @@
-import tailwindcss from '@tailwindcss/vite'
 import { defineConfig, loadEnv, lazyPlugins } from 'vite-plus'
 import react, { reactCompilerPreset } from '@vitejs/plugin-react'
 
@@ -13,7 +12,7 @@ export default defineConfig({
     '*': 'vp check --fix',
   },
   plugins: [
-    tailwindcss(),
+    /* VITE_PLUS_PLUGINS */
     react(),
     // lazyPlugins 返回类型与 Vite plugins 字段类型不兼容
     // 上游 issue: vitejs/vite#22085，官方确认为已知问题

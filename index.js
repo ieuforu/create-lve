@@ -90,7 +90,7 @@ async function main() {
 
         cssEngine: ({ results }) =>
           results.framework === 'next'
-            ? p.note('Next.js 已内置 Tailwind，无需选择')
+            ? (p.note('Next.js 已内置 Tailwind，无需选择'), 'tailwind')
             : p.select({
                 message: '选择 CSS',
                 options: [

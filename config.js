@@ -283,11 +283,10 @@ async function applyProjectTransform(ctx) {
   await fs.writeFile(paths.vite, viteContent)
 
   let mainContent = await fs.readFile(paths.main, 'utf-8')
-  await fs.writeFile(paths.main, strategy.entryImport + mainContent)
-
-  const stylePath = path.join(targetDir, 'src/style.css')
-  await fs.ensureDir(path.dirname(stylePath))
-  await fs.writeFile(stylePath, `@import 'tailwindcss';\n\n${BASE_STYLE}\n`)
+  if (!mainContent.includes(strategy.entryImport.trim())) {
+    mainContent = strategy.entryImport + mainContent
+  }
+  await fs.writeFile(paths.main, mainContent)
 
   await strategy.setup(ctx)
 }
