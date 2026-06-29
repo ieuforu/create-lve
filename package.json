@@ -9,7 +9,8 @@
     "config.js",
     "template-react",
     "template-next",
-    "template-vue"
+    "template-vue",
+    "!**/node_modules"
   ],
   "type": "module",
   "scripts": {
