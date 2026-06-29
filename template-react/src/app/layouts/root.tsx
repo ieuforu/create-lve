@@ -1,5 +1,4 @@
 import { Outlet, useNavigation } from 'react-router'
-import { Toaster } from 'sonner'
 
 export default function RootLayout() {
   const navigation = useNavigation()
@@ -14,8 +13,6 @@ export default function RootLayout() {
       )}
 
       <Outlet />
-
-      <Toaster position="bottom-right" richColors visibleToasts={1} />
     </div>
   )
 }

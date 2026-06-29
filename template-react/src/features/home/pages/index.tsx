@@ -1,7 +1,7 @@
 import { Link } from 'react-router'
 import { toast } from 'sonner'
 
-const links = [{ to: '/about', label: 'About' }]
+const links = [{ to: '/settings', label: 'Settings' }]
 
 export default function HomePage() {
   return (
