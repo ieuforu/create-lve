@@ -1,4 +1,4 @@
-import { defineConfig, loadEnv, lazyPlugins } from 'vite-plus'
+import { defineConfig, loadEnv, lazyPlugins, type Plugin } from 'vite-plus'
 import react, { reactCompilerPreset } from '@vitejs/plugin-react'
 
 const mode = process.env.NODE_ENV || 'development'
@@ -24,7 +24,7 @@ export default defineConfig({
           presets: [reactCompilerPreset()],
         }),
       ]
-    }) as any,
+    }) as Plugin[],
   ],
   resolve: {
     tsconfigPaths: true,
@@ -34,8 +34,9 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (!id.includes('node_modules')) return
-          if (id.includes('react') && !id.includes('react-router')) return 'vendor-react'
           if (id.includes('react-dom')) return 'vendor-react-dom'
+          if (id.includes('react') && !id.includes('react-router') && !id.includes('react-dom'))
+            return 'vendor-react'
           if (id.includes('react-router')) return 'vendor-router'
           if (id.includes('@tanstack')) return 'vendor-query'
           if (id.includes('radix-ui')) return 'vendor-radix'
