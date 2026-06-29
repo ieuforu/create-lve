@@ -1,3 +1,8 @@
+import { Link } from 'react-router'
+import { toast } from 'sonner'
+
+const links = [{ to: '/about', label: 'About' }]
+
 export default function HomePage() {
   return (
     <main className="relative flex min-h-dvh items-center justify-center bg-stone-50 px-8">
@@ -26,7 +31,24 @@ export default function HomePage() {
 
         <p className="text-xs tracking-widest text-stone-400">TypeScript · Shadcn · Tailwind CSS</p>
 
-        <p className="text-[11px] text-stone-300">Edit src/features/home/pages/index.tsx</p>
+        <nav className="flex flex-wrap justify-center gap-3">
+          {links.map((link) => (
+            <Link
+              key={link.to}
+              to={link.to}
+              className="rounded-lg border border-stone-200 bg-white px-4 py-2 text-sm text-stone-600 shadow-sm transition-all hover:border-stone-400 hover:text-stone-800"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+
+        <button
+          onClick={() => toast('Hello 👋', { id: 'home' })}
+          className="mt-2 rounded-full bg-stone-800 px-6 py-2 text-sm text-white transition-colors hover:bg-stone-700"
+        >
+          Toast
+        </button>
       </div>
 
       <div className="absolute bottom-8 left-8 font-mono text-[10px] text-stone-300">v0.0.1</div>
