@@ -4,7 +4,6 @@ import * as p from '@clack/prompts'
 import pc from 'picocolors'
 import fs from 'fs-extra'
 import path from 'node:path'
-import { execSync } from 'node:child_process'
 import { __dirname, applyProjectTransform, cleanupTemplate, installDependencies } from './config.js'
 
 const version = JSON.parse(
@@ -84,20 +83,17 @@ async function main() {
             options: [
               { value: 'react', label: 'React 19', hint: '' },
               { value: 'vue', label: 'Vue 3', hint: '' },
-              { value: 'next', label: 'Next.js 16', hint: '' },
             ],
           }),
 
-        cssEngine: ({ results }) =>
-          results.framework === 'next'
-            ? (p.note('Next.js 已内置 Tailwind，无需选择'), 'tailwind')
-            : p.select({
-                message: '选择 CSS',
-                options: [
-                  { value: 'tailwind', label: 'Tailwind v4' },
-                  { value: 'unocss', label: 'UnoCSS' },
-                ],
-              }),
+        cssEngine: () =>
+          p.select({
+            message: '选择 CSS',
+            options: [
+              { value: 'tailwind', label: 'Tailwind v4' },
+              { value: 'unocss', label: 'UnoCSS' },
+            ],
+          }),
       },
       { onCancel },
     )
@@ -109,11 +105,10 @@ async function main() {
     css: project.cssEngine,
     targetDir: path.resolve(process.cwd(), project.path),
     templateDir: path.resolve(__dirname, `template-${project.framework}`),
-    isNext: project.framework === 'next',
     isUno: project.cssEngine === 'unocss',
-    pkgManager: project.framework === 'next' ? 'pnpm' : 'vp',
-    devCmd: project.framework === 'next' ? 'pnpm dev' : 'vp dev',
-    fmtCmd: project.framework === 'next' ? 'pnpm fmt' : 'vp fmt',
+    pkgManager: 'pnpm',
+    devCmd: 'pnpm dev',
+    fmtCmd: 'vp fmt',
   }
 
   const s = p.spinner()
