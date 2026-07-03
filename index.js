@@ -113,17 +113,15 @@ async function main() {
 
   const s = p.spinner()
 
-  if (!ctx.isNext) {
-    try {
-      execSync('vp --version', { stdio: 'ignore' })
-    } catch {
-      p.log.error(pc.red('未检测到 VitePlus (vp) 环境'))
-      p.note(
-        pc.white(`React/Vue 模板依赖 vp 工具链:\n${pc.cyan('https://viteplus.dev/guide')}`),
-        '环境缺失',
-      )
-      process.exit(1)
-    }
+  try {
+    execSync('vp --version', { stdio: 'ignore' })
+  } catch {
+    p.log.error(pc.red('未检测到 VitePlus (vp) 环境'))
+    p.note(
+      pc.white(`React/Vue 模板依赖 vp 工具链:\n${pc.cyan('https://viteplus.dev/guide')}`),
+      '环境缺失',
+    )
+    process.exit(1)
   }
 
   try {
