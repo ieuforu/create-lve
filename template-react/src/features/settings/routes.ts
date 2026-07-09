@@ -1,35 +1,13 @@
-import type { FeatureRoute } from '@/app/types'
+import { lazyRoute } from '@/app/types'
 
-const routes: FeatureRoute[] = [
+const routes = [
   {
-    path: '/settings',
+    ...lazyRoute('/settings', () => import('./pages/settings')),
     hostRootLayout: false,
-    lazy: async () => {
-      const { default: Component } = await import('./pages/settings')
-      return { Component }
-    },
     children: [
-      {
-        index: true,
-        lazy: async () => {
-          const { default: Component } = await import('./pages/overview')
-          return { Component }
-        },
-      },
-      {
-        path: 'profile',
-        lazy: async () => {
-          const { default: Component } = await import('./pages/profile')
-          return { Component }
-        },
-      },
-      {
-        path: 'account',
-        lazy: async () => {
-          const { default: Component } = await import('./pages/account')
-          return { Component }
-        },
-      },
+      lazyRoute('/', () => import('./pages/overview'), true),
+      lazyRoute('profile', () => import('./pages/profile')),
+      lazyRoute('account', () => import('./pages/account')),
     ],
   },
 ]

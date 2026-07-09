@@ -10,6 +10,21 @@ export interface FeatureRoute extends Omit<RouteObject, 'children' | 'handle'> {
   handle?: Record<string, unknown>
 }
 
+/** 快捷创建 lazy 路由，减少重复模板代码 */
+export function lazyRoute(
+  path: string,
+  factory: () => Promise<{ default: ComponentType }>,
+  index?: boolean,
+): FeatureRoute {
+  return {
+    ...(index ? { index: true } : { path }),
+    lazy: async () => {
+      const { default: Component } = await factory()
+      return { Component }
+    },
+  }
+}
+
 /** FeatureRoute → RouteObject 递归转换，去掉 hostRootLayout */
 export function toRouteObjects(
   routes: FeatureRoute[],

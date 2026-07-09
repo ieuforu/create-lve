@@ -1,14 +1,5 @@
-import type { FeatureRoute } from '@/app/types'
+import { lazyRoute } from '@/app/types'
 
-const routes: FeatureRoute[] = [
-  {
-    path: '/',
-    index: true,
-    lazy: async () => {
-      const { default: Component } = await import('./pages')
-      return { Component }
-    },
-  },
-]
+const routes = [lazyRoute('/', () => import('./pages'), true)]
 
 export default routes
