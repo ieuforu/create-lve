@@ -23,11 +23,16 @@ export default defineConfig({
       output: {
         codeSplitting: {
           groups: [
-            { name: 'vendor-vue', test: /node_modules.*vue(?!-router)/ },
-            { name: 'vendor-router', test: /node_modules.*vue-router/ },
-            { name: 'vendor-pinia', test: /node_modules.*pinia/ },
-            { name: 'vendor-vueuse', test: /node_modules.*@vueuse/ },
-            { name: 'vendor', test: /node_modules/, minSize: 100 * 1024 },
+            {
+              name(id) {
+                if (!id.includes('node_modules')) return null
+                if (id.includes('vue') && !id.includes('vue-router')) return 'vendor-vue'
+                if (id.includes('vue-router')) return 'vendor-router'
+                if (id.includes('pinia')) return 'vendor-pinia'
+                if (id.includes('@vueuse')) return 'vendor-vueuse'
+                return 'vendor'
+              },
+            },
           ],
         },
       },

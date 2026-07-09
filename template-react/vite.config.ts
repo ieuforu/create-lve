@@ -34,14 +34,24 @@ export default defineConfig({
       output: {
         codeSplitting: {
           groups: [
-            { name: 'vendor-react-dom', test: /node_modules.*react-dom/ },
-            { name: 'vendor-react', test: /node_modules.*react(?!-dom|-router)/ },
-            { name: 'vendor-router', test: /node_modules.*react-router/ },
-            { name: 'vendor-query', test: /node_modules.*@tanstack/ },
-            { name: 'vendor-radix', test: /node_modules.*radix-ui/ },
-            { name: 'vendor-state', test: /node_modules.*zustand/ },
-            { name: 'vendor-atom', test: /node_modules.*jotai/ },
-            { name: 'vendor', test: /node_modules/, minSize: 100 * 1024 },
+            {
+              name(id) {
+                if (!id.includes('node_modules')) return null
+                if (id.includes('react-dom')) return 'vendor-react-dom'
+                if (
+                  id.includes('react') &&
+                  !id.includes('react-router') &&
+                  !id.includes('react-dom')
+                )
+                  return 'vendor-react'
+                if (id.includes('react-router')) return 'vendor-router'
+                if (id.includes('@tanstack')) return 'vendor-query'
+                if (id.includes('radix-ui')) return 'vendor-radix'
+                if (id.includes('zustand')) return 'vendor-state'
+                if (id.includes('jotai')) return 'vendor-atom'
+                return 'vendor'
+              },
+            },
           ],
         },
       },
