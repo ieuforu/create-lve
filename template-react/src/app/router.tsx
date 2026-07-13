@@ -64,7 +64,10 @@ export function getRouter() {
             HydrateFallback,
             children: toRouteObjects(layoutChildren, HydrateFallback),
           },
-          ...toRouteObjects(independent, HydrateFallback),
+          {
+            errorElement: <RouteErrorBoundary />,
+            children: toRouteObjects(independent, HydrateFallback),
+          },
         ])
       })
       .catch((err) => {
