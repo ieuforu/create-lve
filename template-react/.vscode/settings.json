@@ -52,5 +52,8 @@
   "js/ts.updateImportsOnFileMove.enabled": "always",
   "diffEditor.ignoreTrimWhitespace": true,
   "diffEditor.hideUnchangedRegions.enabled": true,
-  "editor.inlayHints.enabled": "on"
+  "editor.inlayHints.enabled": "on",
+
+  // ==================== TypeScript 7 (tsgo) ====================
+  "js/ts.experimental.useTsgo": true
 }
