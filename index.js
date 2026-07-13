@@ -23,7 +23,7 @@ function parseArgs() {
 
 function randomName() {
   const hash = Math.random().toString(36).slice(2, 6)
-  return `vite-app-${hash}`
+  return `lve-app-${hash}`
 }
 
 function onCancel() {

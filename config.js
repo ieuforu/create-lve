@@ -96,11 +96,6 @@ const vitePlusDeps = (isUno) => ({
 })
 
 const FRAMEWORK_CONFIG = {
-  next: {
-    deps: (isUno) => ({
-      devDependencies: isUno ? { unocss: 'latest' } : { tailwindcss: 'latest' },
-    }),
-  },
   react: { deps: vitePlusDeps },
   vue: { deps: vitePlusDeps },
 }
@@ -237,7 +232,7 @@ async function runTask(command, args, cwd) {
 }
 
 async function applyProjectTransform(ctx) {
-  const { targetDir, framework, css, isUno, isNext } = ctx
+  const { targetDir, framework, css, isUno } = ctx
 
   const pkgPath = path.join(targetDir, 'package.json')
   const pkg = await fs.readJson(pkgPath)
@@ -265,8 +260,6 @@ async function applyProjectTransform(ctx) {
     indexContent = indexContent.replace(/<title>.*?<\/title>/, `<title>${ctx.name}</title>`)
     await fs.writeFile(indexPath, indexContent)
   }
-
-  if (isNext) return
 
   const strategy = CSS_STRATEGIES[css]
   const isVue = framework === 'vue'
