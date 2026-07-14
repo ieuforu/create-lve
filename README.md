@@ -3,16 +3,16 @@
 THE ULTRA-FAST FRONTEND STACK
 
 ```bash
-npx create-lve
+pnpm create-lve
 ```
 
 ## Options
 
-| Template | Description |
-| --- | --- |
+| Template | Description              |
+| -------- | ------------------------ |
 | React 19 | react-router + vite-plus |
 | React 19 | TanStack Router + Vite 8 |
-| Vue 3 | vue-router + vite-plus |
+| Vue 3    | vue-router + vite-plus   |
 
 All templates ship with **Tailwind CSS v4** out of the box.
 
@@ -20,13 +20,13 @@ All templates ship with **Tailwind CSS v4** out of the box.
 
 ```bash
 # Interactive mode
-npx create-lve
+pnpm create-lve
 
 # Default (React 19 + react-router + Tailwind)
-npx create-lve my-app
+pnpm create-lve my-app
 
 # Skip all prompts
-npx create-lve --default my-app
+pnpm create-lve --default my-app
 ```
 
 ## What's Inside
