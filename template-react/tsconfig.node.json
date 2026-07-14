@@ -24,6 +24,5 @@
   },
   "include": [
     "vite.config.ts"
-    /* UNO_CONFIG */
   ]
 }

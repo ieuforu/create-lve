@@ -54,7 +54,7 @@ async function main() {
       shouldOverwrite = await p.confirm({ message: `目录已存在，是否清空？`, initialValue: false })
       if (p.isCancel(shouldOverwrite)) onCancel()
     }
-    project = { path: name, framework: 'react', cssEngine: 'tailwind', shouldOverwrite }
+    project = { path: name, framework: 'react', shouldOverwrite }
   } else {
     // 交互模式
     project = await p.group(
@@ -81,17 +81,13 @@ async function main() {
           p.select({
             message: '选择框架',
             options: [
-              { value: 'react', label: 'React 19', hint: '' },
+              { value: 'react', label: 'React+ RR+ VP', hint: 'react-router' },
+              {
+                value: 'react-tanstackrouter',
+                label: 'React+ Vite + TR',
+                hint: 'TanStack Router',
+              },
               { value: 'vue', label: 'Vue 3', hint: '' },
-            ],
-          }),
-
-        cssEngine: () =>
-          p.select({
-            message: '选择 CSS',
-            options: [
-              { value: 'tailwind', label: 'Tailwind v4' },
-              { value: 'unocss', label: 'UnoCSS' },
             ],
           }),
       },
@@ -102,13 +98,11 @@ async function main() {
   const ctx = {
     name: project.path,
     framework: project.framework,
-    css: project.cssEngine,
     targetDir: path.resolve(process.cwd(), project.path),
     templateDir: path.resolve(__dirname, `template-${project.framework}`),
-    isUno: project.cssEngine === 'unocss',
     pkgManager: 'pnpm',
     devCmd: 'pnpm dev',
-    fmtCmd: 'vp fmt',
+    fmtCmd: project.framework === 'react-tanstackrouter' ? 'pnpm fmt' : 'vp fmt',
   }
 
   const s = p.spinner()

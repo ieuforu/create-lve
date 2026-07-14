@@ -1,5 +1,6 @@
 import { defineConfig, loadEnv } from 'vite-plus'
 import vue from '@vitejs/plugin-vue'
+import tailwindcss from '@tailwindcss/vite'
 
 const mode = process.env.NODE_ENV || 'development'
 const env = loadEnv(mode, process.cwd(), '')
@@ -11,10 +12,7 @@ export default defineConfig({
     '*': 'vp check --fix',
   },
   lint: { options: { typeAware: true, typeCheck: true } },
-  plugins: [
-    /* VITE_PLUS_PLUGINS */
-    vue(),
-  ],
+  plugins: [vue(), tailwindcss()],
   resolve: {
     tsconfigPaths: true,
   },

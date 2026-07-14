@@ -8,6 +8,7 @@
     "index.js",
     "config.js",
     "template-react",
+    "template-react-tanstackrouter",
     "template-vue",
     "!**/node_modules"
   ],
