@@ -7,11 +7,12 @@ const router = createRouter({
   routeTree,
   defaultPreload: 'intent',
   scrollRestoration: true,
+  defaultPreloadStaleTime: 0,
 })
 
 declare module '@tanstack/react-router' {
   interface Register {
-    router: typeof router
+    router: ReturnType<typeof getRouter>
   }
 }
 

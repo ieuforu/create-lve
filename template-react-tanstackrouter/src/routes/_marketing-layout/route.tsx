@@ -1,6 +1,6 @@
 import { Link, Outlet, createRootRoute } from '@tanstack/react-router'
 
-import viteLogo from '@/assets/vite.svg'
+import viteLogo from '#/assets/vite.svg'
 
 export const Route = createRootRoute({
   component: MarketingLayout,
