@@ -2,6 +2,7 @@ import ReactDOM from 'react-dom/client'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 import './styles.css'
 import { routeTree } from './routeTree.gen'
+import { StrictMode } from 'react'
 
 const router = createRouter({
   routeTree,
@@ -12,7 +13,7 @@ const router = createRouter({
 
 declare module '@tanstack/react-router' {
   interface Register {
-    router: ReturnType<typeof getRouter>
+    router: typeof router
   }
 }
 
@@ -20,5 +21,9 @@ const rootElement = document.getElementById('react-root')!
 
 if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement)
-  root.render(<RouterProvider router={router} />)
+  root.render(
+    <StrictMode>
+      <RouterProvider router={router} />
+    </StrictMode>,
+  )
 }
