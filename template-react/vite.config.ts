@@ -47,7 +47,7 @@ export default defineConfig({
                   return 'vendor-react'
                 if (id.includes('react-router')) return 'vendor-router'
                 if (id.includes('@tanstack')) return 'vendor-query'
-                if (id.includes('radix-ui')) return 'vendor-radix'
+                if (id.includes('base-ui')) return 'vendor-base-ui'
                 if (id.includes('zustand')) return 'vendor-state'
                 if (id.includes('jotai')) return 'vendor-atom'
                 return 'vendor'
