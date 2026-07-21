@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import reactLogo from '#/assets/react.svg'
 
-export const Route = createFileRoute('/_marketing-layout/')({
+export const Route = createFileRoute('/_marketing/')({
   component: Home,
 })
 

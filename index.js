@@ -79,12 +79,12 @@ async function main() {
 
         framework: () =>
           p.select({
-            message: '选择框架',
+            message: '选择模板',
             options: [
-              { value: 'react', label: 'React+ RR+ VP', hint: 'react-router' },
+              { value: 'react', label: 'React + RR+ VP', hint: 'react-router' },
               {
                 value: 'react-tanstackrouter',
-                label: 'React+ Vite + TR',
+                label: 'React + TR + Vite',
                 hint: 'TanStack Router',
               },
               { value: 'vue', label: 'Vue 3', hint: '' },
