@@ -16,4 +16,16 @@ export default defineConfig({
     react(),
     babel({ presets: [reactCompilerPreset()] }),
   ],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(moduleId) {
+          if (/node_modules\/(react|react-dom|scheduler)\b/.test(moduleId)) return 'vendor-react'
+          if (/node_modules\/@tanstack\//.test(moduleId)) return 'vendor-tanstack'
+          if (/node_modules\/jotai\//.test(moduleId)) return 'vendor-state'
+          return null
+        },
+      },
+    },
+  },
 })
