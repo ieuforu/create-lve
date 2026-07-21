@@ -1,6 +1,7 @@
 import ReactDOM from 'react-dom/client'
 import './styles.css'
 import { StrictMode } from 'react'
+import { Provider as JotaiProvider } from 'jotai'
 import { RouterProvider } from '#/lib/providers/RouterProvider.tsx'
 import { QueryProvider } from '#/lib/providers/QueryProvider.tsx'
 
@@ -10,9 +11,11 @@ if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement)
   root.render(
     <StrictMode>
-      <QueryProvider>
-        <RouterProvider />
-      </QueryProvider>
+      <JotaiProvider>
+        <QueryProvider>
+          <RouterProvider />
+        </QueryProvider>
+      </JotaiProvider>
     </StrictMode>,
   )
 }
