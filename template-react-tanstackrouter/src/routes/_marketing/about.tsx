@@ -1,14 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { AboutPage } from '#/features/marketing/components/AboutPage'
 
 export const Route = createFileRoute('/_marketing/about')({
-  component: About,
+  component: AboutPage,
 })
-
-function About() {
-  return (
-    <div>
-      <h1 className="text-3xl font-semibold">About</h1>
-      <p className="mt-2 text-gray-500">A modern React application starter.</p>
-    </div>
-  )
-}
