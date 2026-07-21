@@ -36,9 +36,10 @@ async function main() {
   process.stdout.write('\u001b[3J\u001b[2J\u001b[1J')
   console.clear()
   const logo = `
-    ${pc.cyan('█    █  █ █▀▀▀')}
-    ${pc.cyan('█    █  █ █▀▀ ')}
-    ${pc.cyan('█▄▄▄  ▀▄▀ █▄▄▄')}  ${pc.gray('THE ULTRA-FAST FRONTEND STACK')}
+  ${pc.cyan('╭────────────────────────────────────╮')}
+  ${pc.cyan('│')}  ${pc.bold(pc.bgCyan(pc.black(' L ')))} ${pc.bold(pc.bgMagenta(pc.black(' V ')))} ${pc.bold(pc.bgYellow(pc.black(' E ')))}    ${pc.dim('THE ULTRA-FAST')}  ${pc.cyan('│')}
+  ${pc.cyan('│')}  ${pc.dim('FRONTEND STACK')}                   ${pc.cyan('│')}
+  ${pc.cyan('╰────────────────────────────────────╯')}
   `
   console.log(logo)
   p.intro(`${pc.bgCyan(pc.black(` LVE-CLI v${version} `))}`)
@@ -54,7 +55,7 @@ async function main() {
       shouldOverwrite = await p.confirm({ message: `目录已存在，是否清空？`, initialValue: false })
       if (p.isCancel(shouldOverwrite)) onCancel()
     }
-    project = { path: name, framework: 'react', shouldOverwrite }
+    project = { path: name, framework: 'react-tanstackrouter', shouldOverwrite }
   } else {
     // 交互模式
     project = await p.group(
@@ -81,13 +82,21 @@ async function main() {
           p.select({
             message: '选择模板',
             options: [
-              { value: 'react', label: 'React + RR+ VP', hint: 'react-router' },
               {
                 value: 'react-tanstackrouter',
-                label: 'React + TR + Vite',
-                hint: 'TanStack Router',
+                label: 'React · TanStack Router',
+                hint: '文件路由 + 类型安全 + React Query',
               },
-              { value: 'vue', label: 'Vue 3', hint: '' },
+              {
+                value: 'react',
+                label: 'React · React Router',
+                hint: '经典方案，社区生态最丰富',
+              },
+              {
+                value: 'vue',
+                label: 'Vue 3',
+                hint: '轻量渐进式框架',
+              },
             ],
           }),
       },
