@@ -4,13 +4,13 @@ import { Outlet } from '@tanstack/react-router'
 
 export function DashboardLayout() {
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen bg-background">
       <Sidebar />
 
-      <div className="flex flex-1 flex-col">
+      <div className="flex flex-1 flex-col overflow-hidden">
         <Header />
 
-        <main className="px-10">
+        <main className="flex-1 overflow-y-auto px-10 py-8">
           <Outlet />
         </main>
       </div>

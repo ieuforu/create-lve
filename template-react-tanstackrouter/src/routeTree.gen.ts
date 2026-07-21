@@ -9,88 +9,176 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AuthRouteRouteImport } from './routes/_auth/route'
+import { Route as MarketingRouteRouteImport } from './routes/_marketing/route'
 import { Route as DashboardRouteRouteImport } from './routes/dashboard/route'
-import { Route as MarketingLayoutRouteRouteImport } from './routes/_marketing-layout/route'
+import { Route as AuthLoginRouteImport } from './routes/_auth/login'
+import { Route as AuthRegisterRouteImport } from './routes/_auth/register'
+import { Route as MarketingIndexRouteImport } from './routes/_marketing/index'
+import { Route as MarketingAboutRouteImport } from './routes/_marketing/about'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
-import { Route as MarketingLayoutIndexRouteImport } from './routes/_marketing-layout/index'
 import { Route as DashboardSettingsRouteImport } from './routes/dashboard/settings'
-import { Route as MarketingLayoutAboutRouteImport } from './routes/_marketing-layout/about'
+import { Route as DashboardUsersRouteRouteImport } from './routes/dashboard/users/route'
+import { Route as DashboardUsersIndexRouteImport } from './routes/dashboard/users/index'
+import { Route as DashboardUsersUserIdRouteImport } from './routes/dashboard/users/$userId'
 
+const AuthRouteRoute = AuthRouteRouteImport.update({
+  id: '/_auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarketingRouteRoute = MarketingRouteRouteImport.update({
+  id: '/_marketing',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardRouteRoute = DashboardRouteRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
-const MarketingLayoutRouteRoute = MarketingLayoutRouteRouteImport.update({
-  id: '/_marketing-layout',
-  getParentRoute: () => rootRouteImport,
+const AuthLoginRoute = AuthLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
+const AuthRegisterRoute = AuthRegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
+const MarketingIndexRoute = MarketingIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => MarketingRouteRoute,
+} as any)
+const MarketingAboutRoute = MarketingAboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => MarketingRouteRoute,
 } as any)
 const DashboardIndexRoute = DashboardIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
-const MarketingLayoutIndexRoute = MarketingLayoutIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => MarketingLayoutRouteRoute,
-} as any)
 const DashboardSettingsRoute = DashboardSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
-const MarketingLayoutAboutRoute = MarketingLayoutAboutRouteImport.update({
-  id: '/about',
-  path: '/about',
-  getParentRoute: () => MarketingLayoutRouteRoute,
+const DashboardUsersRouteRoute = DashboardUsersRouteRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
+const DashboardUsersIndexRoute = DashboardUsersIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardUsersRouteRoute,
+} as any)
+const DashboardUsersUserIdRoute = DashboardUsersUserIdRouteImport.update({
+  id: '/$userId',
+  path: '/$userId',
+  getParentRoute: () => DashboardUsersRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof MarketingLayoutIndexRoute
+  '/': typeof MarketingIndexRoute
   '/dashboard': typeof DashboardRouteRouteWithChildren
-  '/about': typeof MarketingLayoutAboutRoute
+  '/dashboard/users': typeof DashboardUsersRouteRouteWithChildren
+  '/login': typeof AuthLoginRoute
+  '/register': typeof AuthRegisterRoute
+  '/about': typeof MarketingAboutRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/dashboard/users/$userId': typeof DashboardUsersUserIdRoute
+  '/dashboard/users/': typeof DashboardUsersIndexRoute
 }
 export interface FileRoutesByTo {
-  '/about': typeof MarketingLayoutAboutRoute
+  '/': typeof MarketingIndexRoute
+  '/login': typeof AuthLoginRoute
+  '/register': typeof AuthRegisterRoute
+  '/about': typeof MarketingAboutRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
-  '/': typeof MarketingLayoutIndexRoute
   '/dashboard': typeof DashboardIndexRoute
+  '/dashboard/users/$userId': typeof DashboardUsersUserIdRoute
+  '/dashboard/users': typeof DashboardUsersIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/_marketing-layout': typeof MarketingLayoutRouteRouteWithChildren
+  '/_auth': typeof AuthRouteRouteWithChildren
+  '/_marketing': typeof MarketingRouteRouteWithChildren
   '/dashboard': typeof DashboardRouteRouteWithChildren
-  '/_marketing-layout/about': typeof MarketingLayoutAboutRoute
+  '/dashboard/users': typeof DashboardUsersRouteRouteWithChildren
+  '/_auth/login': typeof AuthLoginRoute
+  '/_auth/register': typeof AuthRegisterRoute
+  '/_marketing/about': typeof MarketingAboutRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
-  '/_marketing-layout/': typeof MarketingLayoutIndexRoute
+  '/_marketing/': typeof MarketingIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/dashboard/users/$userId': typeof DashboardUsersUserIdRoute
+  '/dashboard/users/': typeof DashboardUsersIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/dashboard' | '/about' | '/dashboard/settings' | '/dashboard/'
+    | '/'
+    | '/dashboard'
+    | '/dashboard/users'
+    | '/login'
+    | '/register'
+    | '/about'
+    | '/dashboard/settings'
+    | '/dashboard/'
+    | '/dashboard/users/$userId'
+    | '/dashboard/users/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/about' | '/dashboard/settings' | '/' | '/dashboard'
+  to:
+    | '/'
+    | '/login'
+    | '/register'
+    | '/about'
+    | '/dashboard/settings'
+    | '/dashboard'
+    | '/dashboard/users/$userId'
+    | '/dashboard/users'
   id:
     | '__root__'
-    | '/_marketing-layout'
+    | '/_auth'
+    | '/_marketing'
     | '/dashboard'
-    | '/_marketing-layout/about'
+    | '/dashboard/users'
+    | '/_auth/login'
+    | '/_auth/register'
+    | '/_marketing/about'
     | '/dashboard/settings'
-    | '/_marketing-layout/'
+    | '/_marketing/'
     | '/dashboard/'
+    | '/dashboard/users/$userId'
+    | '/dashboard/users/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  MarketingLayoutRouteRoute: typeof MarketingLayoutRouteRouteWithChildren
+  AuthRouteRoute: typeof AuthRouteRouteWithChildren
+  MarketingRouteRoute: typeof MarketingRouteRouteWithChildren
   DashboardRouteRoute: typeof DashboardRouteRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/_auth': {
+      id: '/_auth'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_marketing': {
+      id: '/_marketing'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof MarketingRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
@@ -98,12 +186,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_marketing-layout': {
-      id: '/_marketing-layout'
-      path: ''
+    '/_auth/login': {
+      id: '/_auth/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof AuthLoginRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
+    '/_auth/register': {
+      id: '/_auth/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof AuthRegisterRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
+    '/_marketing/': {
+      id: '/_marketing/'
+      path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof MarketingLayoutRouteRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof MarketingIndexRouteImport
+      parentRoute: typeof MarketingRouteRoute
+    }
+    '/_marketing/about': {
+      id: '/_marketing/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof MarketingAboutRouteImport
+      parentRoute: typeof MarketingRouteRoute
     }
     '/dashboard/': {
       id: '/dashboard/'
@@ -112,13 +221,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
-    '/_marketing-layout/': {
-      id: '/_marketing-layout/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof MarketingLayoutIndexRouteImport
-      parentRoute: typeof MarketingLayoutRouteRoute
-    }
     '/dashboard/settings': {
       id: '/dashboard/settings'
       path: '/settings'
@@ -126,35 +228,79 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardSettingsRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
-    '/_marketing-layout/about': {
-      id: '/_marketing-layout/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof MarketingLayoutAboutRouteImport
-      parentRoute: typeof MarketingLayoutRouteRoute
+    '/dashboard/users': {
+      id: '/dashboard/users'
+      path: '/users'
+      fullPath: '/dashboard/users'
+      preLoaderRoute: typeof DashboardUsersRouteRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/users/': {
+      id: '/dashboard/users/'
+      path: '/'
+      fullPath: '/dashboard/users/'
+      preLoaderRoute: typeof DashboardUsersIndexRouteImport
+      parentRoute: typeof DashboardUsersRouteRoute
+    }
+    '/dashboard/users/$userId': {
+      id: '/dashboard/users/$userId'
+      path: '/$userId'
+      fullPath: '/dashboard/users/$userId'
+      preLoaderRoute: typeof DashboardUsersUserIdRouteImport
+      parentRoute: typeof DashboardUsersRouteRoute
     }
   }
 }
 
-interface MarketingLayoutRouteRouteChildren {
-  MarketingLayoutAboutRoute: typeof MarketingLayoutAboutRoute
-  MarketingLayoutIndexRoute: typeof MarketingLayoutIndexRoute
+interface AuthRouteRouteChildren {
+  AuthLoginRoute: typeof AuthLoginRoute
+  AuthRegisterRoute: typeof AuthRegisterRoute
 }
 
-const MarketingLayoutRouteRouteChildren: MarketingLayoutRouteRouteChildren = {
-  MarketingLayoutAboutRoute: MarketingLayoutAboutRoute,
-  MarketingLayoutIndexRoute: MarketingLayoutIndexRoute,
+const AuthRouteRouteChildren: AuthRouteRouteChildren = {
+  AuthLoginRoute: AuthLoginRoute,
+  AuthRegisterRoute: AuthRegisterRoute,
 }
 
-const MarketingLayoutRouteRouteWithChildren =
-  MarketingLayoutRouteRoute._addFileChildren(MarketingLayoutRouteRouteChildren)
+const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
+  AuthRouteRouteChildren,
+)
+
+interface MarketingRouteRouteChildren {
+  MarketingAboutRoute: typeof MarketingAboutRoute
+  MarketingIndexRoute: typeof MarketingIndexRoute
+}
+
+const MarketingRouteRouteChildren: MarketingRouteRouteChildren = {
+  MarketingAboutRoute: MarketingAboutRoute,
+  MarketingIndexRoute: MarketingIndexRoute,
+}
+
+const MarketingRouteRouteWithChildren = MarketingRouteRoute._addFileChildren(
+  MarketingRouteRouteChildren,
+)
+
+interface DashboardUsersRouteRouteChildren {
+  DashboardUsersUserIdRoute: typeof DashboardUsersUserIdRoute
+  DashboardUsersIndexRoute: typeof DashboardUsersIndexRoute
+}
+
+const DashboardUsersRouteRouteChildren: DashboardUsersRouteRouteChildren = {
+  DashboardUsersUserIdRoute: DashboardUsersUserIdRoute,
+  DashboardUsersIndexRoute: DashboardUsersIndexRoute,
+}
+
+const DashboardUsersRouteRouteWithChildren =
+  DashboardUsersRouteRoute._addFileChildren(DashboardUsersRouteRouteChildren)
 
 interface DashboardRouteRouteChildren {
+  DashboardUsersRouteRoute: typeof DashboardUsersRouteRouteWithChildren
   DashboardSettingsRoute: typeof DashboardSettingsRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
 }
 
 const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
+  DashboardUsersRouteRoute: DashboardUsersRouteRouteWithChildren,
   DashboardSettingsRoute: DashboardSettingsRoute,
   DashboardIndexRoute: DashboardIndexRoute,
 }
@@ -164,7 +310,8 @@ const DashboardRouteRouteWithChildren = DashboardRouteRoute._addFileChildren(
 )
 
 const rootRouteChildren: RootRouteChildren = {
-  MarketingLayoutRouteRoute: MarketingLayoutRouteRouteWithChildren,
+  AuthRouteRoute: AuthRouteRouteWithChildren,
+  MarketingRouteRoute: MarketingRouteRouteWithChildren,
   DashboardRouteRoute: DashboardRouteRouteWithChildren,
 }
 export const routeTree = rootRouteImport
