@@ -1,9 +1,13 @@
 {
   // ==================== Formatter (OXC) ====================
   "editor.defaultFormatter": "oxc.oxc-vscode",
+  "oxc.fmt.configPath": "./vite.config.ts",
   "editor.formatOnSave": true,
   "editor.formatOnSaveMode": "file",
   "oxc.enable.oxfmt": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.oxc": "explicit"
+  },
 
   // 语言特定 Formatter
   "[javascript]": {
@@ -52,5 +56,8 @@
   "js/ts.updateImportsOnFileMove.enabled": "always",
   "diffEditor.ignoreTrimWhitespace": true,
   "diffEditor.hideUnchangedRegions.enabled": true,
-  "editor.inlayHints.enabled": "on"
+  "editor.inlayHints.enabled": "on",
+
+  // ==================== TypeScript 7 (tsgo) ====================
+  "js/ts.experimental.useTsgo": false
 }

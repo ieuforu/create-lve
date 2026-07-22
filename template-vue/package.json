@@ -22,8 +22,8 @@
     "@vue/tsconfig": "latest",
     "tailwindcss": "latest",
     "typescript": "latest",
-    "vite": "latest",
-    "vite-plus": "latest",
+    "vite": "catalog:",
+    "vite-plus": "catalog:",
     "vue-tsc": "latest"
   }
 }

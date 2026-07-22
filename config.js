@@ -7,19 +7,6 @@ import { execSync, spawn } from 'node:child_process'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
-const vitePlusDeps = () => ({
-  overrides: {
-    vite: 'npm:@voidzero-dev/vite-plus-core@latest',
-    vitest: 'npm:@voidzero-dev/vite-plus-test@latest',
-  },
-})
-
-const FRAMEWORK_CONFIG = {
-  react: { deps: vitePlusDeps },
-  'react-tanstackrouter': { deps: () => ({}) },
-  vue: { deps: vitePlusDeps },
-}
-
 async function resolveLatestVersions(pkgPath) {
   const pkg = await fs.readJson(pkgPath)
   const sections = ['dependencies', 'devDependencies']
@@ -64,16 +51,11 @@ async function runTask(command, args, cwd) {
 }
 
 async function applyProjectTransform(ctx) {
-  const { targetDir, framework } = ctx
+  const { targetDir } = ctx
 
   const pkgPath = path.join(targetDir, 'package.json')
   const pkg = await fs.readJson(pkgPath)
-  const config = FRAMEWORK_CONFIG[framework]
   pkg.name = ctx.name
-  const extraConfig = config.deps()
-  if (extraConfig.dependencies) pkg.dependencies = { ...pkg.dependencies, ...extraConfig.dependencies }
-  if (extraConfig.devDependencies) pkg.devDependencies = { ...pkg.devDependencies, ...extraConfig.devDependencies }
-  if (extraConfig.overrides) pkg.overrides = { ...pkg.overrides, ...extraConfig.overrides }
   try {
     const version = execSync('pnpm --version', { encoding: 'utf-8', timeout: 5000 }).trim()
     pkg.packageManager = `pnpm@${version}`
@@ -91,7 +73,7 @@ async function applyProjectTransform(ctx) {
 }
 
 async function cleanupTemplate(ctx) {
-  const toRemove = ['pnpm-workspace.yaml', 'pnpm-lock.yaml', 'node_modules', 'dist']
+  const toRemove = ['pnpm-lock.yaml', 'node_modules', 'dist']
   await Promise.all(toRemove.map((file) => fs.remove(path.join(ctx.targetDir, file))))
 
   try {

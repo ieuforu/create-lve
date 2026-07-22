@@ -35,12 +35,20 @@ async function main() {
   const { flags, positional } = parseArgs()
   process.stdout.write('\u001b[3J\u001b[2J\u001b[1J')
   console.clear()
+  const W = 30
+  const __s = (s) => s.replace(/\x1b\[[0-9;]*m/g, '')
+  const __p = (s, w) => s + ' '.repeat(Math.max(0, w - __s(s).length))
+  const __b = (c, t) => pc.bold(pc['bg' + c](pc.black(t)))
+  const _l1 = '  ' + __b('Cyan', ' L ') + '  ' + __b('Magenta', ' V ') + '  ' + __b('Yellow', ' E ') + '   ' + pc.dim('ULTRA-FAST')
+  const _l2 = '  ' + pc.dim('FRONTEND STACK')
+  const _border = pc.cyan('─'.repeat(W))
   const logo = `
-  ${pc.cyan('╭────────────────────────────────────╮')}
-  ${pc.cyan('│')}  ${pc.bold(pc.bgCyan(pc.black(' L ')))} ${pc.bold(pc.bgMagenta(pc.black(' V ')))} ${pc.bold(pc.bgYellow(pc.black(' E ')))}    ${pc.dim('THE ULTRA-FAST')}  ${pc.cyan('│')}
-  ${pc.cyan('│')}  ${pc.dim('FRONTEND STACK')}                   ${pc.cyan('│')}
-  ${pc.cyan('╰────────────────────────────────────╯')}
+  ${pc.cyan('╭')}${_border}${pc.cyan('╮')}
+  ${pc.cyan('│')}${__p(_l1, W)}${pc.cyan('│')}
+  ${pc.cyan('│')}${__p(_l2, W)}${pc.cyan('│')}
+  ${pc.cyan('╰')}${_border}${pc.cyan('╯')}
   `
+
   console.log(logo)
   p.intro(`${pc.bgCyan(pc.black(` LVE-CLI v${version} `))}`)
 

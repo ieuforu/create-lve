@@ -1,9 +1,13 @@
 {
   // ==================== Formatter (OXC) ====================
   "editor.defaultFormatter": "oxc.oxc-vscode",
+  "oxc.fmt.configPath": "./vite.config.ts",
   "editor.formatOnSave": true,
   "editor.formatOnSaveMode": "file",
   "oxc.enable.oxfmt": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.oxc": "explicit"
+  },
 
   // 语言特定 Formatter
   "[javascript]": {
