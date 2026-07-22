@@ -1,3 +1,4 @@
+import { getAuthToken } from '#/lib/auth.ts'
 import ky, { type KyInstance, type Options } from 'ky'
 
 // --- Error types ---
@@ -31,7 +32,8 @@ export const http: KyInstance = ky.create({
   hooks: {
     beforeRequest: [
       (state) => {
-        const token = localStorage.getItem('auth_token')
+        // const token = localStorage.getItem('auth_token')
+        const token = getAuthToken()
         if (token) state.request.headers.set('Authorization', `Bearer ${token}`)
       },
     ],
@@ -55,39 +57,40 @@ export const http: KyInstance = ky.create({
   },
 })
 
+async function request<T>(fn: () => Promise<T>): Promise<T> {
+  try {
+    return await fn()
+  } catch (err) {
+    if (err instanceof ApiError) {
+      throw err
+    }
+
+    throw new NetworkError()
+  }
+}
+
 // --- Typed helpers ---
-export async function apiGet<T>(url: string, opts?: Options): Promise<T> {
-  try {
-    return await http.get(url, opts).json<T>()
-  } catch (err) {
-    if (err instanceof ApiError) throw err
-    throw new NetworkError()
-  }
+
+export function apiGet<T>(url: string, opts?: Options) {
+  return request(() => http.get(url, opts).json<T>())
 }
 
-export async function apiPost<T>(url: string, opts?: Options): Promise<T> {
-  try {
-    return await http.post(url, opts).json<T>()
-  } catch (err) {
-    if (err instanceof ApiError) throw err
-    throw new NetworkError()
-  }
+export function apiPost<T>(url: string, opts?: Options) {
+  return request(() => http.post(url, opts).json<T>())
 }
 
-export async function apiPut<T>(url: string, opts?: Options): Promise<T> {
-  try {
-    return await http.put(url, opts).json<T>()
-  } catch (err) {
-    if (err instanceof ApiError) throw err
-    throw new NetworkError()
-  }
+export function apiPut<T>(url: string, opts?: Options) {
+  return request(() => http.put(url, opts).json<T>())
 }
 
-export async function apiDelete<T>(url: string, opts?: Options): Promise<T> {
-  try {
-    return await http.delete(url, opts).json<T>()
-  } catch (err) {
-    if (err instanceof ApiError) throw err
-    throw new NetworkError()
-  }
+export function apiDelete<T>(url: string, opts?: Options) {
+  return request(async () => {
+    const response = await http.delete(url, opts)
+
+    if (response.status === 204) {
+      return undefined
+    }
+
+    return response.json<T>()
+  })
 }
