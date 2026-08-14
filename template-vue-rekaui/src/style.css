@@ -1,0 +1,29 @@
+@import 'tailwindcss';
+
+/* Base reset & custom styles */
+@layer base {
+  body {
+    @apply antialiased text-gray-900;
+  }
+
+  /* 隐藏滚动条，保留滚动能力，避免 CLS */
+  html {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+  }
+
+  html::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+  }
+}
+
+/* Smooth page transitions */
+.page-enter-active,
+.page-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.page-enter-from,
+.page-leave-to {
+  opacity: 0;
+}

@@ -96,6 +96,11 @@ async function main() {
                 hint: '文件路由 + 类型安全 + React Query',
               },
               {
+                value: 'react-astxy',
+                label: 'React · Astryx',
+                hint: 'Astryx 设计系统 + TanStack Router + Feature 驱动',
+              },
+              {
                 value: 'react',
                 label: 'React · React Router',
                 hint: '经典方案，社区生态最丰富',
@@ -104,6 +109,11 @@ async function main() {
                 value: 'vue',
                 label: 'Vue 3',
                 hint: '轻量渐进式框架',
+              },
+              {
+                value: 'vue-rekaui',
+                label: 'Vue 3 · Reka UI',
+                hint: 'Reka UI + Pinia + Tailwind CSS',
               },
             ],
           }),
@@ -119,7 +129,7 @@ async function main() {
     templateDir: path.resolve(__dirname, `template-${project.framework}`),
     pkgManager: 'pnpm',
     devCmd: 'pnpm dev',
-    fmtCmd: project.framework === 'react-tanstackrouter' ? 'pnpm fmt' : 'vp fmt',
+    fmtCmd: project.framework === 'vue' ? 'vp fmt' : 'pnpm fmt',
   }
 
   const s = p.spinner()
