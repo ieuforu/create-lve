@@ -8,8 +8,10 @@
     "index.js",
     "config.js",
     "template-react",
+    "template-react-astxy",
     "template-react-tanstackrouter",
     "template-vue",
+    "template-vue-rekaui",
     "!**/node_modules"
   ],
   "type": "module",

@@ -36,10 +36,19 @@ async function main() {
   process.stdout.write('\u001b[3J\u001b[2J\u001b[1J')
   console.clear()
   const W = 30
-  const __s = (s) => s.replace(/\x1b\[[0-9;]*m/g, '')
+  const ESC = String.fromCharCode(27)
+  const __s = (s) => s.replace(new RegExp(ESC + '\\[[0-9;]*m', 'g'), '')
   const __p = (s, w) => s + ' '.repeat(Math.max(0, w - __s(s).length))
   const __b = (c, t) => pc.bold(pc['bg' + c](pc.black(t)))
-  const _l1 = '  ' + __b('Cyan', ' L ') + '  ' + __b('Magenta', ' V ') + '  ' + __b('Yellow', ' E ') + '   ' + pc.dim('ULTRA-FAST')
+  const _l1 =
+    '  ' +
+    __b('Cyan', ' L ') +
+    '  ' +
+    __b('Magenta', ' V ') +
+    '  ' +
+    __b('Yellow', ' E ') +
+    '   ' +
+    pc.dim('ULTRA-FAST')
   const _l2 = '  ' + pc.dim('FRONTEND STACK')
   const _border = pc.cyan('─'.repeat(W))
   const logo = `
@@ -129,7 +138,7 @@ async function main() {
     templateDir: path.resolve(__dirname, `template-${project.framework}`),
     pkgManager: 'pnpm',
     devCmd: 'pnpm dev',
-    fmtCmd: project.framework === 'vue' ? 'vp fmt' : 'pnpm fmt',
+    fmtCmd: 'pnpm fmt',
   }
 
   const s = p.spinner()
