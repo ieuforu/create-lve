@@ -110,16 +110,6 @@ async function main() {
                 hint: 'Astryx 设计系统 + TanStack Router + Feature 驱动',
               },
               {
-                value: 'react',
-                label: 'React · React Router',
-                hint: '经典方案，社区生态最丰富',
-              },
-              {
-                value: 'vue',
-                label: 'Vue 3',
-                hint: '轻量渐进式框架',
-              },
-              {
                 value: 'vue-rekaui',
                 label: 'Vue 3 · Reka UI',
                 hint: 'Reka UI + Pinia + Tailwind CSS',

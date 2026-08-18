@@ -10,9 +10,8 @@ pnpm create-lve
 
 | Template | Description              |
 | -------- | ------------------------ |
-| React 19 | react-router + vite-plus |
 | React 19 | TanStack Router + Vite 8 |
-| Vue 3    | vue-router + vite-plus   |
+| Vue 3    | Reka UI + Pinia          |
 
 All templates ship with **Tailwind CSS v4** out of the box.
 
@@ -22,7 +21,7 @@ All templates ship with **Tailwind CSS v4** out of the box.
 # Interactive mode
 pnpm create-lve
 
-# Default (React 19 + react-router + Tailwind)
+# Default (React 19 + TanStack Router + Tailwind)
 pnpm create-lve my-app
 
 # Skip all prompts
@@ -34,7 +33,7 @@ pnpm create-lve --default my-app
 - React 19 / Vue 3
 - Tailwind CSS v4
 - TypeScript
-- [vite-plus](https://github.com/voidzero-dev/vite-plus) (React & Vue templates) or Vite 8 (TanStack Router template)
+- Vite 8
 - React Compiler (via `babel-plugin-react-compiler`)
 - oxfmt + oxlint
 - pnpm
