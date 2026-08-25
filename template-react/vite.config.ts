@@ -1,14 +1,17 @@
 import { defineConfig } from 'vite'
 import react, { reactCompilerPreset } from '@vitejs/plugin-react'
-import { tanstackRouter } from '@tanstack/router-plugin/vite'
 import babel from '@rolldown/plugin-babel'
+import { tanstackRouter } from '@tanstack/router-plugin/vite'
+import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
+  resolve: { tsconfigPaths: true },
   plugins: [
+    tailwindcss(),
     tanstackRouter({
       target: 'react',
-      // autoCodeSplitting: true,
+      autoCodeSplitting: true,
     }),
     react(),
     babel({ presets: [reactCompilerPreset()] }),
@@ -36,33 +39,38 @@ export default defineConfig({
           groups: [
             {
               name: 'vendor-react-dom',
-              test: /node_modules[\/]react-dom/,
+              test: /node_modules[/]react-dom/,
               priority: 40,
             },
             {
               name: 'vendor-react',
-              test: /node_modules[\/]react(?!-dom)/,
+              test: /node_modules[/]react(?!-dom)/,
               priority: 35,
             },
             {
               name: 'vendor-router',
-              test: /node_modules[\/]@tanstack[\/]react-router/,
+              test: /node_modules[/]@tanstack[/]react-router/,
               priority: 30,
             },
             {
               name: 'vendor-query',
-              test: /node_modules[\/]@tanstack[\/]react-query/,
+              test: /node_modules[/]@tanstack[/]react-query/,
               priority: 25,
             },
             {
-              name: 'vendor-astryx',
-              test: /node_modules[\/]@astryxdesign/,
+              name: 'vendor-tanstack',
+              test: /node_modules[/]@tanstack/,
+              priority: 22,
+            },
+            {
+              name: 'vendor-ui',
+              test: /node_modules[/]@base-ui/,
               priority: 20,
             },
             {
-              name: 'vendor-stylex',
-              test: /node_modules[\/]@stylexjs/,
-              priority: 15,
+              name: 'vendor-state',
+              test: /node_modules[/]jotai/,
+              priority: 18,
             },
             {
               name: 'vendor',
