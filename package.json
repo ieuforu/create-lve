@@ -1,6 +1,6 @@
 {
   "name": "create-lve",
-  "version": "0.6.53",
+  "version": "0.6.54",
   "bin": {
     "create-lve": "index.js"
   },
