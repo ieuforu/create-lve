@@ -1,58 +1,73 @@
-# Vue Reka UI App
+# vue-project
 
-基于 Vue 3 + Reka UI + Pinia + Tailwind CSS 的模板。
+This template should help get you started developing with Vue 3 in Vite.
 
-## 技术栈
+## Recommended IDE Setup
 
-| 分类 | 技术 |
-|---|---|
-| 框架 | Vue 3 + TypeScript |
-| 构建 | Vite 8 |
-| 路由 | Vue Router 5 |
-| 状态 | Pinia |
-| UI | Reka UI |
-| 样式 | Tailwind CSS 4 |
-| 图标 | Iconify |
-| Lint | OxLint + OxFmt |
+[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
 
-## 快速开始
+## Recommended Browser Setup
 
-```bash
-# 安装依赖
+- Chromium-based browsers (Chrome, Edge, Brave, etc.):
+  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
+  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
+- Firefox:
+  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
+  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+
+## Type Support for `.vue` Imports in TS
+
+TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+
+## Customize configuration
+
+See [Vite Configuration Reference](https://vite.dev/config/).
+
+## Project Setup
+
+```sh
 pnpm install
+```
 
-# 启动开发服务器
+### Compile and Hot-Reload for Development
+
+```sh
 pnpm dev
+```
 
-# 构建生产版本
+### Type-Check, Compile and Minify for Production
+
+```sh
+pnpm build
+```
+
+### Run Unit Tests with [Vitest](https://vitest.dev/)
+
+```sh
+pnpm test:unit
+```
+
+### Run End-to-End Tests with [Playwright](https://playwright.dev)
+
+```sh
+# Install browsers for the first run
+npx playwright install
+
+# When testing on CI, must build the project first
 pnpm build
 
-# 预览生产构建
-pnpm preview
+# Runs the end-to-end tests
+pnpm test:e2e
+# Runs the tests only on Chromium
+pnpm test:e2e --project=chromium
+# Runs the tests of a specific file
+pnpm test:e2e tests/example.spec.ts
+# Runs the tests in debug mode
+pnpm test:e2e --debug
 ```
 
-## 项目结构
+### Lint with [ESLint](https://eslint.org/)
 
-```
-src/
-├── components/          # 通用组件
-├── layouts/             # 布局组件
-├── pages/               # 页面组件
-├── composables/         # 组合式函数
-├── stores/              # Pinia 状态
-├── router/              # 路由配置
-├── assets/              # 静态资源
-├── App.vue
-└── main.ts
-```
-
-## 常用命令
-
-```bash
-pnpm dev          # 开发服务器
-pnpm build        # 生产构建
-pnpm preview      # 预览构建
-pnpm lint         # 代码检查
-pnpm fmt          # 代码格式化
-pnpm check        # 检查 + 格式化验证
+```sh
+pnpm lint
 ```
