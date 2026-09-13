@@ -128,7 +128,7 @@ export function UsersPage() {
                   </div>
                 ) : user ? (
                   <Link
-                    to="/dashboard/users/$userId"
+                    to="/examples/users/$userId"
                     params={{ userId: String(user.id) }}
                     className={`flex items-center gap-4 px-5 transition-colors hover:bg-muted/40 ${
                       !isLast ? 'border-b border-border/20' : ''

@@ -29,6 +29,6 @@ export function requireAuth() {
 // Redirect logged-in users away from auth pages
 export function redirectIfAuthenticated() {
   if (isAuthenticated()) {
-    throw redirect({ to: '/dashboard' })
+    throw redirect({ to: '/examples' })
   }
 }

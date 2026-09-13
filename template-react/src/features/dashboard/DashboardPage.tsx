@@ -1,4 +1,5 @@
-import { TrendingUp, Activity, Users, ArrowUpRight, ArrowDownRight } from 'lucide-react'
+import { stats, chartData } from './mock'
+import { ArrowUpRight, ArrowDownRight } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
 import { useModal } from '#/stores/modal.store'
 
@@ -15,10 +16,9 @@ export function DashboardHomePage() {
         <button
           onClick={() =>
             open('confirm', {
-              title: 'Delete this item?',
-              description: 'This action cannot be undone.',
-              confirmLabel: 'Delete',
-              onConfirm: () => console.log('confirmed!'),
+              title: 'Try the confirmation dialog?',
+              description: 'This is an example. No data will be changed.',
+              confirmLabel: 'Confirm',
             })
           }
           className="mt-3 rounded-lg border border-border/60 px-4 py-2 text-[13px] font-medium transition-colors hover:bg-muted/50"
@@ -116,21 +116,9 @@ export function DashboardHomePage() {
   )
 }
 
-const stats = [
-  { label: 'Total users', value: '2,847', change: '12%', positive: true, icon: Users },
-  { label: 'Active sessions', value: '1,423', change: '5.2%', positive: true, icon: Activity },
-  { label: 'Revenue', value: '$48,200', change: '18%', positive: true, icon: TrendingUp },
-]
-
-const chartData = [
-  35, 42, 28, 55, 48, 60, 52, 45, 38, 50, 58, 62, 44, 36, 55, 65, 72, 68, 58, 52, 48, 60, 70, 75,
-  68, 55, 48, 62, 78, 82,
-]
-
 const quickActions = [
-  { title: 'Add new user', desc: 'Create a new user account', to: '/dashboard/users' },
-  { title: 'View reports', desc: 'Check analytics and insights', to: '/dashboard' },
-  { title: 'Manage settings', desc: 'Update your preferences', to: '/dashboard/settings' },
+  { title: 'Browse users', desc: 'Explore the virtual list', to: '/examples/users' },
+  { title: 'Manage settings', desc: 'Update your preferences', to: '/examples/settings' },
 ]
 
 const activities = [

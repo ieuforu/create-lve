@@ -20,7 +20,7 @@ export function UserDetailPage({ userId }: { userId: string }) {
       <div className="flex h-64 flex-col items-center justify-center gap-3">
         <p className="text-[14px] text-muted-foreground">User not found</p>
         <Link
-          to="/dashboard/users"
+          to="/examples/users"
           className="text-[13px] text-foreground underline underline-offset-2"
         >
           Back to users
@@ -32,7 +32,7 @@ export function UserDetailPage({ userId }: { userId: string }) {
   return (
     <div className="mx-auto max-w-2xl">
       <Link
-        to="/dashboard/users"
+        to="/examples/users"
         className="mb-8 inline-flex items-center gap-1.5 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
       >
         <ArrowLeft className="h-3.5 w-3.5" />

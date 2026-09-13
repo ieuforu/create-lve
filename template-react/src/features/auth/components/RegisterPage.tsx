@@ -19,7 +19,7 @@ export function RegisterPage() {
           const data = new FormData(e.currentTarget)
           if (data.get('email') && data.get('password')) {
             setAuthToken('mock_token_' + Date.now())
-            navigate({ to: '/dashboard' })
+            navigate({ to: '/examples' })
           }
         }}
       >
@@ -85,14 +85,14 @@ export function RegisterPage() {
           provider="google"
           onClick={() => {
             setAuthToken('mock_google_token_' + Date.now())
-            navigate({ to: '/dashboard' })
+            navigate({ to: '/examples' })
           }}
         />
         <SocialButton
           provider="github"
           onClick={() => {
             setAuthToken('mock_github_token_' + Date.now())
-            navigate({ to: '/dashboard' })
+            navigate({ to: '/examples' })
           }}
         />
       </div>

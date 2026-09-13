@@ -11,16 +11,16 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
 import { Route as MarketingRouteRouteImport } from './routes/_marketing/route'
-import { Route as DashboardRouteRouteImport } from './routes/dashboard/route'
+import { Route as ExamplesRouteRouteImport } from './routes/examples/route'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthRegisterRouteImport } from './routes/_auth/register'
 import { Route as MarketingIndexRouteImport } from './routes/_marketing/index'
 import { Route as MarketingAboutRouteImport } from './routes/_marketing/about'
-import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
-import { Route as DashboardSettingsRouteImport } from './routes/dashboard/settings'
-import { Route as DashboardUsersRouteRouteImport } from './routes/dashboard/users/route'
-import { Route as DashboardUsersIndexRouteImport } from './routes/dashboard/users/index'
-import { Route as DashboardUsersUserIdRouteImport } from './routes/dashboard/users/$userId'
+import { Route as ExamplesIndexRouteImport } from './routes/examples/index'
+import { Route as ExamplesSettingsRouteImport } from './routes/examples/settings'
+import { Route as ExamplesUsersRouteRouteImport } from './routes/examples/users/route'
+import { Route as ExamplesUsersIndexRouteImport } from './routes/examples/users/index'
+import { Route as ExamplesUsersUserIdRouteImport } from './routes/examples/users/$userId'
 
 const AuthRouteRoute = AuthRouteRouteImport.update({
   id: '/_auth',
@@ -30,9 +30,9 @@ const MarketingRouteRoute = MarketingRouteRouteImport.update({
   id: '/_marketing',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DashboardRouteRoute = DashboardRouteRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
+const ExamplesRouteRoute = ExamplesRouteRouteImport.update({
+  id: '/examples',
+  path: '/examples',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthLoginRoute = AuthLoginRouteImport.update({
@@ -55,112 +55,112 @@ const MarketingAboutRoute = MarketingAboutRouteImport.update({
   path: '/about',
   getParentRoute: () => MarketingRouteRoute,
 } as any)
-const DashboardIndexRoute = DashboardIndexRouteImport.update({
+const ExamplesIndexRoute = ExamplesIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => DashboardRouteRoute,
+  getParentRoute: () => ExamplesRouteRoute,
 } as any)
-const DashboardSettingsRoute = DashboardSettingsRouteImport.update({
+const ExamplesSettingsRoute = ExamplesSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
-  getParentRoute: () => DashboardRouteRoute,
+  getParentRoute: () => ExamplesRouteRoute,
 } as any)
-const DashboardUsersRouteRoute = DashboardUsersRouteRouteImport.update({
+const ExamplesUsersRouteRoute = ExamplesUsersRouteRouteImport.update({
   id: '/users',
   path: '/users',
-  getParentRoute: () => DashboardRouteRoute,
+  getParentRoute: () => ExamplesRouteRoute,
 } as any)
-const DashboardUsersIndexRoute = DashboardUsersIndexRouteImport.update({
+const ExamplesUsersIndexRoute = ExamplesUsersIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => DashboardUsersRouteRoute,
+  getParentRoute: () => ExamplesUsersRouteRoute,
 } as any)
-const DashboardUsersUserIdRoute = DashboardUsersUserIdRouteImport.update({
+const ExamplesUsersUserIdRoute = ExamplesUsersUserIdRouteImport.update({
   id: '/$userId',
   path: '/$userId',
-  getParentRoute: () => DashboardUsersRouteRoute,
+  getParentRoute: () => ExamplesUsersRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof MarketingIndexRoute
-  '/dashboard': typeof DashboardRouteRouteWithChildren
-  '/dashboard/users': typeof DashboardUsersRouteRouteWithChildren
+  '/examples': typeof ExamplesRouteRouteWithChildren
+  '/examples/users': typeof ExamplesUsersRouteRouteWithChildren
   '/login': typeof AuthLoginRoute
   '/register': typeof AuthRegisterRoute
   '/about': typeof MarketingAboutRoute
-  '/dashboard/settings': typeof DashboardSettingsRoute
-  '/dashboard/': typeof DashboardIndexRoute
-  '/dashboard/users/$userId': typeof DashboardUsersUserIdRoute
-  '/dashboard/users/': typeof DashboardUsersIndexRoute
+  '/examples/settings': typeof ExamplesSettingsRoute
+  '/examples/': typeof ExamplesIndexRoute
+  '/examples/users/$userId': typeof ExamplesUsersUserIdRoute
+  '/examples/users/': typeof ExamplesUsersIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof MarketingIndexRoute
   '/login': typeof AuthLoginRoute
   '/register': typeof AuthRegisterRoute
   '/about': typeof MarketingAboutRoute
-  '/dashboard/settings': typeof DashboardSettingsRoute
-  '/dashboard': typeof DashboardIndexRoute
-  '/dashboard/users/$userId': typeof DashboardUsersUserIdRoute
-  '/dashboard/users': typeof DashboardUsersIndexRoute
+  '/examples/settings': typeof ExamplesSettingsRoute
+  '/examples': typeof ExamplesIndexRoute
+  '/examples/users/$userId': typeof ExamplesUsersUserIdRoute
+  '/examples/users': typeof ExamplesUsersIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_auth': typeof AuthRouteRouteWithChildren
   '/_marketing': typeof MarketingRouteRouteWithChildren
-  '/dashboard': typeof DashboardRouteRouteWithChildren
-  '/dashboard/users': typeof DashboardUsersRouteRouteWithChildren
+  '/examples': typeof ExamplesRouteRouteWithChildren
+  '/examples/users': typeof ExamplesUsersRouteRouteWithChildren
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/register': typeof AuthRegisterRoute
   '/_marketing/about': typeof MarketingAboutRoute
-  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/examples/settings': typeof ExamplesSettingsRoute
   '/_marketing/': typeof MarketingIndexRoute
-  '/dashboard/': typeof DashboardIndexRoute
-  '/dashboard/users/$userId': typeof DashboardUsersUserIdRoute
-  '/dashboard/users/': typeof DashboardUsersIndexRoute
+  '/examples/': typeof ExamplesIndexRoute
+  '/examples/users/$userId': typeof ExamplesUsersUserIdRoute
+  '/examples/users/': typeof ExamplesUsersIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/dashboard'
-    | '/dashboard/users'
+    | '/examples'
+    | '/examples/users'
     | '/login'
     | '/register'
     | '/about'
-    | '/dashboard/settings'
-    | '/dashboard/'
-    | '/dashboard/users/$userId'
-    | '/dashboard/users/'
+    | '/examples/settings'
+    | '/examples/'
+    | '/examples/users/$userId'
+    | '/examples/users/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/login'
     | '/register'
     | '/about'
-    | '/dashboard/settings'
-    | '/dashboard'
-    | '/dashboard/users/$userId'
-    | '/dashboard/users'
+    | '/examples/settings'
+    | '/examples'
+    | '/examples/users/$userId'
+    | '/examples/users'
   id:
     | '__root__'
     | '/_auth'
     | '/_marketing'
-    | '/dashboard'
-    | '/dashboard/users'
+    | '/examples'
+    | '/examples/users'
     | '/_auth/login'
     | '/_auth/register'
     | '/_marketing/about'
-    | '/dashboard/settings'
+    | '/examples/settings'
     | '/_marketing/'
-    | '/dashboard/'
-    | '/dashboard/users/$userId'
-    | '/dashboard/users/'
+    | '/examples/'
+    | '/examples/users/$userId'
+    | '/examples/users/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
   MarketingRouteRoute: typeof MarketingRouteRouteWithChildren
-  DashboardRouteRoute: typeof DashboardRouteRouteWithChildren
+  ExamplesRouteRoute: typeof ExamplesRouteRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -179,11 +179,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MarketingRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteRouteImport
+    '/examples': {
+      id: '/examples'
+      path: '/examples'
+      fullPath: '/examples'
+      preLoaderRoute: typeof ExamplesRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_auth/login': {
@@ -214,40 +214,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MarketingAboutRouteImport
       parentRoute: typeof MarketingRouteRoute
     }
-    '/dashboard/': {
-      id: '/dashboard/'
+    '/examples/': {
+      id: '/examples/'
       path: '/'
-      fullPath: '/dashboard/'
-      preLoaderRoute: typeof DashboardIndexRouteImport
-      parentRoute: typeof DashboardRouteRoute
+      fullPath: '/examples/'
+      preLoaderRoute: typeof ExamplesIndexRouteImport
+      parentRoute: typeof ExamplesRouteRoute
     }
-    '/dashboard/settings': {
-      id: '/dashboard/settings'
+    '/examples/settings': {
+      id: '/examples/settings'
       path: '/settings'
-      fullPath: '/dashboard/settings'
-      preLoaderRoute: typeof DashboardSettingsRouteImport
-      parentRoute: typeof DashboardRouteRoute
+      fullPath: '/examples/settings'
+      preLoaderRoute: typeof ExamplesSettingsRouteImport
+      parentRoute: typeof ExamplesRouteRoute
     }
-    '/dashboard/users': {
-      id: '/dashboard/users'
+    '/examples/users': {
+      id: '/examples/users'
       path: '/users'
-      fullPath: '/dashboard/users'
-      preLoaderRoute: typeof DashboardUsersRouteRouteImport
-      parentRoute: typeof DashboardRouteRoute
+      fullPath: '/examples/users'
+      preLoaderRoute: typeof ExamplesUsersRouteRouteImport
+      parentRoute: typeof ExamplesRouteRoute
     }
-    '/dashboard/users/': {
-      id: '/dashboard/users/'
+    '/examples/users/': {
+      id: '/examples/users/'
       path: '/'
-      fullPath: '/dashboard/users/'
-      preLoaderRoute: typeof DashboardUsersIndexRouteImport
-      parentRoute: typeof DashboardUsersRouteRoute
+      fullPath: '/examples/users/'
+      preLoaderRoute: typeof ExamplesUsersIndexRouteImport
+      parentRoute: typeof ExamplesUsersRouteRoute
     }
-    '/dashboard/users/$userId': {
-      id: '/dashboard/users/$userId'
+    '/examples/users/$userId': {
+      id: '/examples/users/$userId'
       path: '/$userId'
-      fullPath: '/dashboard/users/$userId'
-      preLoaderRoute: typeof DashboardUsersUserIdRouteImport
-      parentRoute: typeof DashboardUsersRouteRoute
+      fullPath: '/examples/users/$userId'
+      preLoaderRoute: typeof ExamplesUsersUserIdRouteImport
+      parentRoute: typeof ExamplesUsersRouteRoute
     }
   }
 }
@@ -280,39 +280,39 @@ const MarketingRouteRouteWithChildren = MarketingRouteRoute._addFileChildren(
   MarketingRouteRouteChildren,
 )
 
-interface DashboardUsersRouteRouteChildren {
-  DashboardUsersUserIdRoute: typeof DashboardUsersUserIdRoute
-  DashboardUsersIndexRoute: typeof DashboardUsersIndexRoute
+interface ExamplesUsersRouteRouteChildren {
+  ExamplesUsersUserIdRoute: typeof ExamplesUsersUserIdRoute
+  ExamplesUsersIndexRoute: typeof ExamplesUsersIndexRoute
 }
 
-const DashboardUsersRouteRouteChildren: DashboardUsersRouteRouteChildren = {
-  DashboardUsersUserIdRoute: DashboardUsersUserIdRoute,
-  DashboardUsersIndexRoute: DashboardUsersIndexRoute,
+const ExamplesUsersRouteRouteChildren: ExamplesUsersRouteRouteChildren = {
+  ExamplesUsersUserIdRoute: ExamplesUsersUserIdRoute,
+  ExamplesUsersIndexRoute: ExamplesUsersIndexRoute,
 }
 
-const DashboardUsersRouteRouteWithChildren =
-  DashboardUsersRouteRoute._addFileChildren(DashboardUsersRouteRouteChildren)
+const ExamplesUsersRouteRouteWithChildren =
+  ExamplesUsersRouteRoute._addFileChildren(ExamplesUsersRouteRouteChildren)
 
-interface DashboardRouteRouteChildren {
-  DashboardUsersRouteRoute: typeof DashboardUsersRouteRouteWithChildren
-  DashboardSettingsRoute: typeof DashboardSettingsRoute
-  DashboardIndexRoute: typeof DashboardIndexRoute
+interface ExamplesRouteRouteChildren {
+  ExamplesUsersRouteRoute: typeof ExamplesUsersRouteRouteWithChildren
+  ExamplesSettingsRoute: typeof ExamplesSettingsRoute
+  ExamplesIndexRoute: typeof ExamplesIndexRoute
 }
 
-const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
-  DashboardUsersRouteRoute: DashboardUsersRouteRouteWithChildren,
-  DashboardSettingsRoute: DashboardSettingsRoute,
-  DashboardIndexRoute: DashboardIndexRoute,
+const ExamplesRouteRouteChildren: ExamplesRouteRouteChildren = {
+  ExamplesUsersRouteRoute: ExamplesUsersRouteRouteWithChildren,
+  ExamplesSettingsRoute: ExamplesSettingsRoute,
+  ExamplesIndexRoute: ExamplesIndexRoute,
 }
 
-const DashboardRouteRouteWithChildren = DashboardRouteRoute._addFileChildren(
-  DashboardRouteRouteChildren,
+const ExamplesRouteRouteWithChildren = ExamplesRouteRoute._addFileChildren(
+  ExamplesRouteRouteChildren,
 )
 
 const rootRouteChildren: RootRouteChildren = {
   AuthRouteRoute: AuthRouteRouteWithChildren,
   MarketingRouteRoute: MarketingRouteRouteWithChildren,
-  DashboardRouteRoute: DashboardRouteRouteWithChildren,
+  ExamplesRouteRoute: ExamplesRouteRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
