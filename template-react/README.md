@@ -12,6 +12,13 @@ A modern React application starter.
 - oxlint
 - oxfmt
 
+## Build
+
+Run `pnpm build` after installing dependencies. Vite generates the ignored
+`src/routeTree.gen.ts` through the Router plugin before TypeScript checks run,
+so a fresh clone can build without first starting the dev server. Type errors
+still fail the build command; `dist` may already exist when the check fails.
+
 ## HTTP client
 
 `src/lib/http.ts` provides a shared Ky instance and typed JSON helpers. The helpers
