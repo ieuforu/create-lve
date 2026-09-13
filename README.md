@@ -3,7 +3,7 @@
 THE ULTRA-FAST FRONTEND STACK
 
 ```bash
-pnpm create-lve
+pnpm create lve
 ```
 
 ## Options
@@ -19,14 +19,34 @@ All templates ship with **Tailwind CSS v4** out of the box.
 
 ```bash
 # Interactive mode
-pnpm create-lve
+pnpm create lve
 
-# Default (React 19 + TanStack Router + Tailwind)
-pnpm create-lve my-app
+# Use this directory, then choose a template
+pnpm create lve my-app
 
-# Skip all prompts
-pnpm create-lve --default my-app
+# React defaults (non-empty directories still require confirmation)
+pnpm create lve my-app --default
+
+# Choose a template directly
+pnpm create lve my-app --template vue
+
+# Generate files and install dependencies later
+pnpm create lve my-app --template react --no-install
+
+# Help and version
+pnpm create lve --help
+pnpm create lve --version
 ```
+
+Use `.` as the project directory to scaffold into the current directory. Existing
+non-empty directories always require confirmation; declining or cancelling exits
+without changing their contents. In non-interactive terminals, provide a directory
+and `--template`, or use `--default`. Existing non-empty directories are never
+cleared without an interactive confirmation.
+
+Creation shows separate progress for files, installation, and formatting. If a
+command fails, the project is kept and the CLI prints the command output and steps
+to continue manually.
 
 ## What's Inside
 

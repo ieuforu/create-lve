@@ -1,8 +1,7 @@
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { stripVTControlCharacters } from 'node:util'
 import fs from 'fs-extra'
-import pc from 'picocolors'
-import * as p from '@clack/prompts'
 import { execSync, spawn } from 'node:child_process'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -31,23 +30,42 @@ async function resolveLatestVersions(pkgPath) {
   await fs.writeJson(pkgPath, pkg, { spaces: 2 })
 }
 
-async function runTask(command, args, cwd) {
+async function runTask(command, args, cwd, { signal } = {}) {
   return new Promise((resolve, reject) => {
+    let output = ''
     const child = spawn(command, args, {
       cwd,
-      stdio: 'ignore',
+      stdio: ['ignore', 'pipe', 'pipe'],
       shell: process.platform === 'win32',
+      signal,
     })
-
-    child.on('error', (err) => {
-      console.error(pc.red(`无法启动命令: ${command}`), err)
-      reject(err)
+    const capture = (chunk) => {
+      output = (output + chunk).slice(-8000)
+    }
+    child.stdout.setEncoding('utf8').on('data', capture)
+    child.stderr.setEncoding('utf8').on('data', capture)
+    child.on('error', reject)
+    child.on('close', (code) => {
+      if (code === 0) return resolve()
+      const error = new Error(
+        `${command} ${args.join(' ')} 执行失败${code === null ? '' : `（退出码 ${code}）`}。`,
+      )
+      error.output = stripVTControlCharacters(output).trim().split('\n').slice(-12).join('\n')
+      reject(error)
     })
-
-    child.on('close', (code) =>
-      code === 0 ? resolve() : reject(new Error(`${command} exited with code ${code}`)),
-    )
   })
+}
+
+function getPnpmVersion() {
+  try {
+    return execSync('pnpm --version', {
+      encoding: 'utf-8',
+      timeout: 5000,
+      stdio: ['ignore', 'pipe', 'pipe'],
+    }).trim()
+  } catch {
+    throw new Error('未找到可用的 pnpm。请先安装 pnpm，或添加 --no-install 仅生成项目文件。')
+  }
 }
 
 async function applyProjectTransform(ctx) {
@@ -56,10 +74,7 @@ async function applyProjectTransform(ctx) {
   const pkgPath = path.join(targetDir, 'package.json')
   const pkg = await fs.readJson(pkgPath)
   pkg.name = ctx.name
-  try {
-    const version = execSync('pnpm --version', { encoding: 'utf-8', timeout: 5000 }).trim()
-    pkg.packageManager = `pnpm@${version}`
-  } catch {}
+  if (ctx.pnpmVersion) pkg.packageManager = `pnpm@${ctx.pnpmVersion}`
   await fs.writeJson(pkgPath, pkg, { spaces: 2 })
 
   await resolveLatestVersions(pkgPath)
@@ -86,15 +101,24 @@ async function cleanupTemplate(ctx) {
   }
 }
 
-async function installDependencies(ctx) {
-  try {
-    await runTask(ctx.pkgManager, ['install'], ctx.targetDir)
+async function installDependencies(
+  ctx,
+  { signal, onStep = (_title, _completed, task) => task() } = {},
+) {
+  await onStep('安装依赖', '依赖安装完成', () =>
+    runTask(ctx.pkgManager, ['install'], ctx.targetDir, { signal }),
+  )
+  await onStep('格式化代码', '代码格式化完成', async () => {
     const [cmd, ...args] = ctx.fmtCmd.split(' ')
-    await runTask(cmd, args, ctx.targetDir)
-  } catch (err) {
-    p.log.warn('自动安装或格式化失败，请稍后手动尝试', err)
-    throw err
-  }
+    await runTask(cmd, args, ctx.targetDir, { signal })
+  })
 }
 
-export { __dirname, runTask, applyProjectTransform, cleanupTemplate, installDependencies }
+export {
+  __dirname,
+  runTask,
+  getPnpmVersion,
+  applyProjectTransform,
+  cleanupTemplate,
+  installDependencies,
+}
