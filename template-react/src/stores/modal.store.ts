@@ -1,15 +1,28 @@
 import { atom, useSetAtom, useAtomValue } from 'jotai'
 import { useCallback } from 'react'
 
+// --- Types ---
+export interface ConfirmModalData {
+  title?: string
+  description?: string
+  confirmLabel?: string
+  onConfirm?: () => void | Promise<void>
+}
+
+export interface ModalPayloadMap {
+  confirm: ConfirmModalData
+}
+
+export type ModalType = keyof ModalPayloadMap
+export type ModalEntry = {
+  [Type in ModalType]: { id: string; type: Type; data?: ModalPayloadMap[Type] }
+}[ModalType]
+
+const modalTypes: Record<ModalType, true> = { confirm: true }
+let nextModalId = 0
+
 // --- Base atoms ---
 const modalStackAtom = atom<ModalEntry[]>([])
-
-// --- Types ---
-export interface ModalEntry {
-  id: string
-  type: string
-  data?: Record<string, unknown>
-}
 
 // --- Derived atoms ---
 export const isAnyModalOpenAtom = atom((get) => get(modalStackAtom).length > 0)
@@ -24,8 +37,10 @@ export function useModal() {
   const topModal = useAtomValue(topModalAtom)
 
   const open = useCallback(
-    (type: string, data?: Record<string, unknown>) => {
-      const id = `${type}-${Date.now()}`
+    <Type extends ModalType>(type: Type, data?: ModalPayloadMap[Type]) => {
+      if (!Object.hasOwn(modalTypes, type)) throw new Error(`Unknown modal type: ${type}`)
+      // IDs only identify entries in this in-memory stack; a counter avoids clock collisions.
+      const id = `${type}-${++nextModalId}`
       setStack((prev) => [...prev, { id, type, data }])
       return id
     },

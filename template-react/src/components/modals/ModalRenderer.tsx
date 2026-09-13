@@ -1,34 +1,22 @@
-import { useAtomValue } from 'jotai'
-import { isAnyModalOpenAtom, topModalAtom } from '#/stores/modal.store'
-import { useModal } from '#/stores/modal.store'
+import type { ComponentType } from 'react'
+import { useModal, type ModalPayloadMap, type ModalType } from '#/stores/modal.store'
 import { ConfirmModal } from './ConfirmModal'
 
 // Modal registry — add new modals here
-const MODALS: Record<string, React.FC<{ data?: Record<string, unknown>; onClose: () => void }>> = {
+const MODALS = {
   confirm: ConfirmModal,
+} satisfies {
+  [Type in ModalType]: ComponentType<{ data?: ModalPayloadMap[Type]; onClose: () => void }>
 }
 
 export function ModalRenderer() {
-  const isOpen = useAtomValue(isAnyModalOpenAtom)
-  const topModal = useAtomValue(topModalAtom)
-  const { close } = useModal()
+  const { close, topModal } = useModal()
 
-  if (!isOpen || !topModal) return null
+  if (!topModal) return null
 
   const ModalComponent = MODALS[topModal.type]
-  if (!ModalComponent) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-        onClick={() => close(topModal.id)}
-      />
-      {/* Content */}
-      <div className="relative z-10">
-        <ModalComponent data={topModal.data} onClose={() => close(topModal.id)} />
-      </div>
-    </div>
+    <ModalComponent key={topModal.id} data={topModal.data} onClose={() => close(topModal.id)} />
   )
 }

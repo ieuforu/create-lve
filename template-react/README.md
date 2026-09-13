@@ -33,3 +33,29 @@ failures or HTTP 408, 502, 503, and 504. Final HTTP failures become `ApiError` w
 `status`, `body`, and the original Ky error in `cause`. `NetworkError` and
 `TimeoutError` are re-exported from Ky; abort reasons and application errors pass
 through unchanged. Callers should distinguish cancellation from a failed request.
+
+## Global modals
+
+`src/components/ui/dialog.tsx` wraps Base UI Dialog for portals, accessible labels,
+focus management, and Escape/outside dismissal. `ModalRenderer` renders the top
+entry in the Jotai modal stack; `useModal()` provides typed `open`, `close(id?)`,
+and `closeAll` actions. Closing by ID leaves other entries intact.
+
+```tsx
+const { open } = useModal()
+
+open('confirm', {
+  title: 'Delete project?',
+  description: 'All project files will be removed.',
+  confirmLabel: 'Delete',
+  onConfirm: async () => {
+    await deleteProject(projectId)
+  },
+})
+```
+
+Confirmation initially focuses Cancel. While `onConfirm` runs, buttons and user
+dismissal are disabled to prevent duplicate submissions or premature closing.
+Success closes that entry; a thrown error keeps it open, displays an error message,
+and allows retry. Add new modal types to `ModalPayloadMap`, the store's accepted
+types, and the component registry in `ModalRenderer`.
