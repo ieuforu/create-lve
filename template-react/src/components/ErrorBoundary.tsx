@@ -2,11 +2,14 @@ import { Link } from '@tanstack/react-router'
 import { AlertTriangle, RotateCcw } from 'lucide-react'
 
 interface ErrorBoundaryProps {
-  error: Error
+  error: unknown
   reset?: () => void
 }
 
 export function ErrorFallback({ error, reset }: ErrorBoundaryProps) {
+  const message = error instanceof Error ? error.message : typeof error === 'string' ? error : ''
+  const stack = error instanceof Error ? error.stack : undefined
+
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-center px-6 text-center">
       <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-red-500/10">
@@ -14,7 +17,7 @@ export function ErrorFallback({ error, reset }: ErrorBoundaryProps) {
       </div>
       <h1 className="mt-5 text-[20px] font-semibold">Something went wrong</h1>
       <p className="mt-2 max-w-md text-[14px] leading-relaxed text-muted-foreground">
-        {error.message || 'An unexpected error occurred.'}
+        {message || 'An unexpected error occurred.'}
       </p>
       <div className="mt-6 flex gap-3">
         {reset && (
@@ -33,9 +36,9 @@ export function ErrorFallback({ error, reset }: ErrorBoundaryProps) {
           Go home
         </Link>
       </div>
-      {import.meta.env.DEV && (
+      {import.meta.env.DEV && stack && (
         <pre className="mt-8 max-w-lg overflow-auto rounded-lg bg-muted/50 p-4 text-left text-[11px] text-muted-foreground">
-          {error.stack}
+          {stack}
         </pre>
       )}
     </div>

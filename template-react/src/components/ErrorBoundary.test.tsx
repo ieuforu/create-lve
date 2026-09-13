@@ -24,6 +24,21 @@ describe('ErrorFallback', () => {
     expect(screen.getByText('An unexpected error occurred.')).toBeInTheDocument()
   })
 
+  it('renders a thrown string without a stack trace', () => {
+    render(<ErrorFallback error="Something broke" />)
+    expect(screen.getByText('Something broke')).toBeInTheDocument()
+    expect(document.querySelector('pre')).not.toBeInTheDocument()
+  })
+
+  it.each([null, undefined, 42, { message: 'Not an Error instance' }])(
+    'renders a fallback for an unknown thrown value (%#)',
+    (error) => {
+      render(<ErrorFallback error={error} />)
+      expect(screen.getByText('An unexpected error occurred.')).toBeInTheDocument()
+      expect(document.querySelector('pre')).not.toBeInTheDocument()
+    },
+  )
+
   it('shows try again button when reset is provided', () => {
     render(<ErrorFallback error={new Error('Oops')} reset={() => {}} />)
     expect(screen.getByText('Try again')).toBeInTheDocument()

@@ -40,6 +40,19 @@ function onCancel() {
   process.exit(0);
 }
 
+async function confirmOverwrite(targetDir) {
+  if (!fs.existsSync(targetDir) || fs.readdirSync(targetDir).length === 0) {
+    return false;
+  }
+
+  const shouldOverwrite = await p.confirm({
+    message: "目录已存在，是否清空？",
+    initialValue: false,
+  });
+  if (p.isCancel(shouldOverwrite) || !shouldOverwrite) onCancel();
+  return shouldOverwrite;
+}
+
 async function main() {
   const { flags, positional } = parseArgs();
   process.stdout.write("\u001b[3J\u001b[2J\u001b[1J");
@@ -73,14 +86,10 @@ async function main() {
   let project;
 
   if (flags.default) {
-    // --default: React + Tailwind，跳过所有 prompt
+    // --default: React + Tailwind，非空目录仍需确认
     const name = positional[0] || randomName();
     const targetDir = path.resolve(process.cwd(), name);
-    let shouldOverwrite = false;
-    if (fs.existsSync(targetDir) && fs.readdirSync(targetDir).length > 0) {
-      shouldOverwrite = await p.confirm({ message: `目录已存在，是否清空？`, initialValue: false });
-      if (p.isCancel(shouldOverwrite)) onCancel();
-    }
+    const shouldOverwrite = await confirmOverwrite(targetDir);
     project = { path: name, framework: "react", shouldOverwrite };
   } else {
     // 交互模式
@@ -99,9 +108,7 @@ async function main() {
 
         shouldOverwrite: ({ results }) => {
           const targetDir = path.resolve(process.cwd(), results.path);
-          if (fs.existsSync(targetDir) && fs.readdirSync(targetDir).length > 0) {
-            return p.confirm({ message: `目录已存在，是否清空？`, initialValue: false });
-          }
+          return confirmOverwrite(targetDir);
         },
 
         framework: () =>
@@ -152,13 +159,8 @@ async function main() {
   } catch (err) {
     s.stop(pc.red("Failed"));
 
-    if (ctx && ctx.targetDir && fs.existsSync(ctx.targetDir)) {
-      p.log.warn(pc.yellow(`正在清理残留文件: ${ctx.targetDir}...`));
-      try {
-        fs.removeSync(ctx.targetDir);
-      } catch (cleanErr) {
-        p.log.error(pc.red("清理残留文件失败，请手动删除", cleanErr));
-      }
+    if (fs.existsSync(ctx.targetDir)) {
+      p.log.warn(pc.yellow(`已保留项目目录: ${ctx.targetDir}，可检查后手动重试。`));
     }
 
     console.error(err);
