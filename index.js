@@ -18,7 +18,7 @@ const templates = [
   { value: 'vue', label: 'Vue', hint: 'Vue Router · Pinia · Reka UI · Tailwind CSS' },
 ]
 const interactive = Boolean(process.stdin.isTTY && process.stdout.isTTY)
-p.updateSettings({ withGuide: false })
+p.updateSettings({ withGuide: true })
 
 class Cancelled extends Error {}
 
@@ -68,35 +68,9 @@ function printHelp() {
 非空目录始终需要确认；选择保留或取消会直接结束。`)
 }
 
-function wordmark(name) {
-  const width = process.stdout.columns ?? 80
-  // Keep long package names inside the terminal; the configuration shows the full name.
-  const available = Math.max(8, width - 24)
-  const label = name.length > available ? `${name.slice(0, available - 1)}…` : name
-  return `${pc.yellow(pc.bold(label))} ${pc.dim('/')}`
-}
-
-function signatureLine() {
-  const width = process.stdout.columns ?? 80
-  return pc.yellow(`╰${'─'.repeat(Math.max(2, Math.min(17, width - 6)))}▍`)
-}
-
 function printIntro() {
-  const width = process.stdout.columns ?? 80
-  const byline = width >= 56 ? '  work in progress.' : ''
-  const versionLabel = `v${version}`
-  console.log()
-  if (width < 32) {
-    console.log(`  ${wordmark('lve')}`)
-    console.log(`  ${pc.dim(versionLabel)}`)
-  } else {
-    const gap = ' '.repeat(Math.max(2, width - 4 - 5 - byline.length - versionLabel.length))
-    console.log(`  ${wordmark('lve')}${pc.dim(byline)}${gap}${pc.dim(versionLabel)}`)
-  }
-  console.log(`  ${signatureLine()}`)
-  console.log()
-  console.log(`  ${pc.dim('先写一点，世界稍后。')}`)
-  console.log()
+  p.intro(`${pc.yellow(pc.bold('lve'))} ${pc.dim(`v${version}`)}`)
+  p.log.message(pc.dim('先写一点，世界稍后。'), { spacing: 0 })
 }
 
 function isWithin(parent, child) {
@@ -190,7 +164,7 @@ function directoryCommand(targetDir) {
 }
 
 async function runStep(title, completed, task) {
-  const spinner = interactive ? p.spinner({ indicator: 'timer' }) : undefined
+  const spinner = interactive ? p.spinner() : undefined
   if (spinner) spinner.start(title)
   else p.log.step(title)
   try {
@@ -212,14 +186,14 @@ async function main() {
   }
 
   printIntro()
-  const defaultDirectory = `lve-app-${Math.random().toString(36).slice(2, 6)}`
+  const defaultDirectory = 'lve-app'
   const projectPath =
     directory ??
     (flags.default
       ? defaultDirectory
       : answer(
           await p.text({
-            message: `${pc.yellow('01')}  给这个想法起个名字`,
+            message: '项目名称',
             placeholder: defaultDirectory,
             defaultValue: defaultDirectory,
             validate: validateDirectory,
@@ -229,8 +203,7 @@ async function main() {
   if (invalid) throw new Error(invalid)
   if (!projectPath.trim()) throw new Error('项目目录不能为空。')
   const targetDir = path.resolve(projectPath.trim())
-  if (directory || flags.default) p.log.step(`${pc.yellow('01')}  项目目录：${projectPath.trim()}`)
-  else console.log()
+  if (directory || flags.default) p.log.step(`项目名称  ${projectPath.trim()}`)
   const shouldOverwrite = await confirmOverwrite(targetDir)
   const framework =
     flags.template ??
@@ -238,12 +211,14 @@ async function main() {
       ? 'react'
       : answer(
           await p.select({
-            message: `${pc.yellow('02')}  从哪套技术开始？`,
+            message: '选择技术栈',
             initialValue: 'react',
             options: templates,
           }),
         ))
-  console.log()
+  if (flags.template || flags.default) {
+    p.log.step(`技术栈  ${templates.find((template) => template.value === framework).label}`)
+  }
   const ctx = {
     name: packageName(targetDir),
     framework,
@@ -257,16 +232,6 @@ async function main() {
   // Check the installer before making any changes to the target directory.
   if (flags.install) ctx.pnpmVersion = getPnpmVersion()
 
-  p.note(
-    [
-      `模板  ${templates.find((t) => t.value === framework).label}`,
-      `目录  ${targetDir}`,
-      `包名  ${ctx.name}`,
-      `依赖  ${flags.install ? '使用 pnpm 自动安装' : '稍后手动安装'}`,
-    ].join('\n'),
-    '你的起点',
-  )
-
   const controller = new AbortController()
   const interrupt = () => controller.abort()
   process.once('SIGINT', interrupt)
@@ -274,7 +239,7 @@ async function main() {
   let ready = false
   let installed = false
   try {
-    await runStep('正在铺好第一张画布', '文件就绪', async () => {
+    await runStep('创建项目文件', '项目文件已生成', async () => {
       controller.signal.throwIfAborted()
       if (shouldOverwrite) await fs.emptyDir(targetDir)
       controller.signal.throwIfAborted()
@@ -300,16 +265,15 @@ async function main() {
       })
     }
     controller.signal.throwIfAborted()
-    p.log.success(`${wordmark(ctx.name)}\n${signatureLine()}\n\n${pc.dim('接下来，是你的作品。')}`)
+    p.log.success('项目创建完成 🎉')
     p.note(
       [
         ...directoryCommand(targetDir),
-        ...(!flags.install ? ['pnpm install', 'pnpm fmt'] : []),
+        ...(!flags.install ? ['pnpm install'] : []),
         'pnpm dev',
       ].join('\n'),
       process.platform === 'win32' ? '下一步（PowerShell）' : '下一步',
     )
-    p.outro(pc.dim('lve /'))
   } catch (error) {
     if (controller.signal.aborted) p.cancel('已停止创建。')
     else p.log.error(error instanceof Error ? error.message : String(error))

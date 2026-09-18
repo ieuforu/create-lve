@@ -79,10 +79,10 @@ async function installDependencies(
   ctx,
   { signal, onStep = (_title, _completed, task) => task() } = {},
 ) {
-  await onStep('安装依赖', '依赖安装完成', () =>
+  await onStep('安装依赖', '依赖已安装', () =>
     runTask(ctx.pkgManager, ['install'], ctx.targetDir, { signal }),
   )
-  await onStep('格式化代码', '代码格式化完成', async () => {
+  await onStep('格式化代码', '代码已格式化', async () => {
     const [cmd, ...args] = ctx.fmtCmd.split(' ')
     await runTask(cmd, args, ctx.targetDir, { signal })
   })

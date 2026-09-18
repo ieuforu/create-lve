@@ -55,6 +55,9 @@ for (const framework of ['react', 'vue']) {
     const result = runCli([target, '--template', framework, '--no-install'])
 
     assert.equal(result.status, 0, result.stderr)
+    assert.match(result.stdout, /lve v\d+\.\d+\.\d+/)
+    assert.match(result.stdout, /项目创建完成/)
+    assert.doesNotMatch(result.stdout, /你的起点/)
     assert.equal(existsSync(path.join(target, '.gitignore')), true)
     assert.equal(existsSync(path.join(target, '_gitignore')), false)
     assert.equal(existsSync(path.join(target, 'node_modules')), false)
