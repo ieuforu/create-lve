@@ -37,7 +37,7 @@
     "lint:fix": "oxlint --fix",
     "test": "node --test test",
     "test:smoke": "node test/smoke.mjs",
-    "prepublishOnly": "pnpm check && pnpm test:smoke",
+    "prepublishOnly": "pnpm fmt:check && pnpm lint",
     "check": "pnpm fmt:check && pnpm lint && pnpm test",
     "release:patch": "node scripts/release.mjs patch",
     "release:minor": "node scripts/release.mjs minor",

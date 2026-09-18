@@ -29,3 +29,5 @@ The release command:
 4. Pushes `main` and the new tag.
 
 The pushed tag starts the publish workflow. It verifies that the tag and package version match, rebuilds both generated templates, runs their tests, publishes to npm, and creates a GitHub Release. npm adds a provenance attestation automatically for public packages published with trusted publishing.
+
+If publishing fails after a tag was pushed, run the `Publish to npm` workflow manually and enter the existing tag, such as `v0.6.64`. The workflow is safe to retry when the npm package or GitHub Release already exists.

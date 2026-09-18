@@ -3,6 +3,12 @@ name: Publish to npm
 on:
   push:
     tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Existing release tag to publish
+        required: true
+        type: string
 
 permissions:
   contents: write
@@ -21,6 +27,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.ref || github.ref }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v7
@@ -38,12 +46,21 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Verify release tag
+        env:
+          RELEASE_REF: ${{ inputs.ref || github.ref_name }}
         run: |
           expected="v$(node -p "require('./package.json').version")"
-          if [ "$GITHUB_REF_NAME" != "$expected" ]; then
-            echo "Release tag $GITHUB_REF_NAME does not match package version $expected"
+          if [ "$RELEASE_REF" != "$expected" ]; then
+            echo "Release tag $RELEASE_REF does not match package version $expected"
             exit 1
           fi
+          echo "RELEASE_REF=$RELEASE_REF" >> "$GITHUB_ENV"
+
+      - name: Run checks
+        run: pnpm check
+
+      - name: Test generated projects
+        run: pnpm test:smoke
 
       - name: Publish package
         run: |
@@ -51,13 +68,13 @@ jobs:
           if npm view "$package" version >/dev/null 2>&1; then
             echo "$package is already published"
           else
-            npm publish --access public
+            npm publish --access public --ignore-scripts
           fi
 
       - name: Create GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if ! gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
-            gh release create "$GITHUB_REF_NAME" --verify-tag --generate-notes --title "$GITHUB_REF_NAME"
+          if ! gh release view "$RELEASE_REF" >/dev/null 2>&1; then
+            gh release create "$RELEASE_REF" --verify-tag --generate-notes --title "$RELEASE_REF"
           fi
