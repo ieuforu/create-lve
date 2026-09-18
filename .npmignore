@@ -10,7 +10,9 @@ pnpm-lock.yaml
 next-app/
 my-app/
 
-# 确保以下模板被包含（如果之前被忽略了，这里可以加 ! 来强制包含）
-!template-next/
+# 确保以下模板被包含
 !template-react/
 !template-vue/
+
+# 模板锁文件只用于仓库维护，生成项目时会重新创建
+template-*/pnpm-lock.yaml

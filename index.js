@@ -107,6 +107,21 @@ function isWithin(parent, child) {
   )
 }
 
+function canonicalPath(target) {
+  const missing = []
+  let current = target
+
+  while (!fs.existsSync(current)) {
+    const parent = path.dirname(current)
+    if (parent === current) break
+    missing.push(path.basename(current))
+    current = parent
+  }
+
+  const existing = fs.existsSync(current) ? fs.realpathSync.native(current) : current
+  return missing.reduceRight((resolved, segment) => path.join(resolved, segment), existing)
+}
+
 function validateDirectory(value) {
   if (!value?.trim()) return
   // Reject control characters as well as characters invalid in portable folder names.
@@ -117,7 +132,12 @@ function validateDirectory(value) {
   if (/[<>:"|?*]/.test(folder) || hasControl) return '目录包含非法字符，请换一个名称。'
   const target = path.resolve(value.trim())
   if (target === path.parse(target).root) return '请选择一个项目目录，不能使用磁盘根目录。'
-  if (isWithin(__dirname, target) || isWithin(target, __dirname)) {
+  const canonicalTarget = canonicalPath(target)
+  const canonicalInstallDir = fs.realpathSync.native(__dirname)
+  if (
+    isWithin(canonicalInstallDir, canonicalTarget) ||
+    isWithin(canonicalTarget, canonicalInstallDir)
+  ) {
     return '请选择独立的项目目录，不能覆盖 create-lve 自身的安装目录。'
   }
   if (fs.existsSync(target) && !fs.lstatSync(target).isDirectory()) {

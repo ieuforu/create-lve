@@ -10,42 +10,37 @@ on:
         required: true
         type: string
 
-permissions:
-  contents: write
-  id-token: write
+permissions: {}
 
 concurrency:
   group: npm-publish
   cancel-in-progress: false
 
 jobs:
-  publish:
-    name: Publish
+  verify:
+    name: Verify release
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    permissions:
+      contents: read
+    outputs:
+      release_ref: ${{ steps.release.outputs.ref }}
 
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v6
+      - name: Check out release source
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
           ref: ${{ inputs.ref || github.ref }}
+          fetch-depth: 0
 
       - name: Set up Node.js
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 24.12.0
-          registry-url: https://registry.npmjs.org
           package-manager-cache: false
 
-      - name: Set up pnpm
-        uses: pnpm/action-setup@v6
-        with:
-          version: 12.4.2
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
       - name: Verify release tag
+        id: release
         env:
           RELEASE_REF: ${{ inputs.ref || github.ref_name }}
         run: |
@@ -54,7 +49,25 @@ jobs:
             echo "Release tag $RELEASE_REF does not match package version $expected"
             exit 1
           fi
-          echo "RELEASE_REF=$RELEASE_REF" >> "$GITHUB_ENV"
+          if ! git show-ref --verify --quiet "refs/tags/$RELEASE_REF"; then
+            echo "Release ref $RELEASE_REF is not an existing tag"
+            exit 1
+          fi
+          tag_commit="$(git rev-list -n 1 "refs/tags/$RELEASE_REF")"
+          head_commit="$(git rev-parse HEAD)"
+          if [ "$tag_commit" != "$head_commit" ]; then
+            echo "Checked-out commit $head_commit does not match tag $RELEASE_REF ($tag_commit)"
+            exit 1
+          fi
+          echo "ref=$RELEASE_REF" >> "$GITHUB_OUTPUT"
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
+        with:
+          version: 12.4.2
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Run checks
         run: |
@@ -64,6 +77,29 @@ jobs:
 
       - name: Test generated projects
         run: pnpm test:smoke
+
+  publish:
+    name: Publish
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      id-token: write
+
+    steps:
+      - name: Check out verified release source
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          ref: ${{ needs.verify.outputs.release_ref }}
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24.12.0
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
 
       - name: Publish package
         run: |
@@ -77,6 +113,7 @@ jobs:
       - name: Create GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
+          RELEASE_REF: ${{ needs.verify.outputs.release_ref }}
         run: |
           if ! gh release view "$RELEASE_REF" >/dev/null 2>&1; then
             gh release create "$RELEASE_REF" --verify-tag --generate-notes --title "$RELEASE_REF"

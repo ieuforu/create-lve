@@ -47,6 +47,6 @@ run(pnpm, ['test:smoke'])
 run(pnpm, ['version', bump, '--message', 'chore(release): v%s'])
 
 const { version } = JSON.parse(readFileSync(path.join(repoDir, 'package.json'), 'utf8'))
-run('git', ['push', 'origin', 'main', `v${version}`])
+run('git', ['push', '--atomic', 'origin', 'main', `v${version}`])
 
 console.log(`\nRelease v${version} pushed. GitHub Actions will publish it to npm.`)

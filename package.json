@@ -15,6 +15,7 @@
   "bugs": {
     "url": "https://github.com/ieuforu/create-lve/issues"
   },
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ieuforu/create-lve.git"
@@ -27,6 +28,11 @@
     "config.js",
     "template-react",
     "template-vue",
+    "!template-*/coverage",
+    "!template-*/dist",
+    "!template-*/pnpm-lock.yaml",
+    "!template-*/playwright-report",
+    "!template-*/test-results",
     "!**/node_modules"
   ],
   "type": "module",
@@ -38,6 +44,7 @@
     "test": "node --test test/cli.test.js",
     "test:smoke": "node test/smoke.mjs",
     "prepublishOnly": "pnpm fmt:check && pnpm lint",
+    "prepare": "husky",
     "check": "pnpm fmt:check && pnpm lint && pnpm test",
     "release:patch": "node scripts/release.mjs patch",
     "release:minor": "node scripts/release.mjs minor",
@@ -52,8 +59,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
     "oxfmt": "^0.46.0",
-    "oxlint": "^1.61.0",
-    "vite-plus": "^0.2.4"
+    "oxlint": "^1.61.0"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,mjs,cjs}": [
@@ -64,5 +70,6 @@
   },
   "engines": {
     "node": "^22.18.0 || >=24.12.0"
-  }
+  },
+  "packageManager": "pnpm@12.4.2"
 }

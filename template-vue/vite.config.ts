@@ -31,7 +31,7 @@ export default defineConfig({
             },
             {
               name: 'vendor-ui',
-              test: /node_modules[/](reka-ui|shadcn-vue)/,
+              test: /node_modules[/]reka-ui/,
               priority: 25,
             },
             {

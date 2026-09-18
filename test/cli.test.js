@@ -1,5 +1,13 @@
 import assert from 'node:assert/strict'
-import { existsSync, mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import {
+  existsSync,
+  mkdtempSync,
+  mkdirSync,
+  readFileSync,
+  rmSync,
+  symlinkSync,
+  writeFileSync,
+} from 'node:fs'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { spawnSync } from 'node:child_process'
@@ -73,13 +81,28 @@ test('refuses a non-empty directory without modifying it in a non-interactive te
   assert.equal(existsSync(path.join(target, 'package.json')), false)
 })
 
+test(
+  'rejects a path that reaches the CLI installation through a symlinked parent',
+  { skip: process.platform === 'win32' },
+  (t) => {
+    const parent = temporaryDirectory(t)
+    const alias = path.join(parent, 'cli-alias')
+    symlinkSync(repoDir, alias, 'dir')
+
+    const result = runCli([path.join(alias, 'node_modules'), '--template', 'react', '--no-install'])
+
+    assert.equal(result.status, 1)
+    assert.match(output(result), /不能覆盖 create-lve 自身的安装目录/)
+  },
+)
+
 test('rejects unknown options', () => {
   const result = runCli(['--unknown'])
   assert.equal(result.status, 1)
   assert.match(output(result), /未知选项/)
 })
 
-test('the npm package contains both template gitignore sources', () => {
+test('the npm package contains required files without generated artifacts', () => {
   const result = spawnSync('npm', ['pack', '--dry-run', '--json', '--ignore-scripts'], {
     cwd: repoDir,
     encoding: 'utf8',
@@ -88,6 +111,19 @@ test('the npm package contains both template gitignore sources', () => {
   assert.equal(result.status, 0, result.stderr)
   const [{ files }] = JSON.parse(result.stdout)
   const paths = new Set(files.map((file) => file.path))
+  assert.equal(paths.has('LICENSE'), true)
   assert.equal(paths.has('template-react/_gitignore'), true)
   assert.equal(paths.has('template-vue/_gitignore'), true)
+  assert.equal(
+    [...paths].some((file) => file.endsWith('pnpm-lock.yaml')),
+    false,
+  )
+  assert.equal(
+    [...paths].some((file) => file.includes('/dist/')),
+    false,
+  )
+  assert.equal(
+    [...paths].some((file) => file.includes('node_modules')),
+    false,
+  )
 })

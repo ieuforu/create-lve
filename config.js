@@ -6,30 +6,6 @@ import { execSync, spawn } from 'node:child_process'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
-async function resolveLatestVersions(pkgPath) {
-  const pkg = await fs.readJson(pkgPath)
-  const sections = ['dependencies', 'devDependencies']
-
-  for (const section of sections) {
-    if (!pkg[section]) continue
-    for (const [name, version] of Object.entries(pkg[section])) {
-      if (version === 'latest') {
-        try {
-          const resolved = execSync(`npm view ${name} version`, {
-            encoding: 'utf-8',
-            timeout: 10000,
-          }).trim()
-          pkg[section][name] = `^${resolved}`
-        } catch {
-          // resolution failed, keep latest
-        }
-      }
-    }
-  }
-
-  await fs.writeJson(pkgPath, pkg, { spaces: 2 })
-}
-
 async function runTask(command, args, cwd, { signal } = {}) {
   return new Promise((resolve, reject) => {
     let output = ''
@@ -76,8 +52,6 @@ async function applyProjectTransform(ctx) {
   pkg.name = ctx.name
   if (ctx.pnpmVersion) pkg.packageManager = `pnpm@${ctx.pnpmVersion}`
   await fs.writeJson(pkgPath, pkg, { spaces: 2 })
-
-  await resolveLatestVersions(pkgPath)
 
   const indexPath = path.join(targetDir, 'index.html')
   if (fs.existsSync(indexPath)) {

@@ -64,3 +64,7 @@ to continue manually.
 - React Compiler (via `babel-plugin-react-compiler`)
 - oxfmt + oxlint
 - pnpm
+
+## License
+
+[MIT](./LICENSE)
