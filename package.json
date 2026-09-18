@@ -1,6 +1,6 @@
 {
   "name": "create-lve",
-  "version": "0.6.65",
+  "version": "0.6.66",
   "description": "A fast, opinionated frontend project scaffolder for React and Vue.",
   "keywords": [
     "create",
