@@ -57,7 +57,10 @@ jobs:
           echo "RELEASE_REF=$RELEASE_REF" >> "$GITHUB_ENV"
 
       - name: Run checks
-        run: pnpm check
+        run: |
+          pnpm fmt:check
+          pnpm lint
+          node --test test/cli.test.js
 
       - name: Test generated projects
         run: pnpm test:smoke

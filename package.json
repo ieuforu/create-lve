@@ -35,7 +35,7 @@
     "fmt:check": "oxfmt --check",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
-    "test": "node --test test",
+    "test": "node --test test/cli.test.js",
     "test:smoke": "node test/smoke.mjs",
     "prepublishOnly": "pnpm fmt:check && pnpm lint",
     "check": "pnpm fmt:check && pnpm lint && pnpm test",
