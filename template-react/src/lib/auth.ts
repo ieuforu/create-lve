@@ -3,19 +3,19 @@ import { redirect } from '@tanstack/react-router'
 // --- Mock auth state ---
 // In production, replace with real token/session validation
 export function isAuthenticated(): boolean {
-  return localStorage.getItem('auth_token') !== null
+  return window.localStorage.getItem('auth_token') !== null
 }
 
 export function getAuthToken(): string | null {
-  return localStorage.getItem('auth_token')
+  return window.localStorage.getItem('auth_token')
 }
 
 export function setAuthToken(token: string) {
-  localStorage.setItem('auth_token', token)
+  window.localStorage.setItem('auth_token', token)
 }
 
 export function clearAuthToken() {
-  localStorage.removeItem('auth_token')
+  window.localStorage.removeItem('auth_token')
 }
 
 // --- Route guard helper ---

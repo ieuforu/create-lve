@@ -21,7 +21,7 @@ function jsonResponse(body: unknown, status = 200) {
 }
 
 afterEach(() => {
-  localStorage.clear()
+  window.localStorage.clear()
   vi.restoreAllMocks()
 })
 
@@ -206,7 +206,7 @@ describe('transport errors and cancellation', () => {
 })
 
 it('preserves the API prefix, bearer token, JSON accept header, and request body', async () => {
-  localStorage.setItem('auth_token', 'test-token')
+  window.localStorage.setItem('auth_token', 'test-token')
   let requestBody: unknown
   const fetch = vi.fn().mockImplementation(async (request: Request) => {
     requestBody = await request.json()

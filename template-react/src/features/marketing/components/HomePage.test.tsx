@@ -14,7 +14,7 @@ afterEach(() => {
   cleanup()
   vi.restoreAllMocks()
   clients.splice(0).forEach((client) => client.clear())
-  localStorage.clear()
+  window.localStorage.clear()
 })
 
 async function openPage(path = '/') {
@@ -59,7 +59,7 @@ it('connects the homepage form, card and global confirmation dialog', async () =
 
 it('opens existing Users, detail, Dashboard and Settings examples without logging in', async () => {
   const user = userEvent.setup()
-  localStorage.clear()
+  window.localStorage.clear()
   const router = await openPage()
   await user.click(await screen.findByRole('link', { name: 'Explore Users virtual list' }))
   expect(await screen.findByRole('heading', { name: 'Users' })).toBeVisible()
@@ -84,5 +84,5 @@ it('opens existing Users, detail, Dashboard and Settings examples without loggin
   expect(screen.getByText('$48,200')).toBeVisible()
   await user.click(screen.getByRole('link', { name: 'Settings' }))
   expect(await screen.findByRole('heading', { name: 'Settings' })).toBeVisible()
-  expect(localStorage.getItem('auth_token')).toBeNull()
+  expect(window.localStorage.getItem('auth_token')).toBeNull()
 })

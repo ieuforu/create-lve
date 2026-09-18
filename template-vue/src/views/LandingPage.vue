@@ -31,7 +31,9 @@ const features = [
 
 <template>
   <!-- Hero -->
-  <section class="container mx-auto flex flex-col items-center justify-center gap-4 py-24 text-center px-4">
+  <section
+    class="container mx-auto flex flex-col items-center justify-center gap-4 py-24 text-center px-4"
+  >
     <Badge variant="secondary" class="px-4 py-1">
       <Star class="mr-1 h-3 w-3" />
       Built with Vue 3 + shadcn-vue
@@ -44,8 +46,8 @@ const features = [
     </h1>
 
     <p class="max-w-[600px] text-muted-foreground text-lg md:text-xl">
-      A modern Vue 3 starter with TypeScript, Pinia, Vue Router, and shadcn-vue. Everything you
-      need to ship fast.
+      A modern Vue 3 starter with TypeScript, Pinia, Vue Router, and shadcn-vue. Everything you need
+      to ship fast.
     </p>
 
     <div class="flex gap-4 mt-4">
@@ -100,9 +102,7 @@ const features = [
     <div class="mx-auto max-w-[800px]">
       <Badge variant="outline" class="mb-4">Open Source</Badge>
       <h2 class="text-3xl font-bold tracking-tighter sm:text-4xl mb-4">Ready to get started?</h2>
-      <p class="text-muted-foreground text-lg mb-8">
-        Free and open source. Start building today.
-      </p>
+      <p class="text-muted-foreground text-lg mb-8">Free and open source. Start building today.</p>
       <div class="flex gap-4 justify-center">
         <Button size="lg">
           Start Building

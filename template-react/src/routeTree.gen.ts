@@ -262,9 +262,7 @@ const AuthRouteRouteChildren: AuthRouteRouteChildren = {
   AuthRegisterRoute: AuthRegisterRoute,
 }
 
-const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
-  AuthRouteRouteChildren,
-)
+const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(AuthRouteRouteChildren)
 
 interface MarketingRouteRouteChildren {
   MarketingAboutRoute: typeof MarketingAboutRoute
@@ -290,8 +288,9 @@ const ExamplesUsersRouteRouteChildren: ExamplesUsersRouteRouteChildren = {
   ExamplesUsersIndexRoute: ExamplesUsersIndexRoute,
 }
 
-const ExamplesUsersRouteRouteWithChildren =
-  ExamplesUsersRouteRoute._addFileChildren(ExamplesUsersRouteRouteChildren)
+const ExamplesUsersRouteRouteWithChildren = ExamplesUsersRouteRoute._addFileChildren(
+  ExamplesUsersRouteRouteChildren,
+)
 
 interface ExamplesRouteRouteChildren {
   ExamplesUsersRouteRoute: typeof ExamplesUsersRouteRouteWithChildren

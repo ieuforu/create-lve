@@ -1,5 +1,7 @@
 # create-lve
 
+[![CI](https://github.com/ieuforu/create-lve/actions/workflows/ci.yml/badge.svg)](https://github.com/ieuforu/create-lve/actions/workflows/ci.yml)
+
 THE ULTRA-FAST FRONTEND STACK
 
 ```bash
@@ -14,6 +16,11 @@ pnpm create lve
 | Vue 3    | Reka UI + Pinia          |
 
 All templates ship with **Tailwind CSS v4** out of the box.
+
+## Requirements
+
+- Node.js `^22.18.0` or `>=24.12.0`
+- pnpm available on `PATH` unless using `--no-install`
 
 ## Quick Start
 
