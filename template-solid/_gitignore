@@ -1,0 +1,29 @@
+# Logs
+logs
+*.log
+pnpm-debug.log*
+
+node_modules
+dist
+*.local
+.tanstack
+src/routeTree.gen.ts
+
+# Test artifacts
+coverage
+playwright-report
+test-results
+
+# Editors and operating systems
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Environment files
+.env
+.env.*
+!.env.example

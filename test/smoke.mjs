@@ -23,7 +23,7 @@ function run(command, args, cwd = repoDir) {
 }
 
 try {
-  for (const framework of ['react', 'vue']) {
+  for (const framework of ['react', 'solid', 'vue']) {
     const target = path.join(workspace, `${framework}-app`)
 
     run(process.execPath, [cliPath, target, '--template', framework])
@@ -34,7 +34,7 @@ try {
     assert.match(pkg.packageManager, /^pnpm@\d+\.\d+\.\d+$/)
 
     run(pnpm, ['--dir', target, 'build'])
-    run(pnpm, ['--dir', target, framework === 'react' ? 'test' : 'test:unit'])
+    run(pnpm, ['--dir', target, framework === 'vue' ? 'test:unit' : 'test'])
   }
 } finally {
   rmSync(workspace, { recursive: true, force: true })

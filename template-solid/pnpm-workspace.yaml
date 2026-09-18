@@ -1,0 +1,13 @@
+# Solid 2 packages currently release in lockstep. Keep prerelease packages
+# installable when pnpm's minimumReleaseAge policy is enabled globally.
+minimumReleaseAgeExclude:
+  - solid-js
+  - '@solidjs/*'
+  - '@tanstack/solid-router'
+  - '@tanstack/solid-query'
+
+# TanStack Solid Router 2 RC is Solid 2 compatible, but one of its optional
+# debugger dependencies still publishes a Solid 1-only peer range.
+peerDependencyRules:
+  allowedVersions:
+    solid-js: '>=2.0.0-rc.8 <3.0.0'

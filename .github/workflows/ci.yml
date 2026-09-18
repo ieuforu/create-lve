@@ -70,5 +70,5 @@ jobs:
       - name: Install CLI dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Create, build, and test both templates
+      - name: Create, build, and test all templates
         run: pnpm test:smoke

@@ -48,7 +48,7 @@ test('prints help and version without entering the creation flow', () => {
   assert.equal(versionResult.stdout.trim(), version)
 })
 
-for (const framework of ['react', 'vue']) {
+for (const framework of ['react', 'solid', 'vue']) {
   test(`creates the ${framework} template without installing dependencies`, (t) => {
     const parent = temporaryDirectory(t)
     const target = path.join(parent, `${framework}-starter`)
@@ -61,11 +61,22 @@ for (const framework of ['react', 'vue']) {
     assert.equal(existsSync(path.join(target, '.gitignore')), true)
     assert.equal(existsSync(path.join(target, '_gitignore')), false)
     assert.equal(existsSync(path.join(target, 'node_modules')), false)
+    assert.equal(existsSync(path.join(target, '.tanstack')), false)
+    assert.equal(existsSync(path.join(target, 'playwright-report')), false)
+    assert.equal(existsSync(path.join(target, 'test-results')), false)
 
     const pkg = JSON.parse(readFileSync(path.join(target, 'package.json'), 'utf8'))
     assert.equal(pkg.name, `${framework}-starter`)
     assert.equal(pkg.packageManager, expectedPackageManager)
     assert.equal(pkg.engines.node, '^22.18.0 || >=24.12.0')
+
+    if (framework === 'solid') {
+      const document = readFileSync(path.join(target, 'src', 'Document.tsx'), 'utf8')
+      assert.match(document, /<title>solid-starter<\/title>/)
+      const homeRoute = readFileSync(path.join(target, 'src', 'routes', 'index.tsx'), 'utf8')
+      assert.match(homeRoute, /solid-starter · lve/)
+      assert.doesNotMatch(homeRoute, /__APP_NAME__/)
+    }
   })
 }
 
@@ -116,6 +127,7 @@ test('the npm package contains required files without generated artifacts', () =
   const paths = new Set(files.map((file) => file.path))
   assert.equal(paths.has('LICENSE'), true)
   assert.equal(paths.has('template-react/_gitignore'), true)
+  assert.equal(paths.has('template-solid/_gitignore'), true)
   assert.equal(paths.has('template-vue/_gitignore'), true)
   assert.equal(
     [...paths].some((file) => file.endsWith('pnpm-lock.yaml')),
@@ -123,6 +135,14 @@ test('the npm package contains required files without generated artifacts', () =
   )
   assert.equal(
     [...paths].some((file) => file.includes('/dist/')),
+    false,
+  )
+  assert.equal(
+    [...paths].some((file) => file.includes('/.tanstack/')),
+    false,
+  )
+  assert.equal(
+    [...paths].some((file) => file.includes('playwright-report') || file.includes('test-results')),
     false,
   )
   assert.equal(

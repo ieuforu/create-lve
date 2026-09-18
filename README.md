@@ -10,10 +10,11 @@ pnpm create lve
 
 ## Options
 
-| Template | Description              |
-| -------- | ------------------------ |
-| React 19 | TanStack Router + Vite 8 |
-| Vue 3    | Reka UI + Pinia          |
+| Template     | Description                            |
+| ------------ | -------------------------------------- |
+| React 19     | TanStack Router + React Query + Vite 8 |
+| Solid 2 (RC) | TanStack Router + Solid Query + Vite 8 |
+| Vue 3        | Vue Router + Pinia + Reka UI + Vite 8  |
 
 All templates ship with **Tailwind CSS v4** out of the box.
 
@@ -37,6 +38,9 @@ pnpm create lve my-app --default
 # Choose a template directly
 pnpm create lve my-app --template vue
 
+# Solid 2 RC with TanStack Router and Query
+pnpm create lve my-app --template solid
+
 # Generate files and install dependencies later
 pnpm create lve my-app --template react --no-install
 
@@ -57,12 +61,14 @@ to continue manually.
 
 ## What's Inside
 
-- React 19 / Vue 3
+- React 19 / Solid 2 RC / Vue 3
 - Tailwind CSS v4
 - TypeScript
 - Vite 8
-- React Compiler (via `babel-plugin-react-compiler`)
+- TanStack Router and Query in the React and Solid templates
+- React Compiler (React template)
 - oxfmt + oxlint
+- Vitest
 - pnpm
 
 ## License

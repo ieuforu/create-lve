@@ -53,16 +53,33 @@ async function applyProjectTransform(ctx) {
   if (ctx.pnpmVersion) pkg.packageManager = `pnpm@${ctx.pnpmVersion}`
   await fs.writeJson(pkgPath, pkg, { spaces: 2 })
 
-  const indexPath = path.join(targetDir, 'index.html')
-  if (fs.existsSync(indexPath)) {
-    let indexContent = await fs.readFile(indexPath, 'utf-8')
-    indexContent = indexContent.replace(/<title>.*?<\/title>/, `<title>${ctx.name}</title>`)
-    await fs.writeFile(indexPath, indexContent)
+  const projectFiles = [
+    'index.html',
+    path.join('src', 'Document.tsx'),
+    path.join('src', 'routes', '__root.tsx'),
+    path.join('src', 'routes', 'index.tsx'),
+    path.join('src', 'routes', 'users.$id.tsx'),
+  ]
+  for (const relativePath of projectFiles) {
+    const documentPath = path.join(targetDir, relativePath)
+    if (!fs.existsSync(documentPath)) continue
+    let content = await fs.readFile(documentPath, 'utf-8')
+    content = content.replace(/<title>.*?<\/title>/, `<title>${ctx.name}</title>`)
+    content = content.replaceAll('__APP_NAME__', ctx.name)
+    await fs.writeFile(documentPath, content)
   }
 }
 
 async function cleanupTemplate(ctx) {
-  const toRemove = ['pnpm-lock.yaml', 'node_modules', 'dist']
+  const toRemove = [
+    'pnpm-lock.yaml',
+    'node_modules',
+    'dist',
+    '.tanstack',
+    'coverage',
+    'playwright-report',
+    'test-results',
+  ]
   await Promise.all(toRemove.map((file) => fs.remove(path.join(ctx.targetDir, file))))
 
   try {

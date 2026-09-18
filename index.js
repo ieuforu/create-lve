@@ -15,6 +15,11 @@ import {
 const { version } = fs.readJsonSync(new URL('./package.json', import.meta.url))
 const templates = [
   { value: 'react', label: 'React', hint: 'TanStack Router · React Query · Tailwind CSS' },
+  {
+    value: 'solid',
+    label: 'Solid 2.0 (RC)',
+    hint: 'TanStack Router · Solid Query · Tailwind CSS',
+  },
   { value: 'vue', label: 'Vue', hint: 'Vue Router · Pinia · Reka UI · Tailwind CSS' },
 ]
 const interactive = Boolean(process.stdin.isTTY && process.stdout.isTTY)
@@ -43,7 +48,7 @@ function parseArgs(args) {
   }
   if (positional.length > 1) throw new Error('一次只能创建一个项目，请只提供一个项目目录。')
   if (flags.template !== undefined && !templates.some((t) => t.value === flags.template)) {
-    throw new Error('--template 需要指定 react 或 vue。')
+    throw new Error('--template 需要指定 react、solid 或 vue。')
   }
   return { flags, directory: positional[0] }
 }
@@ -54,7 +59,7 @@ function printHelp() {
 用法：create-lve [项目目录] [选项]
 
   --default           使用默认目录和 React，已提供的目录或模板优先
-  -t, --template <名>  指定 react 或 vue，跳过模板选择
+  -t, --template <名>  指定 react、solid 或 vue，跳过模板选择
   --no-install        只生成项目，稍后手动安装依赖
   -h, --help          查看帮助
   -v, --version       查看版本
@@ -62,6 +67,7 @@ function printHelp() {
 示例：
   pnpm create lve
   pnpm create lve my-app
+  pnpm create lve my-app --template solid
   pnpm create lve my-app --template vue
   pnpm create lve my-app --default --no-install
 
@@ -182,7 +188,9 @@ async function main() {
   if (flags.help) return printHelp()
   if (flags.version) return console.log(version)
   if (!interactive && ((!directory && !flags.default) || (!flags.template && !flags.default))) {
-    throw new Error('当前终端无法交互。请提供项目目录，并使用 --template react|vue 或 --default。')
+    throw new Error(
+      '当前终端无法交互。请提供项目目录，并使用 --template react|solid|vue 或 --default。',
+    )
   }
 
   printIntro()
@@ -246,9 +254,16 @@ async function main() {
       await fs.ensureDir(targetDir)
       await fs.copy(ctx.templateDir, targetDir, {
         filter: (source) =>
-          !['node_modules', 'dist', '.git', 'pnpm-lock.yaml'].includes(
-            path.relative(ctx.templateDir, source).split(path.sep)[0],
-          ),
+          ![
+            'node_modules',
+            'dist',
+            '.git',
+            '.tanstack',
+            'pnpm-lock.yaml',
+            'coverage',
+            'playwright-report',
+            'test-results',
+          ].includes(path.relative(ctx.templateDir, source).split(path.sep)[0]),
       })
       controller.signal.throwIfAborted()
       await cleanupTemplate(ctx)
