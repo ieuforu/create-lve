@@ -23,7 +23,7 @@ function run(command, args, cwd = repoDir) {
 }
 
 try {
-  for (const framework of ['react', 'solid', 'vue']) {
+  for (const framework of ['react', 'vue']) {
     const target = path.join(workspace, `${framework}-app`)
 
     run(process.execPath, [cliPath, target, '--template', framework])

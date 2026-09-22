@@ -1,12 +1,11 @@
 {
   "name": "create-lve",
   "version": "0.6.68",
-  "description": "A fast, opinionated frontend project scaffolder for React, Solid, and Vue.",
+  "description": "A fast, opinionated frontend project scaffolder for React, and Vue.",
   "keywords": [
     "create",
     "react",
     "scaffolding",
-    "solid",
     "tailwindcss",
     "typescript",
     "vite",
@@ -28,7 +27,6 @@
     "index.js",
     "config.js",
     "template-react",
-    "template-solid",
     "template-vue",
     "!template-*/.tanstack",
     "!template-*/coverage",
@@ -59,7 +57,6 @@
     "picocolors": "^1.1.1"
   },
   "devDependencies": {
-    "eslint-plugin-solid": "~0.18.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
     "oxfmt": "^0.46.0",
