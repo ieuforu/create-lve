@@ -8,7 +8,9 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build && tsc -b",
+    "build": "tsc-ts -b && vite build",
+    "build:ts": "tsc -b && vite build",
+    "typecheck": "tsc-ts -p tsconfig.json --noEmit",
     "fmt": "oxfmt",
     "lint": "oxlint",
     "preview": "vite preview",
@@ -52,6 +54,7 @@
     "oxfmt": "^0.67.0",
     "oxlint": "^1.82.0",
     "tailwindcss": "^4.3.3",
+    "tsc-ts": "^0.0.4",
     "typescript": "~7.0.2",
     "vite": "^8.2.2",
     "vitest": "^4.1.10"
