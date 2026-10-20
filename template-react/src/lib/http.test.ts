@@ -138,15 +138,14 @@ describe('transport errors and cancellation', () => {
   it('preserves the abort reason for an already-aborted signal', async () => {
     const controller = new AbortController()
     controller.abort()
-    const fetch = vi.fn().mockImplementation(async (request: Request) => {
-      request.signal.throwIfAborted()
-      return jsonResponse({ id: 1 })
-    })
+
+    const fetch = vi.fn()
 
     await expect(apiGet('users', { ...options, fetch, signal: controller.signal })).rejects.toBe(
       controller.signal.reason,
     )
-    expect(fetch).toHaveBeenCalledTimes(1)
+
+    expect(fetch).not.toHaveBeenCalled()
   })
 
   it('preserves cancellation while a request is in flight', async () => {
