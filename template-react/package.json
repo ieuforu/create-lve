@@ -10,7 +10,7 @@
     "dev": "vite",
     "build": "tsc-ts -b && vite build",
     "build:ts": "tsc -b && vite build",
-    "typecheck": "tsc-ts -p tsconfig.json --noEmit",
+    "typecheck": "tsc-ts -b --noEmit",
     "fmt": "oxfmt",
     "lint": "oxlint",
     "preview": "vite preview",
