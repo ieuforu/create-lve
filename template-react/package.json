@@ -8,10 +8,8 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc-ts -b && vite build",
-    "build:tsrs": "tsrs -b && vite build",
-    "build:ts": "tsc -b && vite build",
-    "typecheck": "tsc-ts -b --noEmit",
+    "build": "tsrs -b && vite build",
+    "typecheck": "tsrs -b --noEmit",
     "fmt": "oxfmt",
     "lint": "oxlint",
     "preview": "vite preview",
@@ -55,9 +53,8 @@
     "oxlint": "^1.82.0",
     "shadcn": "^4.13.0",
     "tailwindcss": "^4.3.3",
-    "tsc-ts": "^0.0.4",
     "tsrs": "0.18.0-ts7.1.0-dev.20260929",
-    "typescript": "~7.0.2",
+    "typescript": "~7.1.0-beta",
     "vite": "^8.2.2",
     "vitest": "^4.1.10"
   },
