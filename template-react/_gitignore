@@ -15,7 +15,7 @@ dist-ssr
 src/routeTree.gen.ts
 
 # Editor directories and files
-!vscode/settings.json
+!.vscode/settings.json
 !.vscode/extensions.json
 .idea
 .DS_Store
@@ -31,3 +31,5 @@ src/routeTree.gen.ts
 !.env.example
 
 routeTree.gen.ts
+
+coverage
