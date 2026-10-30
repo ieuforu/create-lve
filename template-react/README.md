@@ -62,10 +62,13 @@ types, and the component registry in `ModalRenderer`.
 
 ## Homepage and examples
 
-The default `/` page is a small component showcase. Edit the copy and layout in
-`src/features/marketing/components/HomePage.tsx` and its sibling showcase components;
-visual styling is scoped in `src/features/marketing/styles/landing.css`.
-The form, buttons, cards and global confirmation dialog use the shared UI components.
+The default `/` page is lve's personal starting point: bold typography, a blue
+bracket, and a small interactive project preview. Edit the headline in
+`src/features/marketing/components/HomePage.tsx`, the shared header and footer in
+`MarketingLayout.tsx`, and the project example in `ProjectPlayground.tsx`.
+Visual styling is scoped in `src/features/marketing/styles/landing.css`.
+The example uses the shared Input, Label, Button and global confirmation dialog.
+Naming a project updates only this visit's preview; it does not create files.
 
 Public examples live at `/examples` (Dashboard), `/examples/users` (virtual list
 and user details), and `/examples/settings`. They reuse the existing feature modules

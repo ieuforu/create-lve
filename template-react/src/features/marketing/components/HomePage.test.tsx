@@ -37,22 +37,21 @@ async function openPage(path = '/') {
   return router
 }
 
-it('connects the homepage form, card and global confirmation dialog', async () => {
+it('connects the project naming example and global confirmation dialog', async () => {
   const user = userEvent.setup()
   await openPage()
-  expect(await screen.findByRole('heading', { level: 1 })).toHaveTextContent('A fresh start.')
+  expect(await screen.findByRole('heading', { level: 1 })).toHaveTextContent('先写一点，世界稍后。')
   const name = screen.getByRole('textbox', { name: 'Project name' })
-  expect(screen.getByRole('button', { name: 'Save' })).toBeDisabled()
+  await user.clear(name)
+  expect(screen.getByRole('button', { name: 'Create' })).toBeDisabled()
+  await user.type(name, '   ')
+  expect(screen.getByRole('button', { name: 'Create' })).toBeDisabled()
+  await user.clear(name)
   await user.type(name, 'A little idea')
-  await user.click(screen.getByRole('button', { name: 'Save' }))
+  await user.click(screen.getByRole('button', { name: 'Create' }))
   expect(screen.getByText('A little idea')).toBeVisible()
-  await user.click(screen.getByRole('button', { name: 'Favorite example' }))
-  expect(screen.getByRole('button', { name: 'Favorite example' })).toHaveAttribute(
-    'aria-pressed',
-    'true',
-  )
-  await user.click(screen.getByRole('button', { name: 'Open dialog' }))
-  const dialog = await screen.findByRole('dialog', { name: 'Ready to continue?' })
+  await user.click(screen.getByRole('button', { name: 'Open A little idea project preview' }))
+  const dialog = await screen.findByRole('dialog', { name: 'Start A little idea?' })
   await user.click(within(dialog).getByRole('button', { name: 'Confirm' }))
   expect(await screen.findByText('Example confirmed.')).toBeVisible()
 })
@@ -61,7 +60,13 @@ it('opens existing Users, detail, Dashboard and Settings examples without loggin
   const user = userEvent.setup()
   window.localStorage.clear()
   const router = await openPage()
-  await user.click(await screen.findByRole('link', { name: 'Explore Users virtual list' }))
+  await user.click(await screen.findByRole('link', { name: '打开示例' }))
+  expect(await screen.findByRole('heading', { name: 'Overview' })).toBeVisible()
+  await user.click(
+    within(screen.getByRole('navigation', { name: 'Examples' })).getByRole('link', {
+      name: 'Users',
+    }),
+  )
   expect(await screen.findByRole('heading', { name: 'Users' })).toBeVisible()
   expect(await screen.findByText('100,000 people')).toBeVisible()
   expect(router.state.location.pathname).toBe('/examples/users')

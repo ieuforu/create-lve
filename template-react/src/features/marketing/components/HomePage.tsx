@@ -1,37 +1,65 @@
-import { ArrowRight } from 'lucide-react'
+import { Link } from '@tanstack/react-router'
+import { ArrowUpRight } from 'lucide-react'
 import { buttonVariants } from '#/components/ui/button'
-import { ComponentShowcase } from './ComponentShowcase'
-import { ExampleShowcase } from './ExampleShowcase'
+import { ProjectPlayground } from './ProjectPlayground'
 
 export function Home() {
   return (
     <>
-      <section className="landing-hero">
-        <p className="landing-eyebrow">
-          <span />
-          React / Components / Examples
-        </p>
-        <h1>
-          A fresh start.
-          <br />
-          <em>Ready to build.</em>
-        </h1>
-        <p className="landing-description">
-          Your React template, brought together.
-          <br />
-          Explore the components. Try an example. Make it yours.
-        </p>
-        <div className="landing-actions">
-          <a href="#components" className={buttonVariants({ size: 'lg' })}>
-            Explore components <ArrowRight aria-hidden="true" />
-          </a>
-          <a href="#examples" className={buttonVariants({ variant: 'outline', size: 'lg' })}>
-            Browse examples
-          </a>
+      <section className="lve-hero" aria-labelledby="lve-title">
+        <div className="lve-hero-copy">
+          <p className="lve-section-index" aria-hidden="true">
+            <span>01</span>
+            <span className="lve-index-rule" />
+          </p>
+          <h1 id="lve-title" lang="zh-CN">
+            <span>先写一点，</span>
+            <span>世界稍后。</span>
+          </h1>
+          <p className="lve-description" lang="zh-CN">
+            <span>React、TypeScript，</span>
+            <span>以及一些刚刚好的默认值。</span>
+          </p>
+          <Link
+            to="/examples"
+            className={buttonVariants({ size: 'lg', className: 'lve-primary-link' })}
+            lang="zh-CN"
+          >
+            打开示例 <ArrowUpRight aria-hidden="true" />
+          </Link>
+          <p className="lve-stack">React 19 / TypeScript / Vite</p>
+        </div>
+        <div className="lve-hero-aside" aria-hidden="true">
+          <svg className="lve-bracket" viewBox="0 0 114 480" preserveAspectRatio="none" fill="none">
+            <path d="M113 1H1v478h112v-27H59V28h54V1Z" />
+          </svg>
+          <div className="lve-margin-notes">
+            <p>
+              LVE
+              <br />/ 001
+              <br />—
+              <br />
+              <br />
+              SIMPLE
+              <br />
+              DEFAULTS.
+              <br />
+              MORE
+              <br />
+              BUILDING.
+            </p>
+            <p>
+              FOR
+              <br />
+              INDEPENDENT
+              <br />
+              DEVELOPERS
+              <br />—
+            </p>
+          </div>
         </div>
       </section>
-      <ComponentShowcase />
-      <ExampleShowcase />
+      <ProjectPlayground />
     </>
   )
 }

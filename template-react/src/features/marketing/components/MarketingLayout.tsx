@@ -1,49 +1,42 @@
 import { Link, Outlet } from '@tanstack/react-router'
-import { ArrowUpRight, Atom } from 'lucide-react'
+import { ArrowUpRight } from 'lucide-react'
 import '../styles/landing.css'
 
 export function MarketingLayout() {
   return (
-    <div className="starter-home">
-      <div className="landing-page">
-        <a className="landing-skip" href="#main">
+    <div className="lve-site">
+      <div className="lve-page">
+        <a className="lve-skip" href="#main">
           Skip to content
         </a>
-        <header className="landing-topbar">
-          <Link to="/" className="landing-brand">
-            <Atom aria-hidden="true" />
-            React Starter
+        <header className="lve-topbar">
+          <Link to="/" className="lve-wordmark" aria-label="lve home">
+            lve
           </Link>
-          <nav aria-label="Main navigation" className="landing-nav">
-            <Link to="/" hash="components">
-              Components
-            </Link>
-            <Link to="/" hash="examples">
-              Examples
-            </Link>
-            <a
-              className="landing-docs"
-              href="https://ui.shadcn.com/docs"
-              target="_blank"
-              rel="noreferrer"
-            >
-              shadcn/ui <ArrowUpRight aria-hidden="true" />
+          <p className="lve-brand-note">
+            A PERSONAL REACT STARTER
+            <br />
+            FOR PEOPLE WHO BUILD THINGS.
+          </p>
+          <nav aria-label="Main navigation" className="lve-nav">
+            <Link to="/examples">Examples</Link>
+            <a href="https://github.com/ieuforu/create-lve" target="_blank" rel="noreferrer">
+              GitHub <ArrowUpRight aria-hidden="true" />
             </a>
           </nav>
         </header>
-        <main id="main">
+        <main id="main" tabIndex={-1}>
           <Outlet />
         </main>
-        <footer className="landing-footer">
-          <span>React Starter · A good place to begin.</span>
-          <div>
-            <a href="https://react.dev/learn" target="_blank" rel="noreferrer">
-              React docs ↗
-            </a>
-            <a href="https://ui.shadcn.com/docs" target="_blank" rel="noreferrer">
-              shadcn/ui ↗
-            </a>
+        <footer className="lve-footer">
+          <div className="lve-footer-signature">
+            <Link to="/" className="lve-footer-wordmark" aria-label="lve home">
+              lve
+            </Link>
+            <span aria-hidden="true">—</span>
+            <span>Made to make things.</span>
           </div>
+          <span>© {new Date().getFullYear()} lve</span>
         </footer>
       </div>
     </div>
