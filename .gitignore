@@ -12,3 +12,4 @@ template-*/pnpm-lock.yaml
 template-*/.tanstack/
 template-*/playwright-report/
 template-*/test-results/
+template-react/src/routeTree.gen.ts

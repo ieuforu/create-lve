@@ -1,10 +1,11 @@
 import { afterEach, describe, expect, expectTypeOf, it, vi } from 'vitest'
 import { HTTPError, TimeoutError, type Options } from 'ky'
 import { ApiError, NetworkError, apiDelete, apiGet, apiPost, apiPut, http } from './http'
+import { queryClient } from './queryClient'
 
 const options: Options = {
   prefix: 'https://example.test/api',
-  retry: { delay: () => 0 },
+  retry: { limit: 1, methods: ['get'], statusCodes: [408, 502, 503, 504], delay: () => 0 },
 }
 const methods = [
   { method: 'GET', request: apiGet },
@@ -63,6 +64,30 @@ describe('JSON parsing', () => {
 })
 
 describe('HTTP errors and retries', () => {
+  it('lets Query own retries without multiplying transport attempts', async () => {
+    const fetch = vi.fn().mockImplementation(async () => jsonResponse({ message: 'Busy' }, 503))
+    try {
+      await expect(
+        queryClient.fetchQuery({
+          queryKey: ['retry-contract'],
+          queryFn: ({ signal }) => apiGet('users', { prefix: options.prefix, fetch, signal }),
+          retryDelay: 0,
+        }),
+      ).rejects.toBeInstanceOf(ApiError)
+      expect(fetch).toHaveBeenCalledTimes(2)
+    } finally {
+      queryClient.clear()
+    }
+  })
+
+  it('does not retry standalone requests unless explicitly configured', async () => {
+    const fetch = vi.fn().mockImplementation(async () => jsonResponse({ message: 'Busy' }, 503))
+    await expect(apiGet('users', { prefix: options.prefix, fetch })).rejects.toBeInstanceOf(
+      ApiError,
+    )
+    expect(fetch).toHaveBeenCalledTimes(1)
+  })
+
   it('retries a transient GET 503 before returning the successful response', async () => {
     const fetch = vi
       .fn()
@@ -213,7 +238,7 @@ it('preserves the API prefix, bearer token, JSON accept header, and request body
   })
   await apiPost('users', { ...options, fetch, json: { name: 'Ada' } })
 
-  const request = fetch.mock.calls[0][0] as Request
+  const request = fetch.mock.calls[0]?.[0] as Request
   expect(request.url).toBe('https://example.test/api/users')
   expect(request.headers.get('Authorization')).toBe('Bearer test-token')
   expect(request.headers.get('Accept')).toBe('application/json')

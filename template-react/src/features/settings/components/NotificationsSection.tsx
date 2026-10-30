@@ -1,3 +1,5 @@
+import { Switch } from '#/components/ui/switch'
+import { Label } from '#/components/ui/label'
 import { SectionCard } from './settings-ui'
 
 export function NotificationsSection() {
@@ -10,23 +12,22 @@ export function NotificationsSection() {
             { label: 'Security alerts', desc: 'Important security notifications', on: true },
             { label: 'Marketing', desc: 'Tips, offers, and promotions', on: false },
             { label: 'Weekly digest', desc: 'Summary of your account activity', on: true },
-          ].map((item) => (
+          ].map((item, index) => (
             <div key={item.label} className="flex items-center justify-between">
               <div>
-                <p className="text-[13px] font-medium">{item.label}</p>
-                <p className="text-[12px] text-muted-foreground/60">{item.desc}</p>
+                <Label htmlFor={`notification-${index}`}>{item.label}</Label>
+                <p
+                  id={`notification-${index}-description`}
+                  className="text-[12px] text-muted-foreground/60"
+                >
+                  {item.desc}
+                </p>
               </div>
-              <div
-                className={`h-5 w-9 cursor-pointer rounded-full p-0.5 transition-colors ${
-                  item.on ? 'bg-foreground' : 'bg-foreground/20'
-                }`}
-              >
-                <div
-                  className={`h-4 w-4 rounded-full bg-background shadow-sm transition-transform ${
-                    item.on ? 'translate-x-4' : 'translate-x-0'
-                  }`}
-                />
-              </div>
+              <Switch
+                id={`notification-${index}`}
+                aria-describedby={`notification-${index}-description`}
+                defaultChecked={item.on}
+              />
             </div>
           ))}
         </div>

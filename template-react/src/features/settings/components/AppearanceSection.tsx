@@ -1,3 +1,4 @@
+import { Switch } from '#/components/ui/switch'
 import { SectionCard, FieldGroup, Field } from './settings-ui'
 
 export function AppearanceSection() {
@@ -38,6 +39,7 @@ export function AppearanceSection() {
               className={`h-8 w-8 rounded-full transition-transform hover:scale-110 ${
                 i === 0 ? 'ring-2 ring-offset-2 ring-foreground' : ''
               }`}
+              aria-label={`Accent color ${i + 1}`}
               style={{ background: c }}
             />
           ))}
@@ -46,11 +48,9 @@ export function AppearanceSection() {
 
       <SectionCard title="Sidebar" desc="Customize sidebar behavior">
         <FieldGroup>
-          <Field label="Compact mode" hint="Show fewer items in sidebar">
+          <Field htmlFor="compact-mode" label="Compact mode" hint="Show fewer items in sidebar">
             <div className="flex justify-end">
-              <div className="h-5 w-9 rounded-full bg-foreground/20 p-0.5">
-                <div className="h-4 w-4 rounded-full bg-foreground shadow-sm" />
-              </div>
+              <Switch id="compact-mode" aria-describedby="compact-mode-description" />
             </div>
           </Field>
         </FieldGroup>

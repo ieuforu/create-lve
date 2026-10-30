@@ -159,91 +159,125 @@ const statuses: User['status'][] = ['active', 'inactive', 'suspended']
 const roleWeights = [0.08, 0.32, 0.6]
 const statusWeights = [0.75, 0.18, 0.07]
 
-function weightedPick<T>(items: T[], weights: number[], rand: () => number): T {
-  const r = rand()
-  let sum = 0
-  for (let i = 0; i < weights.length; i++) {
-    sum += weights[i]
-    if (r < sum) return items[i]
-  }
-  return items[items.length - 1]
+function pick<T>(items: readonly T[], rand: () => number): T {
+  const item = items[Math.floor(rand() * items.length)]
+  if (item === undefined) throw new Error('Cannot pick from an empty fixture')
+  return item
 }
 
-function generateUser(id: number, rand: () => number): User {
-  const firstName = firstNames[Math.floor(rand() * firstNames.length)]
-  const lastName = lastNames[Math.floor(rand() * lastNames.length)]
-  const name = `${firstName} ${lastName}`
-  const email = `${firstName.toLowerCase()}.${lastName.toLowerCase()}${id}@example.com`
+function weightedPick<T>(items: readonly T[], weights: readonly number[], rand: () => number): T {
+  const r = rand()
+  let sum = 0
+  for (const [index, item] of items.entries()) {
+    sum += weights[index] ?? 0
+    if (r < sum) return item
+  }
+  const last = items.at(-1)
+  if (last === undefined) throw new Error('Cannot pick from an empty fixture')
+  return last
+}
 
-  // Random date in last 3 years
-  const now = Date.now()
+function userProfile(id: number, rand: () => number) {
+  const firstName = pick(firstNames, rand)
+  const lastName = pick(lastNames, rand)
+  return {
+    name: `${firstName} ${lastName}`,
+    email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}${id}@example.com`,
+    department: pick(departments, rand),
+  }
+}
+
+const referenceTime = Date.now()
+const TOTAL = 100_000
+
+// Generate only requested rows. Per-ID seeds keep list and detail data consistent.
+function generateUser(id: number): User {
+  const rand = mulberry32(id)
+  const profile = userProfile(id, rand)
   const threeYears = 3 * 365 * 24 * 60 * 60 * 1000
-  const joinTimestamp = now - Math.floor(rand() * threeYears)
-  const lastActiveTimestamp = joinTimestamp + Math.floor(rand() * (now - joinTimestamp))
+  const joinTimestamp = referenceTime - Math.floor(rand() * threeYears)
+  const lastActiveTimestamp = joinTimestamp + Math.floor(rand() * (referenceTime - joinTimestamp))
 
   return {
     id,
-    name,
-    email,
+    ...profile,
     role: weightedPick(roles, roleWeights, rand),
     status: weightedPick(statuses, statusWeights, rand),
     avatar: `https://api.dicebear.com/9.x/notionists/svg?seed=${id}`,
-    department: departments[Math.floor(rand() * departments.length)],
-    joinDate: new Date(joinTimestamp).toISOString().split('T')[0],
-    lastActive: new Date(lastActiveTimestamp).toISOString().split('T')[0],
-    location: locations[Math.floor(rand() * locations.length)],
-    bio: bios[Math.floor(rand() * bios.length)],
+    joinDate: new Date(joinTimestamp).toISOString().slice(0, 10),
+    lastActive: new Date(lastActiveTimestamp).toISOString().slice(0, 10),
+    location: pick(locations, rand),
+    bio: pick(bios, rand),
   }
 }
 
-// Pre-generate all 100k users
-const TOTAL = 100_000
-const users: User[] = new Array(TOTAL)
-const rand = mulberry32(42)
-for (let i = 0; i < TOTAL; i++) {
-  users[i] = generateUser(i + 1, rand)
+function delay(ms: number, signal?: AbortSignal): Promise<void> {
+  signal?.throwIfAborted()
+  return new Promise((resolve, reject) => {
+    const abort = () => {
+      clearTimeout(timer)
+      reject(signal?.reason)
+    }
+    const timer = setTimeout(() => {
+      signal?.removeEventListener('abort', abort)
+      resolve()
+    }, ms)
+    signal?.addEventListener('abort', abort, { once: true })
+  })
 }
 
-// Simulate network delay
-function delay(ms: number) {
-  return new Promise((r) => setTimeout(r, ms))
+// Build a lightweight text index only when searching, yielding so typing stays responsive.
+const searchIndex: string[] = []
+async function matchingIds(search: string, signal?: AbortSignal) {
+  const query = search.trim().toLowerCase()
+  if (!query) return undefined
+  const matches: number[] = []
+  for (let index = 0; index < TOTAL; index++) {
+    if (index % 2_000 === 0) await delay(0, signal)
+    let text = searchIndex[index]
+    if (text === undefined) {
+      const profile = userProfile(index + 1, mulberry32(index + 1))
+      text = `${profile.name} ${profile.email} ${profile.department}`.toLowerCase()
+      searchIndex[index] = text
+    }
+    if (text.includes(query)) matches.push(index + 1)
+  }
+  return matches
 }
 
 export async function fetchUsers({
   page = 1,
   pageSize = 50,
   search = '',
+  signal,
 }: {
   page?: number
   pageSize?: number
   search?: string
+  signal?: AbortSignal
 }) {
-  await delay(200 + Math.random() * 200)
-
-  let filtered = users
-  if (search) {
-    const q = search.toLowerCase()
-    filtered = users.filter(
-      (u) =>
-        u.name.toLowerCase().includes(q) ||
-        u.email.toLowerCase().includes(q) ||
-        u.department.toLowerCase().includes(q),
-    )
-  }
-
+  await delay(200, signal)
+  const ids = await matchingIds(search, signal)
+  signal?.throwIfAborted()
+  const total = ids?.length ?? TOTAL
   const start = (page - 1) * pageSize
+  const pageIds = ids
+    ? ids.slice(start, start + pageSize)
+    : Array.from(
+        { length: Math.max(0, Math.min(pageSize, total - start)) },
+        (_, index) => start + index + 1,
+      )
   return {
-    data: filtered.slice(start, start + pageSize),
-    total: filtered.length,
+    data: pageIds.map(generateUser),
+    total,
     page,
     pageSize,
-    totalPages: Math.ceil(filtered.length / pageSize),
+    totalPages: Math.ceil(total / pageSize),
   }
 }
 
-export async function fetchUserById(id: number) {
-  await delay(150 + Math.random() * 100)
-  const user = users.find((u) => u.id === id)
-  if (!user) throw new Error(`User ${id} not found`)
-  return user
+export async function fetchUserById(id: number, signal?: AbortSignal) {
+  await delay(150, signal)
+  if (!Number.isSafeInteger(id) || id < 1 || id > TOTAL) throw new Error(`User ${id} not found`)
+  return generateUser(id)
 }

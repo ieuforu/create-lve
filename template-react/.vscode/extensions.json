@@ -1,3 +1,7 @@
 {
-  "recommendations": ["TypeScriptTeam.native-preview"]
+  "recommendations": [
+    "TypeScriptTeam.native-preview",
+    "oxc.oxc-vscode",
+    "bradlc.vscode-tailwindcss"
+  ]
 }

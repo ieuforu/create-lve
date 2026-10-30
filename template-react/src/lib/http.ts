@@ -1,4 +1,4 @@
-import { getAuthToken } from '#/lib/auth.ts'
+import { getAuthToken } from '#/lib/session'
 import ky, { isHTTPError, type KyInstance, type Options } from 'ky'
 
 export { NetworkError, TimeoutError } from 'ky'
@@ -23,7 +23,8 @@ const API_PREFIX = import.meta.env.VITE_API_URL ?? '/api'
 export const http: KyInstance = ky.create({
   prefix: API_PREFIX,
   timeout: 15_000,
-  retry: { limit: 1, methods: ['get'], statusCodes: [408, 502, 503, 504] },
+  // Query owns retries; standalone callers can opt in through request options.
+  retry: 0,
   // An empty successful response is valid; malformed non-empty JSON must still fail.
   parseJson: (text) => (text === '' ? undefined : JSON.parse(text)),
   hooks: {

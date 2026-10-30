@@ -2,7 +2,7 @@
 
 ## Tech Stack
 
-- **Core**: React 19 (React Compiler enabled), TypeScript 7 (`tsc-ts` / `tsrs`)
+- **Core**: React 19 (React Compiler enabled), TypeScript 7 (`tsrs`, with matching `tsc` for compatibility checks)
 - **Build & Tooling**: Vite 8 (Rolldown), Oxlint (`pnpm lint`), Oxfmt (`pnpm fmt`), Vitest (`pnpm test`)
 - **UI & Styling**: `@base-ui/react`, Tailwind CSS v4, CVA (`class-variance-authority`), `tw-animate-css`, Lucide Icons (`lucide-react`)
 - **Routing**: `@tanstack/react-router` (File-based routing)
@@ -25,18 +25,24 @@
 
 - **MUST** use `@base-ui/react` for interactive primitives (Dialog, Popover, Menu, etc.). **NEVER** import `@radix-ui/*`.
 - Style component states using Base UI `data-*` attributes (e.g., `data-[open]:...`, `data-[disabled]:...`, `data-[highlighted]:...`).
-- Rely on native browser capabilities (`Popover` API, `<dialog>`, CSS Anchor Positioning) exposed by Base UI rather than JS positioning hacks.
+- Use Base UI's documented positioning, focus, and dismissal APIs rather than reimplementing interactions.
 
 ### 4. State Management Hierarchy
 
-1. **Server State**: Always use `@tanstack/react-query` + `#/lib/http` (`ky`). Define reusable `queryOptions` in `src/features/<domain>/queries.ts`.
+1. **Server State**: Use `@tanstack/react-query` + `#/lib/http` (`ky`) for real APIs. Local examples use cancellable mock adapters. Define reusable query options in `src/features/<domain>/queries.ts`; reuse them in route loaders and components. Query owns retries; Ky retries are disabled by default. Forward the query's `signal` to the adapter.
 2. **URL State**: Use `@tanstack/react-router` typed Search Params for pagination, filters, sorting, and active tabs.
 3. **Client UI State**: Use `jotai` atoms (`src/stores/`) strictly for ephemeral cross-component client state (e.g., global modals).
-4. **React Compiler**: Do **NOT** manually wrap components or hooks with `useMemo`, `useCallback`, or `React.memo` unless explicitly debugging a reference equality edge case. `babel-plugin-react-compiler` handles memoization automatically.
+4. **React Compiler**: Let the Compiler handle new memoization. Preserve intentional existing memoization until validated. Document exceptions: `UsersPage` uses `"use no memo"` for TanStack Virtual's mutable instance and caches its flattened pages; modal action callbacks stay stable for uncompiled consumers. Keep any lint suppression local and explain it.
+5. **Sessions**: `lib/session.ts` owns mock token storage. `lib/auth.ts` owns routing guards. The HTTP client must not import routing guards.
 
 ### 5. Commands & Verification
 
 - Format code: `pnpm fmt` (`oxfmt`)
 - Lint code: `pnpm lint` (`oxlint`)
-- Typecheck: `pnpm typecheck` (`tsc-ts -b --noEmit`)
+- Typecheck: `pnpm typecheck` (generate routes, then `tsrs -b --noEmit`)
+- Compiler compatibility: `pnpm typecheck:ts` (matching TypeScript baseline)
 - Run tests: `pnpm test` (`vitest run`)
+- Full checks: `pnpm check`
+- Production browser checks: `pnpm exec playwright install chromium`, then `pnpm test:e2e`
+- Never edit or commit `src/routeTree.gen.ts`. Route generation runs explicitly before type checking; Vite also regenerates it during development.
+- Keep the exact TypeScript/tsrs baseline and Router plugin/generator pair coordinated when upgrading. Stable application dependencies retain normal semver ranges.

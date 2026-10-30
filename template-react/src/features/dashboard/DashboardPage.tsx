@@ -1,10 +1,10 @@
 import { stats, chartData } from './mock'
 import { ArrowUpRight, ArrowDownRight } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
-import { useModal } from '#/stores/modal.store'
+import { useModalActions } from '#/stores/modal.store'
 
 export function DashboardHomePage() {
-  const { open } = useModal()
+  const { open } = useModalActions()
 
   return (
     <div>

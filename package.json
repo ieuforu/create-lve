@@ -34,6 +34,7 @@
     "!template-*/pnpm-lock.yaml",
     "!template-*/playwright-report",
     "!template-*/test-results",
+    "!template-react/src/routeTree.gen.ts",
     "!**/node_modules"
   ],
   "type": "module",
@@ -59,8 +60,8 @@
   "devDependencies": {
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
-    "oxfmt": "^0.46.0",
-    "oxlint": "^1.61.0"
+    "oxfmt": "^0.67.0",
+    "oxlint": "^1.90.0"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,mjs,cjs}": [
