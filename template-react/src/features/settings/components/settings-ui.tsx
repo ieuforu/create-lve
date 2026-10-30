@@ -1,4 +1,5 @@
 import React from 'react'
+import { Label } from '#/components/ui/label'
 
 export function SectionCard({
   title,
@@ -28,27 +29,31 @@ export function Field({
   label,
   children,
   hint,
+  htmlFor,
 }: {
   label: string
   children: React.ReactNode
   hint?: string
+  htmlFor?: string
 }) {
   return (
-    <div className="flex items-start justify-between gap-8">
+    <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-8">
       <div className="pt-2">
-        <label className="text-[13px] font-medium">{label}</label>
-        {hint && <p className="mt-0.5 text-[12px] text-muted-foreground/60">{hint}</p>}
+        {htmlFor ? (
+          <Label htmlFor={htmlFor}>{label}</Label>
+        ) : (
+          <span className="text-sm font-medium">{label}</span>
+        )}
+        {hint && (
+          <p
+            id={htmlFor ? `${htmlFor}-description` : undefined}
+            className="mt-0.5 text-[12px] text-muted-foreground/60"
+          >
+            {hint}
+          </p>
+        )}
       </div>
-      <div className="w-72 shrink-0">{children}</div>
+      <div className="w-full sm:w-72 sm:shrink-0">{children}</div>
     </div>
-  )
-}
-
-export function Input({ ...props }: React.InputHTMLAttributes<HTMLInputElement>) {
-  return (
-    <input
-      {...props}
-      className="flex h-9 w-full rounded-lg border border-border/60 bg-background px-3 text-[13px] outline-none transition-all placeholder:text-muted-foreground/40 focus:border-foreground/30 focus:ring-2 focus:ring-foreground/[0.06]"
-    />
   )
 }

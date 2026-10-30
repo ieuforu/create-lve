@@ -1,18 +1,34 @@
-import { SectionCard, FieldGroup, Field, Input } from './settings-ui'
+import { Input } from '#/components/ui/input'
+import { SectionCard, FieldGroup, Field } from './settings-ui'
 
 export function SecuritySection() {
   return (
     <div className="space-y-4">
       <SectionCard title="Change password" desc="Update your account password">
         <FieldGroup>
-          <Field label="Current password">
-            <Input type="password" placeholder="••••••••" />
+          <Field htmlFor="current-password" label="Current password">
+            <Input
+              id="current-password"
+              type="password"
+              autoComplete="current-password"
+              placeholder="••••••••"
+            />
           </Field>
-          <Field label="New password">
-            <Input type="password" placeholder="At least 8 characters" />
+          <Field htmlFor="new-password" label="New password">
+            <Input
+              id="new-password"
+              type="password"
+              autoComplete="new-password"
+              placeholder="At least 8 characters"
+            />
           </Field>
-          <Field label="Confirm password">
-            <Input type="password" placeholder="Repeat new password" />
+          <Field htmlFor="confirm-password" label="Confirm password">
+            <Input
+              id="confirm-password"
+              type="password"
+              autoComplete="new-password"
+              placeholder="Repeat new password"
+            />
           </Field>
         </FieldGroup>
       </SectionCard>

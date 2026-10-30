@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import type { ConfirmModalData } from '#/stores/modal.store'
+import type { ConfirmModalData, ModalProps } from '#/stores/modal.store'
 import { Button } from '#/components/ui/button'
 import {
   Dialog,
@@ -10,12 +10,7 @@ import {
   DialogTitle,
 } from '#/components/ui/dialog'
 
-interface ConfirmModalProps {
-  data?: ConfirmModalData
-  onClose: () => void
-}
-
-export function ConfirmModal({ data, onClose }: ConfirmModalProps) {
+export function ConfirmModal({ data, open, onClose }: ModalProps<ConfirmModalData>) {
   const [pending, setPending] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const submitting = useRef(false)
@@ -41,10 +36,10 @@ export function ConfirmModal({ data, onClose }: ConfirmModalProps) {
 
   return (
     <Dialog
-      open
+      open={open}
       disablePointerDismissal={pending}
-      onOpenChange={(open, details) => {
-        if (open) return
+      onOpenChange={(nextOpen, details) => {
+        if (nextOpen || !open) return
         if (submitting.current) details.cancel()
         else onClose()
       }}

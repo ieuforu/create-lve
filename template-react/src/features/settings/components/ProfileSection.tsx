@@ -1,4 +1,5 @@
-import { SectionCard, FieldGroup, Field, Input } from './settings-ui'
+import { Input } from '#/components/ui/input'
+import { SectionCard, FieldGroup, Field } from './settings-ui'
 
 export function ProfileSection() {
   return (
@@ -15,17 +16,23 @@ export function ProfileSection() {
               </button>
             </div>
           </Field>
-          <Field label="Full name">
-            <Input defaultValue="John Doe" />
+          <Field htmlFor="profile-name" label="Full name">
+            <Input id="profile-name" defaultValue="John Doe" />
           </Field>
-          <Field label="Email" hint="Used for sign-in and notifications">
-            <Input defaultValue="john@example.com" type="email" />
+          <Field htmlFor="profile-email" label="Email" hint="Used for sign-in and notifications">
+            <Input
+              id="profile-email"
+              aria-describedby="profile-email-description"
+              defaultValue="john@example.com"
+              type="email"
+            />
           </Field>
-          <Field label="Username">
-            <Input defaultValue="johndoe" />
+          <Field htmlFor="profile-username" label="Username">
+            <Input id="profile-username" defaultValue="johndoe" />
           </Field>
-          <Field label="Bio">
+          <Field htmlFor="profile-bio" label="Bio">
             <textarea
+              id="profile-bio"
               defaultValue="Building cool things."
               rows={3}
               className="flex w-full resize-none rounded-lg border border-border/60 bg-background px-3 py-2 text-[13px] outline-none transition-all placeholder:text-muted-foreground/40 focus:border-foreground/30 focus:ring-2 focus:ring-foreground/[0.06]"

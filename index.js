@@ -245,17 +245,22 @@ async function main() {
       controller.signal.throwIfAborted()
       await fs.ensureDir(targetDir)
       await fs.copy(ctx.templateDir, targetDir, {
-        filter: (source) =>
-          ![
-            'node_modules',
-            'dist',
-            '.git',
-            '.tanstack',
-            'pnpm-lock.yaml',
-            'coverage',
-            'playwright-report',
-            'test-results',
-          ].includes(path.relative(ctx.templateDir, source).split(path.sep)[0]),
+        filter: (source) => {
+          const relative = path.relative(ctx.templateDir, source)
+          return (
+            relative !== path.join('src', 'routeTree.gen.ts') &&
+            ![
+              'node_modules',
+              'dist',
+              '.git',
+              '.tanstack',
+              'pnpm-lock.yaml',
+              'coverage',
+              'playwright-report',
+              'test-results',
+            ].includes(relative.split(path.sep)[0])
+          )
+        },
       })
       controller.signal.throwIfAborted()
       await cleanupTemplate(ctx)

@@ -54,6 +54,6 @@ describe('modal store atoms', () => {
       // @ts-expect-error A misspelled modal name must also fail type checking.
       result.current.open('confrim')
     }).toThrow('Unknown modal type: confrim')
-    expect(result.current.topModal?.data?.title).toBe('Keep me')
+    expect(result.current.topModal).toMatchObject({ type: 'confirm', data: { title: 'Keep me' } })
   })
 })

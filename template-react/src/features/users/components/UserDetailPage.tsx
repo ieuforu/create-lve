@@ -21,6 +21,7 @@ export function UserDetailPage({ userId }: { userId: string }) {
         <p className="text-[14px] text-muted-foreground">User not found</p>
         <Link
           to="/examples/users"
+          search={true}
           className="text-[13px] text-foreground underline underline-offset-2"
         >
           Back to users
@@ -33,6 +34,8 @@ export function UserDetailPage({ userId }: { userId: string }) {
     <div className="mx-auto max-w-2xl">
       <Link
         to="/examples/users"
+        search={true}
+        aria-label="Back to users"
         className="mb-8 inline-flex items-center gap-1.5 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
       >
         <ArrowLeft className="h-3.5 w-3.5" />

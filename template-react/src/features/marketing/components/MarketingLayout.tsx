@@ -2,6 +2,8 @@ import { Link, Outlet } from '@tanstack/react-router'
 import { ArrowUpRight } from 'lucide-react'
 import '../styles/landing.css'
 
+const copyrightYear = new Date().getFullYear()
+
 export function MarketingLayout() {
   return (
     <div className="lve-site">
@@ -36,7 +38,7 @@ export function MarketingLayout() {
             <span aria-hidden="true">—</span>
             <span>Made to make things.</span>
           </div>
-          <span>© {new Date().getFullYear()} lve</span>
+          <span>© {copyrightYear} lve</span>
         </footer>
       </div>
     </div>

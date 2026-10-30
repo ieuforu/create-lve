@@ -46,10 +46,18 @@ jobs:
         run: pnpm check
 
   smoke:
-    name: Generated projects
+    name: Generated projects · Node ${{ matrix.node }}
     needs: quality
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - node: '22.18.0'
+            browser: false
+          - node: '26.x'
+            browser: true
 
     steps:
       - name: Check out repository
@@ -58,7 +66,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: 26.x
+          node-version: ${{ matrix.node }}
           package-manager-cache: false
 
       - name: Set up pnpm
@@ -71,4 +79,6 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Create, build, and test all templates
+        env:
+          LVE_BROWSER_TESTS: ${{ matrix.browser && '1' || '0' }}
         run: pnpm test:smoke

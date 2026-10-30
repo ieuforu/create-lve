@@ -1,8 +1,8 @@
-import { act, render, screen, waitFor, within } from '@testing-library/react'
+import { act, render, renderHook, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { Provider } from 'jotai'
+import { createStore, Provider } from 'jotai'
 import { describe, expect, it, vi } from 'vitest'
-import { useModal, type ConfirmModalData } from '#/stores/modal.store'
+import { useModal, useModalActions, type ConfirmModalData } from '#/stores/modal.store'
 import { ModalRenderer } from './ModalRenderer'
 
 function Harness({ data }: { data?: ConfirmModalData }) {
@@ -36,6 +36,86 @@ function overlay() {
 }
 
 describe('global confirmation dialog', () => {
+  it('preserves pending state when another entry covers and uncovers the dialog', async () => {
+    const store = createStore()
+    const { result } = renderHook(useModalActions, {
+      wrapper: ({ children }) => <Provider store={store}>{children}</Provider>,
+    })
+    render(
+      <Provider store={store}>
+        <ModalRenderer />
+      </Provider>,
+    )
+    let finish!: () => void
+    const onConfirm = vi.fn(
+      () =>
+        new Promise<void>((resolve) => {
+          finish = resolve
+        }),
+    )
+    const user = userEvent.setup()
+
+    act(() => {
+      result.current.open('confirm', { title: 'First', onConfirm })
+    })
+    const first = await screen.findByRole('dialog', { name: 'First' })
+    await user.click(within(first).getByRole('button', { name: 'Confirm' }))
+    act(() => {
+      result.current.open('confirm', { title: 'Second' })
+    })
+    const second = await screen.findByRole('dialog', { name: 'Second' })
+    await user.click(within(second).getByRole('button', { name: 'Cancel' }))
+
+    const restored = await screen.findByRole('dialog', { name: 'First' })
+    expect(restored).toHaveAttribute('aria-busy', 'true')
+    expect(within(restored).getByRole('button', { name: 'Working…' })).toBeDisabled()
+    await user.keyboard('{Escape}')
+    expect(screen.getByRole('dialog', { name: 'First' })).toBeVisible()
+    expect(onConfirm).toHaveBeenCalledTimes(1)
+    await act(async () => finish())
+    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
+  })
+
+  it('leaves the covering dialog open when an earlier entry finishes in the background', async () => {
+    const store = createStore()
+    const { result } = renderHook(useModalActions, {
+      wrapper: ({ children }) => <Provider store={store}>{children}</Provider>,
+    })
+    render(
+      <Provider store={store}>
+        <ModalRenderer />
+      </Provider>,
+    )
+    let finish!: () => void
+    const user = userEvent.setup()
+    act(() => {
+      result.current.open('confirm', {
+        title: 'First',
+        onConfirm: () =>
+          new Promise<void>((resolve) => {
+            finish = resolve
+          }),
+      })
+    })
+    await user.click(
+      within(await screen.findByRole('dialog', { name: 'First' })).getByRole('button', {
+        name: 'Confirm',
+      }),
+    )
+    act(() => {
+      result.current.open('confirm', { title: 'Second' })
+    })
+    await screen.findByRole('dialog', { name: 'Second' })
+    await act(async () => finish())
+    expect(screen.getByRole('dialog', { name: 'Second' })).toBeVisible()
+    await user.click(
+      within(screen.getByRole('dialog', { name: 'Second' })).getByRole('button', {
+        name: 'Cancel',
+      }),
+    )
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  })
+
   it('portals the dialog, labels it, and keeps keyboard focus inside', async () => {
     const { user, dialog, container } = await openModal({
       title: 'Delete project?',

@@ -64,6 +64,7 @@ for (const framework of ['react', 'vue']) {
     assert.equal(existsSync(path.join(target, '.tanstack')), false)
     assert.equal(existsSync(path.join(target, 'playwright-report')), false)
     assert.equal(existsSync(path.join(target, 'test-results')), false)
+    assert.equal(existsSync(path.join(target, 'src/routeTree.gen.ts')), false)
 
     const pkg = JSON.parse(readFileSync(path.join(target, 'package.json'), 'utf8'))
     assert.equal(pkg.name, `${framework}-starter`)
@@ -120,6 +121,7 @@ test('the npm package contains required files without generated artifacts', () =
   assert.equal(paths.has('LICENSE'), true)
   assert.equal(paths.has('template-react/_gitignore'), true)
   assert.equal(paths.has('template-vue/_gitignore'), true)
+  assert.equal(paths.has('template-react/src/routeTree.gen.ts'), false)
   assert.equal(
     [...paths].some((file) => file.endsWith('pnpm-lock.yaml')),
     false,

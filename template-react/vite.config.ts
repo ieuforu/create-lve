@@ -30,55 +30,6 @@ export default defineConfig({
     },
   },
 
-  build: {
-    rolldownOptions: {
-      output: {
-        codeSplitting: {
-          minSize: 10000,
-          groups: [
-            {
-              name: 'vendor-react-dom',
-              test: /node_modules[/]react-dom/,
-              priority: 40,
-            },
-            {
-              name: 'vendor-react',
-              test: /node_modules[/]react(?!-dom)/,
-              priority: 35,
-            },
-            {
-              name: 'vendor-router',
-              test: /node_modules[/]@tanstack[/]react-router/,
-              priority: 30,
-            },
-            {
-              name: 'vendor-query',
-              test: /node_modules[/]@tanstack[/]react-query/,
-              priority: 25,
-            },
-            {
-              name: 'vendor-tanstack',
-              test: /node_modules[/]@tanstack/,
-              priority: 22,
-            },
-            {
-              name: 'vendor-ui',
-              test: /node_modules[/]@base-ui/,
-              priority: 20,
-            },
-            {
-              name: 'vendor-state',
-              test: /node_modules[/]jotai/,
-              priority: 18,
-            },
-            {
-              name: 'vendor',
-              test: /node_modules/,
-              priority: 10,
-            },
-          ],
-        },
-      },
-    },
-  },
+  // Browser support is independent of TypeScript's target.
+  build: { target: ['chrome111', 'edge111', 'firefox114', 'safari16.4', 'ios16.4'] },
 })

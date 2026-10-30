@@ -1,11 +1,9 @@
-import { useState } from 'react'
 import { User, Bell, Shield, Palette } from 'lucide-react'
 import { ProfileSection } from './ProfileSection'
 import { AppearanceSection } from './AppearanceSection'
 import { NotificationsSection } from './NotificationsSection'
 import { SecuritySection } from './SecuritySection'
-
-type Section = 'profile' | 'appearance' | 'notifications' | 'security'
+import type { SettingsSection } from '#/features/settings/search'
 
 const navItems = [
   { id: 'profile' as const, label: 'Profile', icon: User },
@@ -14,9 +12,13 @@ const navItems = [
   { id: 'security' as const, label: 'Security', icon: Shield },
 ]
 
-export function SettingsPage() {
-  const [activeSection, setActiveSection] = useState<Section>('profile')
-
+export function SettingsPage({
+  section,
+  onSectionChange,
+}: {
+  section: SettingsSection
+  onSectionChange: (section: SettingsSection) => void
+}) {
   return (
     <div>
       <div>
@@ -26,15 +28,20 @@ export function SettingsPage() {
         </p>
       </div>
 
-      <div className="mt-7 flex gap-8">
-        <nav className="w-48 shrink-0 space-y-0.5">
+      <div className="mt-7 flex flex-col gap-6 md:flex-row md:gap-8">
+        <nav
+          aria-label="Settings sections"
+          className="grid grid-cols-2 gap-1 md:block md:w-48 md:shrink-0 md:space-y-0.5"
+        >
           {navItems.map((item) => {
             const Icon = item.icon
-            const isActive = activeSection === item.id
+            const isActive = section === item.id
             return (
               <button
                 key={item.id}
-                onClick={() => setActiveSection(item.id)}
+                type="button"
+                aria-current={isActive ? 'page' : undefined}
+                onClick={() => onSectionChange(item.id)}
                 className={`flex w-full items-center gap-2.5 rounded-lg px-2.5 py-[7px] text-[13px] transition-all ${
                   isActive
                     ? 'bg-foreground/[0.05] font-medium text-foreground'
@@ -49,10 +56,10 @@ export function SettingsPage() {
         </nav>
 
         <div className="min-w-0 flex-1">
-          {activeSection === 'profile' && <ProfileSection />}
-          {activeSection === 'appearance' && <AppearanceSection />}
-          {activeSection === 'notifications' && <NotificationsSection />}
-          {activeSection === 'security' && <SecuritySection />}
+          {section === 'profile' && <ProfileSection />}
+          {section === 'appearance' && <AppearanceSection />}
+          {section === 'notifications' && <NotificationsSection />}
+          {section === 'security' && <SecuritySection />}
         </div>
       </div>
     </div>

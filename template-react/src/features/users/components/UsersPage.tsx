@@ -1,44 +1,53 @@
 import { Link } from '@tanstack/react-router'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { useVirtualizer } from '@tanstack/react-virtual'
-import { useRef, useState, useCallback, useMemo } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Search, X } from 'lucide-react'
-import { fetchUsers } from '#/features/users/mock'
+import { userQueries } from '#/features/users/queries'
 import type { User } from '#/features/users/types'
+import { Input } from '#/components/ui/input'
+import { Button } from '#/components/ui/button'
 
-const PAGE_SIZE = 50
 const ROW_HEIGHT = 72
 
-export function UsersPage() {
+export function UsersPage({
+  search,
+  onSearchChange,
+}: {
+  search: string
+  onSearchChange: (value: string) => void
+}) {
+  'use no memo'
+  // TanStack Virtual exposes a mutable instance. Keep this component outside Compiler memoization.
   const parentRef = useRef<HTMLDivElement>(null)
-  const [search, setSearch] = useState('')
-  const [debouncedSearch, setDebouncedSearch] = useState('')
+  const [draft, setDraft] = useState({ source: search, value: search })
+  // Synchronize URL navigation before scheduling a new debounce, including back/forward.
+  if (draft.source !== search) setDraft({ source: search, value: search })
 
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined)
-  const onSearchChange = useCallback((val: string) => {
-    setSearch(val)
-    clearTimeout(debounceRef.current)
-    debounceRef.current = setTimeout(() => setDebouncedSearch(val), 250)
-  }, [])
+  useEffect(() => {
+    if (draft.value.trim() === search) return
+    const timer = setTimeout(() => onSearchChange(draft.value), 250)
+    return () => clearTimeout(timer)
+  }, [draft.value, search, onSearchChange])
 
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteQuery({
-    queryKey: ['users', 'infinite', debouncedSearch],
-    queryFn: ({ pageParam }) =>
-      fetchUsers({ page: pageParam, pageSize: PAGE_SIZE, search: debouncedSearch }),
-    initialPageParam: 1,
-    getNextPageParam: (lastPage) =>
-      lastPage.page < lastPage.totalPages ? lastPage.page + 1 : undefined,
-    staleTime: 30_000,
-  })
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isFetchNextPageError,
+    isLoading,
+    error,
+    refetch,
+  } = useInfiniteQuery(userQueries.infinite(search))
 
-  const rows = useMemo(() => {
-    if (!data) return []
-    return data.pages.flatMap((p) => p.data)
-  }, [data])
+  // This component opts out of Compiler optimization; cache the flattened loaded pages explicitly.
+  const rows = useMemo(() => data?.pages.flatMap((page) => page.data) ?? [], [data])
 
   const totalFetched = rows.length
   const totalCount = data?.pages[0]?.total ?? 0
 
+  // oxlint-disable-next-line react/incompatible-library -- This component explicitly opts out with "use no memo".
   const virtualizer = useVirtualizer({
     count: hasNextPage ? totalFetched + 1 : totalFetched,
     getScrollElement: () => parentRef.current,
@@ -48,9 +57,17 @@ export function UsersPage() {
 
   const virtualItems = virtualizer.getVirtualItems()
   const lastItem = virtualItems[virtualItems.length - 1]
-  if (lastItem && lastItem.index >= totalFetched - 10 && hasNextPage && !isFetchingNextPage) {
-    fetchNextPage()
-  }
+  const lastVisibleIndex = lastItem?.index ?? -1
+
+  useEffect(() => {
+    if (parentRef.current) parentRef.current.scrollTop = 0
+  }, [search])
+
+  useEffect(() => {
+    if (lastVisibleIndex >= totalFetched - 10 && hasNextPage && !isFetchingNextPage && !error) {
+      void fetchNextPage()
+    }
+  }, [lastVisibleIndex, totalFetched, hasNextPage, isFetchingNextPage, error, fetchNextPage])
 
   return (
     <div className="flex h-[calc(100vh-120px)] flex-col">
@@ -67,16 +84,20 @@ export function UsersPage() {
       {/* Search */}
       <div className="relative mb-4">
         <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/40" />
-        <input
+        <Input
           type="text"
+          aria-label="Search people"
           placeholder="Search people…"
-          value={search}
-          onChange={(e) => onSearchChange(e.target.value)}
+          maxLength={100}
+          value={draft.value}
+          onChange={(e) => setDraft({ source: search, value: e.target.value })}
           className="h-10 w-full rounded-xl border border-border/50 bg-muted/30 pl-10 pr-9 text-[14px] outline-none transition-all placeholder:text-muted-foreground/40 focus:bg-background focus:border-foreground/20 focus:ring-2 focus:ring-foreground/[0.05]"
         />
-        {search && (
+        {draft.value && (
           <button
-            onClick={() => onSearchChange('')}
+            type="button"
+            aria-label="Clear search"
+            onClick={() => setDraft({ source: search, value: '' })}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/40 hover:text-foreground transition-colors"
           >
             <X className="h-4 w-4" />
@@ -84,9 +105,28 @@ export function UsersPage() {
         )}
       </div>
 
+      {error && (
+        <div role="alert" className="mb-4 flex items-center justify-between gap-3 text-sm">
+          <p>Unable to load people. Please try again.</p>
+          <Button
+            variant="outline"
+            onClick={() => void (isFetchNextPageError ? fetchNextPage() : refetch())}
+          >
+            Retry
+          </Button>
+        </div>
+      )}
+      {!isLoading && !error && rows.length === 0 && (
+        <p role="status" className="py-8 text-center text-sm text-muted-foreground">
+          No people match your search.
+        </p>
+      )}
+
       {/* List */}
       <div
         ref={parentRef}
+        role="region"
+        aria-label="People"
         className="flex-1 overflow-auto rounded-2xl border border-border/40"
         style={{ contain: 'strict' }}
       >
@@ -130,6 +170,7 @@ export function UsersPage() {
                   <Link
                     to="/examples/users/$userId"
                     params={{ userId: String(user.id) }}
+                    search={true}
                     className={`flex items-center gap-4 px-5 transition-colors hover:bg-muted/40 ${
                       !isLast ? 'border-b border-border/20' : ''
                     }`}
@@ -173,8 +214,8 @@ export function UsersPage() {
   )
 }
 
-function StatusPill({ status }: { status: string }) {
-  const config: Record<string, { dot: string; bg: string; text: string }> = {
+function StatusPill({ status }: { status: User['status'] }) {
+  const config: Record<User['status'], { dot: string; bg: string; text: string }> = {
     active: {
       dot: 'bg-emerald-500',
       bg: 'bg-emerald-500/8',
@@ -191,7 +232,7 @@ function StatusPill({ status }: { status: string }) {
       text: 'text-red-500',
     },
   }
-  const c = config[status] ?? config.inactive
+  const c = config[status]
 
   return (
     <span

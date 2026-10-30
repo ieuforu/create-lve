@@ -1,5 +1,5 @@
 import { Link, useNavigate } from '@tanstack/react-router'
-import { setAuthToken } from '#/lib/auth'
+import { setAuthToken } from '#/lib/session'
 import { SocialButton } from './LoginPage'
 
 export function RegisterPage() {
