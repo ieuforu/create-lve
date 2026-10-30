@@ -1,5 +1,5 @@
-import { useRef, useState } from 'react'
-import type { ConfirmModalData, ModalProps } from '#/stores/modal.store'
+import { useRef } from 'react'
+import { modalActions, type ConfirmModalData, type ModalProps } from '#/stores/modal.store'
 import { Button } from '#/components/ui/button'
 import {
   Dialog,
@@ -10,29 +10,15 @@ import {
   DialogTitle,
 } from '#/components/ui/dialog'
 
-export function ConfirmModal({ data, open, onClose }: ModalProps<ConfirmModalData>) {
-  const [pending, setPending] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const submitting = useRef(false)
+export function ConfirmModal({
+  id,
+  data,
+  open,
+  pending,
+  error,
+  onClose,
+}: ModalProps<ConfirmModalData>) {
   const cancelRef = useRef<HTMLButtonElement>(null)
-
-  async function confirm() {
-    if (submitting.current) return
-    submitting.current = true
-    setPending(true)
-    setError(null)
-    try {
-      await data?.onConfirm?.()
-      onClose()
-    } catch (cause) {
-      const message =
-        cause instanceof Error ? cause.message : typeof cause === 'string' ? cause : ''
-      setError(message || 'Unable to complete this action. Please try again.')
-    } finally {
-      submitting.current = false
-      setPending(false)
-    }
-  }
 
   return (
     <Dialog
@@ -40,7 +26,7 @@ export function ConfirmModal({ data, open, onClose }: ModalProps<ConfirmModalDat
       disablePointerDismissal={pending}
       onOpenChange={(nextOpen, details) => {
         if (nextOpen || !open) return
-        if (submitting.current) details.cancel()
+        if (pending) details.cancel()
         else onClose()
       }}
     >
@@ -58,7 +44,7 @@ export function ConfirmModal({ data, open, onClose }: ModalProps<ConfirmModalDat
           <DialogClose ref={cancelRef} disabled={pending} render={<Button variant="outline" />}>
             Cancel
           </DialogClose>
-          <Button type="button" disabled={pending} onClick={confirm}>
+          <Button type="button" disabled={pending} onClick={() => void modalActions.confirm(id)}>
             {pending ? 'Working…' : (data?.confirmLabel ?? 'Confirm')}
           </Button>
         </DialogFooter>

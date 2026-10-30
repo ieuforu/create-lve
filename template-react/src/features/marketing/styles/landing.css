@@ -2,6 +2,8 @@
   --lve-paper: #fcfcfa;
   --lve-ink: #191919;
   --lve-blue: #2446ff;
+  --lve-blue-hover: #1835dd;
+  --lve-on-blue: #fff;
   --lve-rule: #40403d;
   --lve-muted: #696965;
   --lve-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
@@ -14,6 +16,15 @@
   width: min(1440px, calc(100% - 112px));
   margin-inline: auto;
 }
+.dark .lve-site {
+  --lve-paper: #171715;
+  --lve-ink: #f4f4ef;
+  --lve-blue: #8194ff;
+  --lve-blue-hover: #a0aeff;
+  --lve-on-blue: #171715;
+  --lve-rule: #777770;
+  --lve-muted: #aaa9a0;
+}
 .lve-skip {
   position: absolute;
   z-index: 60;
@@ -22,7 +33,7 @@
   padding: 12px 18px;
   transform: translateY(-200%);
   background: var(--lve-blue);
-  color: white;
+  color: var(--lve-on-blue);
 }
 .lve-skip:focus {
   transform: none;
@@ -136,13 +147,13 @@
   border: 0;
   border-radius: 0;
   background: var(--lve-blue);
-  color: #fff;
+  color: var(--lve-on-blue);
   font-size: 23px;
   font-weight: 400;
   transition: background-color 160ms ease;
 }
 .lve-primary-link:hover {
-  background: #1835dd;
+  background: var(--lve-blue-hover);
 }
 .lve-primary-link svg {
   width: 28px;
@@ -227,14 +238,14 @@
   border: 0;
   border-radius: 0;
   background: var(--lve-blue);
-  color: #fff;
+  color: var(--lve-on-blue);
   font-family: inherit;
   font-size: 13px;
   font-weight: 400;
   transition: background-color 160ms ease;
 }
 .lve-project-input-row button:hover {
-  background: #1835dd;
+  background: var(--lve-blue-hover);
 }
 .lve-project-arrow {
   width: 22px;

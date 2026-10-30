@@ -3,13 +3,12 @@ import { ArrowRight, Folder } from 'lucide-react'
 import { Button } from '#/components/ui/button'
 import { Input } from '#/components/ui/input'
 import { Label } from '#/components/ui/label'
-import { useModalActions } from '#/stores/modal.store'
+import { modalActions } from '#/stores/modal.store'
 
 export function ProjectPlayground() {
   const [name, setName] = useState('a little idea')
   const [project, setProject] = useState('a little idea')
   const [confirmed, setConfirmed] = useState(false)
-  const { open } = useModalActions()
 
   return (
     <section className="lve-playground" aria-label="Interactive project example">
@@ -52,7 +51,7 @@ export function ProjectPlayground() {
         className="lve-project-result"
         aria-label={`Open ${project} project preview`}
         onClick={() =>
-          open('confirm', {
+          modalActions.open('confirm', {
             title: `Start ${project}?`,
             description: 'A small example of the global dialog. No files will be created.',
             confirmLabel: 'Confirm',

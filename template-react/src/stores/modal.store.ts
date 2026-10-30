@@ -1,5 +1,4 @@
-import { atom, useSetAtom, useAtomValue } from 'jotai'
-import { useCallback } from 'react'
+import { atom, createStore } from 'jotai/vanilla'
 
 // --- Types ---
 export interface ConfirmModalData {
@@ -15,12 +14,21 @@ export interface ModalPayloadMap {
 
 export type ModalType = keyof ModalPayloadMap
 export type ModalEntry<Type extends ModalType = ModalType> = {
-  [Key in Type]: { id: string; type: Key; data: ModalPayloadMap[Key] }
+  [Key in Type]: {
+    id: string
+    type: Key
+    data: ModalPayloadMap[Key]
+    pending: boolean
+    error: string | null
+  }
 }[Type]
 
 export interface ModalProps<Data> {
+  id: string
   data: Data
   open: boolean
+  pending: boolean
+  error: string | null
   onClose: () => void
 }
 
@@ -31,7 +39,6 @@ type OpenModalArgs = {
 }[ModalType]
 
 const modalTypes: Record<ModalType, true> = { confirm: true }
-let nextModalId = 0
 
 // --- Base atoms ---
 export const modalStackAtom = atom<ModalEntry[]>([])
@@ -43,39 +50,63 @@ export const topModalAtom = atom((get) => {
   return stack[stack.length - 1] ?? null
 })
 
-// --- Actions ---
-export function useModalActions() {
-  const setStack = useSetAtom(modalStackAtom)
+// Each instance owns its IDs, state and actions. No React runtime is required.
+export function createModalStore() {
+  const store = createStore()
+  let nextModalId = 0
 
-  // Keep action identities stable for consumers outside Compiler-optimized code.
-  const open = useCallback(
-    (...[type, data]: OpenModalArgs) => {
+  const actions = {
+    open(...[type, data]: OpenModalArgs) {
       if (!Object.hasOwn(modalTypes, type)) throw new Error(`Unknown modal type: ${type}`)
       // IDs only identify entries in this in-memory stack; a counter avoids clock collisions.
       const id = `${type}-${++nextModalId}`
       // The discriminated argument tuple validates the payload before it enters the stack.
-      const entry = { id, type, data: data ?? {} } as ModalEntry
-      setStack((prev) => [...prev, entry])
+      const entry = { id, type, data: data ?? {}, pending: false, error: null } as ModalEntry
+      store.set(modalStackAtom, (prev) => [...prev, entry])
       return id
     },
-    [setStack],
-  )
-
-  const close = useCallback(
-    (id?: string) => {
-      setStack((prev) => {
+    close(id?: string) {
+      store.set(modalStackAtom, (prev) => {
         if (id) return prev.filter((m) => m.id !== id)
         return prev.slice(0, -1)
       })
     },
-    [setStack],
-  )
+    closeAll() {
+      store.set(modalStackAtom, [])
+    },
+    dismiss(id: string) {
+      if (!store.get(modalStackAtom).find((modal) => modal.id === id)?.pending) actions.close(id)
+    },
+    async confirm(id: string) {
+      const entry = store.get(modalStackAtom).find((modal) => modal.id === id)
+      if (!entry || entry.type !== 'confirm' || entry.pending) return
 
-  const closeAll = useCallback(() => setStack([]), [setStack])
+      store.set(modalStackAtom, (prev) =>
+        prev.map((modal) => (modal.id === id ? { ...modal, pending: true, error: null } : modal)),
+      )
+      try {
+        await entry.data.onConfirm?.()
+        actions.close(id)
+      } catch (cause) {
+        const message =
+          cause instanceof Error ? cause.message : typeof cause === 'string' ? cause : ''
+        store.set(modalStackAtom, (prev) =>
+          prev.map((modal) =>
+            modal.id === id
+              ? {
+                  ...modal,
+                  pending: false,
+                  error: message || 'Unable to complete this action. Please try again.',
+                }
+              : modal,
+          ),
+        )
+      }
+    },
+  }
 
-  return { open, close, closeAll }
+  return { store, actions }
 }
 
-export function useModal() {
-  return { ...useModalActions(), topModal: useAtomValue(topModalAtom) }
-}
+// One SPA instance, shared by ordinary TS callers and the React subscription hooks.
+export const { store: modalStore, actions: modalActions } = createModalStore()

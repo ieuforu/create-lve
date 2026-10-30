@@ -1,8 +1,7 @@
 import type { ComponentType } from 'react'
-import { useAtomValue } from 'jotai'
+import { useModalStack } from '#/hooks/useModal'
 import {
-  modalStackAtom,
-  useModalActions,
+  modalActions,
   type ModalEntry,
   type ModalPayloadMap,
   type ModalProps,
@@ -27,12 +26,20 @@ function ModalView<Type extends ModalType>({
   onClose: () => void
 }) {
   const ModalComponent: ComponentType<ModalProps<ModalPayloadMap[Type]>> = MODALS[entry.type]
-  return <ModalComponent data={entry.data} open={open} onClose={onClose} />
+  return (
+    <ModalComponent
+      id={entry.id}
+      data={entry.data}
+      open={open}
+      pending={entry.pending}
+      error={entry.error}
+      onClose={onClose}
+    />
+  )
 }
 
 export function ModalRenderer() {
-  const stack = useAtomValue(modalStackAtom)
-  const { close } = useModalActions()
+  const stack = useModalStack()
   return (
     <>
       {stack.map((entry, index) => (
@@ -40,7 +47,7 @@ export function ModalRenderer() {
           key={entry.id}
           entry={entry}
           open={index === stack.length - 1}
-          onClose={() => close(entry.id)}
+          onClose={() => modalActions.dismiss(entry.id)}
         />
       ))}
     </>

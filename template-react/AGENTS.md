@@ -6,7 +6,7 @@
 - **Build & Tooling**: Vite 8 (Rolldown), Oxlint (`pnpm lint`), Oxfmt (`pnpm fmt`), Vitest (`pnpm test`)
 - **UI & Styling**: `@base-ui/react`, Tailwind CSS v4, CVA (`class-variance-authority`), `tw-animate-css`, Lucide Icons (`lucide-react`)
 - **Routing**: `@tanstack/react-router` (File-based routing)
-- **State & Data Fetching**: `@tanstack/react-query`, `ky` (HTTP client), `jotai` (Client atomic state)
+- **State & Data Fetching**: `@tanstack/react-query`, `ky` (HTTP client), `jotai` (Ephemeral atomic state), `zustand` (Persistent client preferences)
 
 ## Strict Coding Rules
 
@@ -31,9 +31,10 @@
 
 1. **Server State**: Use `@tanstack/react-query` + `#/lib/http` (`ky`) for real APIs. Local examples use cancellable mock adapters. Define reusable query options in `src/features/<domain>/queries.ts`; reuse them in route loaders and components. Query owns retries; Ky retries are disabled by default. Forward the query's `signal` to the adapter.
 2. **URL State**: Use `@tanstack/react-router` typed Search Params for pagination, filters, sorting, and active tabs.
-3. **Client UI State**: Use `jotai` atoms (`src/stores/`) strictly for ephemeral cross-component client state (e.g., global modals).
-4. **React Compiler**: Let the Compiler handle new memoization. Preserve intentional existing memoization until validated. Document exceptions: `UsersPage` uses `"use no memo"` for TanStack Virtual's mutable instance and caches its flattened pages; modal action callbacks stay stable for uncompiled consumers. Keep any lint suppression local and explain it.
+3. **Client State**: Jotai owns the ephemeral modal stack; Zustand owns persisted appearance preferences. Keep each piece of state in one owner. Stores in `src/stores/` import vanilla APIs and export ordinary TS actions; hooks in `src/hooks/` only subscribe. Components render state and call actions. Store actions must work without mounting React. Confirmation pending/error state belongs to the modal store. Purely local UI state can stay in React.
+4. **React Compiler**: Let the Compiler handle new memoization. Preserve intentional existing memoization until validated. Document exceptions: `UsersPage` uses `"use no memo"` for TanStack Virtual's mutable instance and caches its flattened pages. Keep any lint suppression local and explain it.
 5. **Sessions**: `lib/session.ts` owns mock token storage. `lib/auth.ts` owns routing guards. The HTTP client must not import routing guards.
+6. **Store Scope**: The shipped SPA uses shared `modalStore` and `preferencesStore` instances. React subscription hooks read those same instances; no Provider is needed. Use the exported factories for isolated tests. SSR/multiple app instances require explicitly scoped stores. `lib/theme.ts` synchronizes preferences to the DOM at startup and returns a cleanup function.
 
 ### 5. Commands & Verification
 

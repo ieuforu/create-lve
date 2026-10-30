@@ -2,7 +2,7 @@ import { act, cleanup, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createMemoryHistory, createRouter, RouterProvider } from '@tanstack/react-router'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { Provider } from 'jotai'
+import { modalActions } from '#/stores/modal.store'
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { routeTree } from '#/routeTree.gen'
 
@@ -12,6 +12,7 @@ beforeEach(() => {
 })
 afterEach(() => {
   cleanup()
+  modalActions.closeAll()
   vi.restoreAllMocks()
   clients.splice(0).forEach((client) => client.clear())
   window.localStorage.clear()
@@ -28,11 +29,9 @@ async function openPage(path = '/') {
   })
   await router.load()
   render(
-    <Provider>
-      <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
-      </QueryClientProvider>
-    </Provider>,
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>,
   )
   return router
 }
