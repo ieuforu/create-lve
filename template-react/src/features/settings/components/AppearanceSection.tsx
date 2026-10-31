@@ -1,20 +1,28 @@
 import { Switch } from '#/components/ui/switch'
 import { SectionCard, FieldGroup, Field } from './settings-ui'
+import { useTheme } from '#/hooks/useTheme'
+import { preferencesActions, type Theme } from '#/stores/preferences.store'
+
+const themes: { label: string; value: Theme }[] = [
+  { label: 'Light', value: 'light' },
+  { label: 'Dark', value: 'dark' },
+  { label: 'System', value: 'system' },
+]
 
 export function AppearanceSection() {
+  const theme = useTheme()
   return (
     <div className="space-y-4">
       <SectionCard title="Theme" desc="Customize how the app looks">
         <div className="grid grid-cols-3 gap-3">
-          {[
-            { label: 'Light', active: true },
-            { label: 'Dark', active: false },
-            { label: 'System', active: false },
-          ].map((t) => (
+          {themes.map((t) => (
             <button
               key={t.label}
+              type="button"
+              aria-pressed={theme === t.value}
+              onClick={() => preferencesActions.setTheme(t.value)}
               className={`rounded-xl border p-4 text-center text-[13px] font-medium transition-all ${
-                t.active
+                theme === t.value
                   ? 'border-foreground/30 bg-foreground/[0.04] text-foreground'
                   : 'border-border/40 text-muted-foreground hover:border-border/70'
               }`}

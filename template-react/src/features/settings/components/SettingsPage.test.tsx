@@ -1,7 +1,26 @@
-import { render, screen } from '@testing-library/react'
+import { act, cleanup, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { expect, it, vi } from 'vitest'
+import { afterEach, expect, it, vi } from 'vitest'
 import { SettingsPage } from './SettingsPage'
+import { preferencesActions } from '#/stores/preferences.store'
+
+afterEach(() => {
+  cleanup()
+  preferencesActions.setTheme('light')
+  localStorage.clear()
+})
+
+it('subscribes to external preferences and preserves them across section remounts', async () => {
+  const user = userEvent.setup()
+  const view = render(<SettingsPage section="appearance" onSectionChange={() => {}} />)
+  await user.click(screen.getByRole('button', { name: 'Dark' }))
+  expect(screen.getByRole('button', { name: 'Dark' })).toHaveAttribute('aria-pressed', 'true')
+  view.rerender(<SettingsPage section="profile" onSectionChange={() => {}} />)
+  view.rerender(<SettingsPage section="appearance" onSectionChange={() => {}} />)
+  expect(screen.getByRole('button', { name: 'Dark' })).toHaveAttribute('aria-pressed', 'true')
+  act(() => preferencesActions.setTheme('system'))
+  expect(screen.getByRole('button', { name: 'System' })).toHaveAttribute('aria-pressed', 'true')
+})
 
 it('associates profile labels and descriptions with their fields', () => {
   render(<SettingsPage section="profile" onSectionChange={() => {}} />)

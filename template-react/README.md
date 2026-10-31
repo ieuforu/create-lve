@@ -35,7 +35,14 @@ Keep routes thin and domain code in `src/features/<domain>`. The root route
 declares a typed `QueryClient` context. User routes preload the same query
 options that their components consume, so routing and rendering share one cache.
 User search (`q`) and settings sections (`section`) live in validated URL search
-parameters; form drafts stay local. Jotai owns transient global modal state.
+parameters; form drafts stay local. Jotai owns transient global modal state;
+Zustand owns persisted theme preferences. Each piece of state has one owner.
+
+`src/stores/` uses vanilla APIs and exports ordinary TypeScript actions, usable
+from event handlers, services, or tests without mounting React. `src/hooks/`
+contains React subscriptions; components render state and invoke actions. The
+shipped SPA shares one instance of each store. Store factories support isolated
+tests; SSR or multiple application instances would need explicit store scoping.
 
 The users example exposes 100,000 deterministic fixtures without generating all
 user objects at startup. It creates requested rows on demand, builds a lightweight
@@ -83,17 +90,19 @@ depends on session storage. Set the public API base URL in `.env.example`.
 ## Global modals
 
 `src/components/ui/dialog.tsx` wraps Base UI Dialog for portals, accessible labels,
-focus management, and Escape/outside dismissal. `ModalRenderer` renders the top
-entry in the Jotai modal stack; covered modal components remain mounted with a
-closed dialog so local pending/error state survives. `useModalActions()` provides
-typed `open`, `close(id?)`, and `closeAll` actions without subscribing the caller
-to the top entry. `useModal()` additionally exposes the reactive `topModal`.
-Closing by ID leaves other entries intact.
+focus management, and Escape/outside dismissal. `ModalRenderer` subscribes through
+`useModalStack()` and displays the top entry; covered components remain mounted
+with closed dialogs. `modalActions` provides typed `open`, `close(id?)`,
+`closeAll`, `dismiss(id)`, and asynchronous `confirm(id)` operations.
+`useTopModal()` subscribes to the current top entry when needed. Action callers
+do not subscribe to the stack. Closing by ID leaves other entries intact;
+user dismissal is blocked while that entry is pending. Explicit `close` and
+`closeAll` remain available for application-driven cleanup.
 
 ```tsx
-const { open } = useModalActions()
+import { modalActions } from '#/stores/modal.store'
 
-open('confirm', {
+modalActions.open('confirm', {
   title: 'Delete project?',
   description: 'All project files will be removed.',
   confirmLabel: 'Delete',
@@ -106,11 +115,31 @@ open('confirm', {
 Confirmation initially focuses Cancel. While `onConfirm` runs, buttons and user
 dismissal are disabled to prevent duplicate submissions or premature closing.
 Success closes that entry; a thrown error keeps it open, displays an error message,
-and allows retry. This protection survives covering and uncovering the entry;
+and allows retry. Pending/error state and confirmation execution live in the
+vanilla store, surviving covering, uncovering, and renderer remounts;
 completion closes its own ID and leaves any follow-up modal intact. Add new modal
 types to `ModalPayloadMap`, the store's accepted types, and the mapped registry
 in `ModalRenderer`. Components receive `ModalProps<YourPayload>` and must honor
 its controlled `open` prop. Payloads with required fields are required by `open()`.
+
+## Theme preferences
+
+`src/stores/preferences.store.ts` uses Zustand's vanilla store and persistence
+middleware for the `light`, `dark`, and `system` preference. The default is light.
+Only preferences are saved under `lve-preferences`; modal callbacks and server
+data are not persisted. Invalid stored theme values fall back to the default.
+
+```ts
+import { preferencesActions } from '#/stores/preferences.store'
+
+preferencesActions.setTheme('system')
+```
+
+`useTheme()` subscribes to the selected preference. `lib/theme.ts` applies it to
+the document at startup and listens to system color-scheme changes, independently
+of React mounts. The appearance settings demonstrate changing and restoring the
+preference across route changes and reloads. The startup subscription is cleaned
+up during Vite HMR.
 
 ## Homepage and examples
 
@@ -124,6 +153,6 @@ Naming a project updates only this visit's preview; it does not create files.
 
 Public examples live at `/examples` (Dashboard), `/examples/users` (virtual list
 and user details), and `/examples/settings`. They reuse the existing feature modules
-with local mock data. Dashboard fixtures are shared with its homepage preview.
+with local mock data.
 Login and registration remain separate mock examples; the public examples do not
 require a session. Apply `requireAuth` to routes that need protection in your app.

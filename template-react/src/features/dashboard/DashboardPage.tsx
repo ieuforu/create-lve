@@ -1,11 +1,9 @@
 import { stats, chartData } from './mock'
 import { ArrowUpRight, ArrowDownRight } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
-import { useModalActions } from '#/stores/modal.store'
+import { modalActions } from '#/stores/modal.store'
 
 export function DashboardHomePage() {
-  const { open } = useModalActions()
-
   return (
     <div>
       <div>
@@ -15,7 +13,7 @@ export function DashboardHomePage() {
         </p>
         <button
           onClick={() =>
-            open('confirm', {
+            modalActions.open('confirm', {
               title: 'Try the confirmation dialog?',
               description: 'This is an example. No data will be changed.',
               confirmLabel: 'Confirm',

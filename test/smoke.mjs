@@ -56,8 +56,8 @@ function NoticeModal({ data, open, onClose }: ModalProps<{ message: string }>) {
     )
     writeFileSync(
       fixturePath,
-      `import type { useModalActions } from '#/stores/modal.store'
-export function checkPayloads(open: ReturnType<typeof useModalActions>['open']) {
+      `import type { modalActions } from '#/stores/modal.store'
+export function checkPayloads(open: typeof modalActions.open) {
   open('confirm')
   open('notice', { message: 'Ready' })
   // @ts-expect-error Notice payloads are required.

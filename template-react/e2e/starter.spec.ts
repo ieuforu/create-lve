@@ -68,3 +68,32 @@ test('settings use URL state and accessible switches on a narrow screen', async 
   await page.goBack()
   await expect(page.getByRole('textbox', { name: 'Full name' })).toBeVisible()
 })
+
+test('theme preferences survive navigation and reload, and follow system changes', async ({
+  page,
+}) => {
+  await page.emulateMedia({ colorScheme: 'dark' })
+  await page.goto('/examples/settings?section=appearance')
+  const root = page.locator('html')
+  await expect(root).not.toHaveClass(/dark/)
+  await page.getByRole('button', { name: 'Dark', exact: true }).click()
+  await expect(root).toHaveClass(/dark/)
+  await page.getByRole('link', { name: 'React Starter', exact: true }).click()
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
+  await expect(root).toHaveClass(/dark/)
+  await page.reload()
+  await expect(root).toHaveClass(/dark/)
+  await page.goto('/examples/settings?section=appearance')
+  await expect(page.getByRole('button', { name: 'Dark', exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  )
+  await page.getByRole('button', { name: 'System', exact: true }).click()
+  await expect(root).toHaveClass(/dark/)
+  await page.emulateMedia({ colorScheme: 'light' })
+  await expect(root).not.toHaveClass(/dark/)
+  await page.emulateMedia({ colorScheme: 'dark' })
+  await expect(root).toHaveClass(/dark/)
+  await page.getByRole('button', { name: 'Light', exact: true }).click()
+  await expect(root).not.toHaveClass(/dark/)
+})
