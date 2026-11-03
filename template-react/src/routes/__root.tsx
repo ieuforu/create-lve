@@ -1,19 +1,9 @@
 import { Outlet, createRootRouteWithContext } from '@tanstack/react-router'
 import type { QueryClient } from '@tanstack/react-query'
-import { ErrorFallback } from '#/components/ErrorBoundary'
-import { ModalRenderer } from '#/components/modals/ModalRenderer'
-import '../styles.css'
+import { AppErrorPage, NotFoundPage } from '#/features/system/SystemPages'
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  component: RootLayout,
-  errorComponent: ({ error, reset }) => <ErrorFallback error={error} reset={reset} />,
+  component: () => <Outlet />,
+  errorComponent: AppErrorPage,
+  notFoundComponent: NotFoundPage,
 })
-
-function RootLayout() {
-  return (
-    <>
-      <Outlet />
-      <ModalRenderer />
-    </>
-  )
-}

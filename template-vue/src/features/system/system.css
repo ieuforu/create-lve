@@ -1,0 +1,71 @@
+.vue-system-page {
+  display: grid;
+  min-height: 100svh;
+  place-items: center;
+  padding: clamp(1.25rem, 4vw, 4rem);
+  background:
+    linear-gradient(to right, transparent 49.9%, var(--border) 50%, transparent 50.1%),
+    var(--background);
+}
+
+.vue-system-panel {
+  width: min(100%, 52rem);
+  border: 1px solid var(--border);
+  border-top: 4px solid var(--foreground);
+  background: var(--card);
+  box-shadow: 1.25rem 1.25rem 0 color-mix(in srgb, var(--foreground) 8%, transparent);
+}
+
+.vue-system-meta {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.vue-system-copy {
+  padding: clamp(2rem, 7vw, 5.5rem) clamp(1.25rem, 6vw, 4.5rem);
+}
+
+.vue-system-copy h1 {
+  max-width: 10ch;
+  margin: 0;
+  font-size: clamp(2.75rem, 8vw, 6.5rem);
+  font-weight: 520;
+  letter-spacing: -0.07em;
+  line-height: 0.92;
+}
+
+.vue-system-copy p {
+  margin: 2rem 0 0;
+  color: var(--muted-foreground);
+  line-height: 1.65;
+}
+
+.vue-system-actions {
+  padding: 1.25rem;
+  border-top: 1px solid var(--border);
+}
+
+.vue-system-actions a {
+  display: inline-flex;
+  min-height: 2.25rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 0.875rem;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-size: 0.875rem;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.vue-system-actions a:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--ring) 45%, transparent);
+  outline-offset: 2px;
+}

@@ -1,10 +1,92 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["eslint", "typescript", "unicorn", "oxc", "vue", "vitest"],
+  "plugins": ["typescript", "oxc", "vue", "vitest"],
   "env": {
     "browser": true
   },
   "categories": {
     "correctness": "error"
-  }
+  },
+  "overrides": [
+    {
+      "files": ["src/features/**/*.{ts,vue}"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["@/app", "@/app/**", "@/router", "@/router/**", "@/features/**"],
+                "message": "Features may not depend on app, router, or another feature. Keep same-feature imports relative and promote shared domain code when a second feature needs it."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/components/ui/**/*.{ts,vue}"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": [
+                  "@/app",
+                  "@/app/**",
+                  "@/router",
+                  "@/router/**",
+                  "@/features",
+                  "@/features/**"
+                ],
+                "message": "Shared UI primitives may not depend on application or feature code."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/lib/**/*.{ts,vue}", "src/domain/**/*.{ts,vue}", "src/entities/**/*.{ts,vue}"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": [
+                  "@/app",
+                  "@/app/**",
+                  "@/router",
+                  "@/router/**",
+                  "@/features",
+                  "@/features/**",
+                  "@/components",
+                  "@/components/**"
+                ],
+                "message": "Infrastructure and shared domain rules may not depend on application, router, feature, or UI code."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/router/**/*.{ts,vue}"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["@/app", "@/app/**", "@/components", "@/components/**"],
+                "message": "The router maps URLs to feature entries; it must not own or import UI primitives directly."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
 }

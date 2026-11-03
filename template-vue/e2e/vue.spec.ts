@@ -1,8 +1,29 @@
-import { test, expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 
-// See here how to get started:
-// https://playwright.dev/docs/intro
-test('visits the app root url', async ({ page }) => {
+test('the production landing explains one Vue application flow', async ({ page }) => {
   await page.goto('/')
-  await expect(page.locator('h1')).toContainText('Build your next great idea with confidence')
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('Start clear.')
+  await expect(page.getByRole('heading', { name: 'Four owners. One direction.' })).toBeVisible()
+  await expect(page.getByRole('article')).toHaveCount(4)
+
+  await page.getByRole('link', { name: /See the flow/ }).click()
+  await expect(page).toHaveURL(/#flow$/)
+  await expect(page.getByLabel('Application architecture flow')).toContainText(
+    'request→route→feature→ui + store',
+  )
+})
+
+test('the Vue landing stays inside a narrow viewport', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('/')
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
+  const width = await page.evaluate('document.documentElement.scrollWidth')
+  expect(width).toBeLessThanOrEqual(390)
+})
+
+test('an unknown route renders the feature-owned not-found page', async ({ page }) => {
+  await page.goto('/does-not-exist')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('This route ends here.')
+  await page.getByRole('link', { name: 'Back home' }).click()
+  await expect(page).toHaveURL(/\/$/)
 })

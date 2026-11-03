@@ -1,49 +1,79 @@
-# Project Architecture & Coding Guidelines
+# Project Architecture
 
-## Tech Stack
+## Stack
 
-- **Core**: React 19 (React Compiler enabled), TypeScript 7 (`tsrs`, with matching `tsc` for compatibility checks)
-- **Build & Tooling**: Vite 8 (Rolldown), Oxlint (`pnpm lint`), Oxfmt (`pnpm fmt`), Vitest (`pnpm test`)
-- **UI & Styling**: `@base-ui/react`, Tailwind CSS v4, CVA (`class-variance-authority`), `tw-animate-css`, Lucide Icons (`lucide-react`)
-- **Routing**: `@tanstack/react-router` (File-based routing)
-- **State & Data Fetching**: `@tanstack/react-query`, `ky` (HTTP client), `jotai` (Ephemeral atomic state), `zustand` (Persistent client preferences)
+- React 19 with React Compiler
+- Vite 8, TypeScript and `tsrs`
+- TanStack Router and TanStack Query
+- Base UI, Tailwind CSS v4 and CVA
+- Vitest, Testing Library, Oxlint and Oxfmt
 
-## Strict Coding Rules
+## One-way flow
 
-### 1. Imports & Paths
+Keep application code moving in one direction:
 
-- **MUST** use Node subpath imports `#/*` mapped to `./src/*` (e.g., `import { http } from '#/lib/http'`).
-- **NEVER** use deep relative paths (`../../`) across feature or module boundaries.
+```text
+request → route → feature → ui + query
+```
 
-### 2. Directory Boundaries (`routes/` vs `features/`)
+### `src/routes`
 
-- `src/routes/`: Keep route files thin. Only define route configurations, `loader`, `validateSearch`, and layout wrappers. Do not write heavy business logic or complex sub-components here.
-- `src/features/<domain>/`: Co-locate all domain logic, UI components (`components/`), API query options (`queries.ts`), and domain types (`types.ts`).
-- `src/components/ui/`: Pure headless/styled primitives built strictly on `@base-ui/react` and Tailwind CSS v4.
+Routes are flat integration maps. A route may define its path, search schema,
+loader, guard and feature entry component. It must not own page markup, domain
+components, business state or API details.
 
-### 3. UI & Styling (`@base-ui/react` + Tailwind v4)
+### `src/features/<feature>`
 
-- **MUST** use `@base-ui/react` for interactive primitives (Dialog, Popover, Menu, etc.). **NEVER** import `@radix-ui/*`.
-- Style component states using Base UI `data-*` attributes (e.g., `data-[open]:...`, `data-[disabled]:...`, `data-[highlighted]:...`).
-- Use Base UI's documented positioning, focus, and dismissal APIs rather than reimplementing interactions.
+A feature owns its page, feature-only components, queries, mutations, types and
+styles. Start with one file and split it only after the feature has real internal
+boundaries. Features may import shared UI and library code; shared code must not
+import a feature.
 
-### 4. State Management Hierarchy
+When a feature becomes complex, split only the boundaries it actually has, such
+as `components`, `queries`, `mutations`, `schema` or `types`. Do not pre-create
+these folders. Keep imports within the same feature relative so the linter can
+distinguish them from cross-feature dependencies.
 
-1. **Server State**: Use `@tanstack/react-query` + `#/lib/http` (`ky`) for real APIs. Local examples use cancellable mock adapters. Define reusable query options in `src/features/<domain>/queries.ts`; reuse them in route loaders and components. Query owns retries; Ky retries are disabled by default. Forward the query's `signal` to the adapter.
-2. **URL State**: Use `@tanstack/react-router` typed Search Params for pagination, filters, sorting, and active tabs.
-3. **Client State**: Jotai owns the ephemeral modal stack; Zustand owns persisted appearance preferences. Keep each piece of state in one owner. Stores in `src/stores/` import vanilla APIs and export ordinary TS actions; hooks in `src/hooks/` only subscribe. Components render state and call actions. Store actions must work without mounting React. Confirmation pending/error state belongs to the modal store. Purely local UI state can stay in React.
-4. **React Compiler**: Let the Compiler handle new memoization. Preserve intentional existing memoization until validated. Document exceptions: `UsersPage` uses `"use no memo"` for TanStack Virtual's mutable instance and caches its flattened pages. Keep any lint suppression local and explain it.
-5. **Sessions**: `lib/session.ts` owns mock token storage. `lib/auth.ts` owns routing guards. The HTTP client must not import routing guards.
-6. **Store Scope**: The shipped SPA uses shared `modalStore` and `preferencesStore` instances. React subscription hooks read those same instances; no Provider is needed. Use the exported factories for isolated tests. SSR/multiple app instances require explicitly scoped stores. `lib/theme.ts` synchronizes preferences to the DOM at startup and returns a cleanup function.
+Features must not import another feature. When a business model is needed by a
+second feature, promote that model and its framework-neutral rules to
+`src/domain/<name>` (or `src/entities/<name>` if the application consistently
+uses that vocabulary). Do not put shared business rules in `src/lib`.
 
-### 5. Commands & Verification
+### `src/components/ui`
 
-- Format code: `pnpm fmt` (`oxfmt`)
-- Lint code: `pnpm lint` (`oxlint`)
-- Typecheck: `pnpm typecheck` (generate routes, then `tsrs -b --noEmit`)
-- Compiler compatibility: `pnpm typecheck:ts` (matching TypeScript baseline)
-- Run tests: `pnpm test` (`vitest run`)
-- Full checks: `pnpm check`
-- Production browser checks: `pnpm exec playwright install chromium`, then `pnpm test:e2e`
-- Never edit or commit `src/routeTree.gen.ts`. Route generation runs explicitly before type checking; Vite also regenerates it during development.
-- Keep the exact TypeScript/tsrs baseline and Router plugin/generator pair coordinated when upgrading. Stable application dependencies retain normal semver ranges.
+This directory contains reusable visual or interactive primitives only. Use Base
+UI for accessible interactive behavior. Do not move feature-specific components
+here merely because they are rendered more than once inside one feature.
+
+### `src/app` and `src/lib`
+
+`src/app` composes application-wide providers and the router. `src/lib` contains
+framework-neutral infrastructure such as the query client, HTTP client and small
+utilities. Neither directory owns product UI.
+
+## State hierarchy
+
+1. TanStack Query owns remote/server state.
+2. TanStack Router owns shareable URL state.
+3. React owns local interaction state.
+4. Add one global client store only when a concrete cross-feature requirement
+   cannot fit the first three owners. Do not preinstall competing store patterns.
+
+## Imports
+
+- Use `#/*` imports across module boundaries.
+- Avoid deep relative imports between features.
+- A route imports its feature entry; a feature never imports a route.
+- Oxlint enforces the main route, feature, UI and infrastructure boundaries.
+
+## Verification
+
+- `pnpm fmt` formats the project.
+- `pnpm lint` runs Oxlint with warnings treated as failures.
+- `pnpm typecheck` generates routes and checks with the official TypeScript compiler.
+- `pnpm typecheck:tsrs` checks the same pinned TypeScript baseline with `tsrs`.
+- `pnpm test` runs unit tests.
+- `pnpm check` runs the complete local verification set.
+- `pnpm test:e2e` runs the production Playwright checks.
+
+Do not edit `src/routeTree.gen.ts`; it is generated and ignored.

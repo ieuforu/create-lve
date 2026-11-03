@@ -10,6 +10,7 @@ dist
 
 template-*/pnpm-lock.yaml
 template-*/.tanstack/
+template-*/coverage/
 template-*/playwright-report/
 template-*/test-results/
 template-react/src/routeTree.gen.ts

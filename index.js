@@ -23,7 +23,7 @@ p.updateSettings({ withGuide: true })
 class Cancelled extends Error {}
 
 function parseArgs(args) {
-  const flags = { install: true }
+  const flags = { git: true, install: true }
   const positional = []
   for (let i = 0; i < args.length; i++) {
     const arg = args[i]
@@ -31,7 +31,8 @@ function parseArgs(args) {
       positional.push(...args.slice(i + 1))
       break
     }
-    if (arg === '--default') flags.default = true
+    if (arg === '--default' || arg === '--yes' || arg === '-y') flags.default = true
+    else if (arg === '--no-git') flags.git = false
     else if (arg === '--no-install') flags.install = false
     else if (arg === '--help' || arg === '-h') flags.help = true
     else if (arg === '--version' || arg === '-v') flags.version = true
@@ -53,23 +54,25 @@ function printHelp() {
 
 用法：create-lve [项目目录] [选项]
 
-  --default           使用默认目录和 React，已提供的目录或模板优先
+  -y, --yes            使用默认目录和 React，已提供的目录或模板优先
+  --default            --yes 的兼容别名
   -t, --template <名>  指定 react 或 vue，跳过模板选择
-  --no-install        只生成项目，稍后手动安装依赖
-  -h, --help          查看帮助
-  -v, --version       查看版本
+  --no-install         只生成项目，稍后手动安装依赖
+  --no-git             不初始化 Git 仓库
+  -h, --help           查看帮助
+  -v, --version        查看版本
 
 示例：
   pnpm create lve
   pnpm create lve my-app
   pnpm create lve my-app --template vue
-  pnpm create lve my-app --default --no-install
+  pnpm create lve my-app --yes --no-install
 
 非空目录始终需要确认；选择保留或取消会直接结束。`)
 }
 
 function printIntro() {
-  p.intro(`${pc.yellow(pc.bold('lve'))} ${pc.dim(`v${version}`)}`)
+  p.intro(`${pc.bold('lve')} ${pc.dim(`v${version}`)}`)
   p.log.message(pc.dim('先写一点，世界稍后。'), { spacing: 0 })
 }
 
@@ -151,6 +154,16 @@ function packageName(targetDir) {
   return !name || ['node_modules', 'favicon.ico'].includes(name) ? 'lve-app' : name
 }
 
+function hasGitAncestor(targetDir) {
+  let current = path.dirname(targetDir)
+  while (true) {
+    if (fs.existsSync(path.join(current, '.git'))) return true
+    const parent = path.dirname(current)
+    if (parent === current) return false
+    current = parent
+  }
+}
+
 function directoryCommand(targetDir) {
   const relative = path.relative(process.cwd(), targetDir)
   if (!relative) return []
@@ -161,6 +174,15 @@ function directoryCommand(targetDir) {
     ? directory
     : `'${directory.replaceAll("'", "'\\''")}'`
   return [`cd ${quoted}`]
+}
+
+function nextCommand(targetDir, needsInstall) {
+  const commands = [
+    ...directoryCommand(targetDir),
+    ...(needsInstall ? ['pnpm install'] : []),
+    'pnpm dev',
+  ]
+  return commands.join(process.platform === 'win32' ? '; ' : ' && ')
 }
 
 async function runStep(title, completed, task) {
@@ -182,7 +204,7 @@ async function main() {
   if (flags.help) return printHelp()
   if (flags.version) return console.log(version)
   if (!interactive && ((!directory && !flags.default) || (!flags.template && !flags.default))) {
-    throw new Error('当前终端无法交互。请提供项目目录，并使用 --template react|vue 或 --default。')
+    throw new Error('当前终端无法交互。请提供项目目录，并使用 --template react|vue 或 --yes。')
   }
 
   printIntro()
@@ -193,7 +215,7 @@ async function main() {
       ? defaultDirectory
       : answer(
           await p.text({
-            message: '项目名称',
+            message: '项目目录',
             placeholder: defaultDirectory,
             defaultValue: defaultDirectory,
             validate: validateDirectory,
@@ -203,7 +225,7 @@ async function main() {
   if (invalid) throw new Error(invalid)
   if (!projectPath.trim()) throw new Error('项目目录不能为空。')
   const targetDir = path.resolve(projectPath.trim())
-  if (directory || flags.default) p.log.step(`项目名称  ${projectPath.trim()}`)
+  if (directory || flags.default) p.log.step(`项目目录  ${projectPath.trim()}`)
   const shouldOverwrite = await confirmOverwrite(targetDir)
   const framework =
     flags.template ??
@@ -225,7 +247,7 @@ async function main() {
     targetDir,
     templateDir: path.join(__dirname, `template-${framework}`),
     pkgManager: 'pnpm',
-    fmtCmd: 'pnpm fmt',
+    initGit: flags.git && !hasGitAncestor(targetDir),
   }
   if (!fs.existsSync(ctx.templateDir))
     throw new Error(`未找到 ${framework} 模板，请重新安装 create-lve。`)
@@ -238,6 +260,7 @@ async function main() {
   process.once('SIGTERM', interrupt)
   let ready = false
   let installed = false
+  const startedAt = performance.now()
   try {
     await runStep('创建项目文件', '项目文件已生成', async () => {
       controller.signal.throwIfAborted()
@@ -277,13 +300,10 @@ async function main() {
       })
     }
     controller.signal.throwIfAborted()
-    p.log.success('项目创建完成 🎉')
+    const elapsed = ((performance.now() - startedAt) / 1000).toFixed(1)
+    p.log.success(`Ready in ${elapsed}s`)
     p.note(
-      [
-        ...directoryCommand(targetDir),
-        ...(!flags.install ? ['pnpm install'] : []),
-        'pnpm dev',
-      ].join('\n'),
+      nextCommand(targetDir, !flags.install),
       process.platform === 'win32' ? '下一步（PowerShell）' : '下一步',
     )
   } catch (error) {
@@ -294,12 +314,7 @@ async function main() {
     if (fs.existsSync(targetDir)) p.log.warn(`已保留项目目录：${targetDir}`)
     if (ready) {
       p.note(
-        [
-          ...directoryCommand(targetDir),
-          ...(!installed ? ['pnpm install'] : []),
-          'pnpm fmt',
-          'pnpm dev',
-        ].join('\n'),
+        nextCommand(targetDir, !installed),
         process.platform === 'win32' ? '手动继续（PowerShell）' : '手动继续',
       )
     }

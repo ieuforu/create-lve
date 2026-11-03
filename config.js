@@ -53,16 +53,8 @@ async function applyProjectTransform(ctx) {
   if (ctx.pnpmVersion) pkg.packageManager = `pnpm@${ctx.pnpmVersion}`
   await fs.writeJson(pkgPath, pkg, { spaces: 2 })
 
-  const projectFiles = [
-    'index.html',
-    path.join('src', 'Document.tsx'),
-    path.join('src', 'routes', '__root.tsx'),
-    path.join('src', 'routes', 'index.tsx'),
-    path.join('src', 'routes', 'users.$id.tsx'),
-  ]
-  for (const relativePath of projectFiles) {
-    const documentPath = path.join(targetDir, relativePath)
-    if (!fs.existsSync(documentPath)) continue
+  const documentPath = path.join(targetDir, 'index.html')
+  if (fs.existsSync(documentPath)) {
     let content = await fs.readFile(documentPath, 'utf-8')
     content = content.replace(/<title>.*?<\/title>/, `<title>${ctx.name}</title>`)
     content = content.replaceAll('__APP_NAME__', ctx.name)
@@ -82,9 +74,11 @@ async function cleanupTemplate(ctx) {
   ]
   await Promise.all(toRemove.map((file) => fs.remove(path.join(ctx.targetDir, file))))
 
-  try {
-    execSync('git init', { cwd: ctx.targetDir, stdio: 'ignore' })
-  } catch {}
+  if (ctx.initGit) {
+    try {
+      execSync('git init', { cwd: ctx.targetDir, stdio: 'ignore' })
+    } catch {}
+  }
 
   const oldGit = path.join(ctx.targetDir, '_gitignore')
   if (fs.existsSync(oldGit)) {
@@ -99,10 +93,6 @@ async function installDependencies(
   await onStep('安装依赖', '依赖已安装', () =>
     runTask(ctx.pkgManager, ['install'], ctx.targetDir, { signal }),
   )
-  await onStep('格式化代码', '代码已格式化', async () => {
-    const [cmd, ...args] = ctx.fmtCmd.split(' ')
-    await runTask(cmd, args, ctx.targetDir, { signal })
-  })
 }
 
 export {

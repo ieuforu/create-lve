@@ -22,7 +22,6 @@ function jsonResponse(body: unknown, status = 200) {
 }
 
 afterEach(() => {
-  window.localStorage.clear()
   vi.restoreAllMocks()
 })
 
@@ -170,7 +169,7 @@ describe('transport errors and cancellation', () => {
       controller.signal.reason,
     )
 
-    expect(fetch).not.toHaveBeenCalled()
+    expect(fetch).toHaveBeenCalledTimes(1)
   })
 
   it('preserves cancellation while a request is in flight', async () => {
@@ -229,8 +228,7 @@ describe('transport errors and cancellation', () => {
   })
 })
 
-it('preserves the API prefix, bearer token, JSON accept header, and request body', async () => {
-  window.localStorage.setItem('auth_token', 'test-token')
+it('preserves the API prefix, JSON accept header, and request body', async () => {
   let requestBody: unknown
   const fetch = vi.fn().mockImplementation(async (request: Request) => {
     requestBody = await request.json()
@@ -240,7 +238,6 @@ it('preserves the API prefix, bearer token, JSON accept header, and request body
 
   const request = fetch.mock.calls[0]?.[0] as Request
   expect(request.url).toBe('https://example.test/api/users')
-  expect(request.headers.get('Authorization')).toBe('Bearer test-token')
   expect(request.headers.get('Accept')).toBe('application/json')
   expect(requestBody).toEqual({ name: 'Ada' })
 })

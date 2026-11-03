@@ -1,0 +1,100 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant data-open {
+  &:where([data-state='open']),
+  &:where([data-open]:not([data-open='false'])) {
+    @slot;
+  }
+}
+
+@custom-variant data-closed {
+  &:where([data-state='closed']),
+  &:where([data-closed]:not([data-closed='false'])) {
+    @slot;
+  }
+}
+
+@theme inline {
+  --font-sans: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: 0;
+  --radius-md: 0;
+  --radius-lg: 0;
+}
+
+:root {
+  color-scheme: light;
+  --background: #f3f5f1;
+  --foreground: #111713;
+  --card: #fafbf8;
+  --card-foreground: #111713;
+  --popover: #fafbf8;
+  --popover-foreground: #111713;
+  --primary: #111713;
+  --primary-foreground: #f8faf6;
+  --secondary: #e8ece7;
+  --secondary-foreground: #111713;
+  --muted: #e8ece7;
+  --muted-foreground: #626a64;
+  --accent: #dde5df;
+  --accent-foreground: #111713;
+  --destructive: #b42318;
+  --border: #d5dad5;
+  --input: #c6cdc7;
+  --ring: #2f9f6b;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    @apply font-sans;
+  }
+
+  body {
+    position: relative;
+    min-width: 320px;
+    margin: 0;
+    @apply bg-background text-foreground;
+  }
+
+  button,
+  a {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  #app {
+    min-height: 100svh;
+    isolation: isolate;
+  }
+
+  ::selection {
+    background: #2f9f6b;
+    color: white;
+  }
+}

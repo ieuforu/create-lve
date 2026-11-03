@@ -1,73 +1,55 @@
-# vue-project
+# Vue Starter
 
-This template should help get you started developing with Vue 3 in Vite.
+A deliberately small Vue starter with one architectural path and no demo
+application hidden inside it.
 
-## Recommended IDE Setup
+## Flow
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Recommended Browser Setup
-
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
-
-## Type Support for `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
-pnpm install
+```text
+request → route → feature → ui + store
 ```
 
-### Compile and Hot-Reload for Development
+- `src/router` maps URLs to feature entries and may define guards.
+- `src/features` owns pages, domain UI, data access, types and feature styles.
+- `src/components/ui` contains reusable Reka UI primitives.
+- `src/app` composes the root application shell.
+- `src/lib` contains shared infrastructure.
 
-```sh
+Start a feature with the smallest useful file set. Add internal `components`,
+`queries`, `mutations`, `schema`, `stores` or `types` only when those boundaries
+become real. Features do not import one another. When a business model gains a
+second feature consumer, promote its framework-neutral rules to
+`src/domain/<name>`; `src/lib` remains infrastructure rather than a domain
+catch-all. Oxlint enforces the primary dependency boundaries.
+
+Keep state local to a component or composable first. Use the URL for shareable
+navigation state and add a Pinia store only for concrete cross-feature client
+state. The starter installs Pinia but does not invent a default store.
+
+## Stack
+
+- Vue 3 and Vue Router
+- Vite 8 and TypeScript
+- Pinia and Reka UI
+- Tailwind CSS v4 and CVA
+- Vitest, Vue Test Utils, Playwright, Oxlint and Oxfmt
+
+## Commands
+
+```bash
 pnpm dev
-```
-
-### Type-Check, Compile and Minify for Production
-
-```sh
+pnpm check
 pnpm build
-```
-
-### Run Unit Tests with [Vitest](https://vitest.dev/)
-
-```sh
-pnpm test:unit
-```
-
-### Run End-to-End Tests with [Playwright](https://playwright.dev)
-
-```sh
-# Install browsers for the first run
-npx playwright install
-
-# When testing on CI, must build the project first
-pnpm build
-
-# Runs the end-to-end tests
 pnpm test:e2e
-# Runs the tests only on Chromium
-pnpm test:e2e --project=chromium
-# Runs the tests of a specific file
-pnpm test:e2e e2e/vue.spec.ts
-# Runs the tests in debug mode
-pnpm test:e2e --debug
 ```
 
-### Lint with [Oxlint](https://oxc.rs/docs/guide/usage/linter.html)
+The default landing page lives entirely in `src/features/landing`. The `/` route
+only maps the URL to that feature, making it a compact reference for the intended
+project structure.
 
-```sh
-pnpm lint
+UI component source is owned by the project. Add another component with the
+shadcn-vue CLI only when the product needs it:
+
+```bash
+pnpm dlx shadcn-vue@latest add dialog
 ```

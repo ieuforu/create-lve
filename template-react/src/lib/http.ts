@@ -1,4 +1,3 @@
-import { getAuthToken } from '#/lib/session'
 import ky, { isHTTPError, type KyInstance, type Options } from 'ky'
 
 export { NetworkError, TimeoutError } from 'ky'
@@ -28,12 +27,6 @@ export const http: KyInstance = ky.create({
   // An empty successful response is valid; malformed non-empty JSON must still fail.
   parseJson: (text) => (text === '' ? undefined : JSON.parse(text)),
   hooks: {
-    beforeRequest: [
-      (state) => {
-        const token = getAuthToken()
-        if (token) state.request.headers.set('Authorization', `Bearer ${token}`)
-      },
-    ],
     beforeError: [
       ({ error }) => {
         // Convert only the final HTTP failure, after Ky has finished retrying.

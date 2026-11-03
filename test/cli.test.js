@@ -42,6 +42,8 @@ test('prints help and version without entering the creation flow', () => {
   assert.equal(help.status, 0, help.stderr)
   assert.match(help.stdout, /用法：create-lve/)
   assert.match(help.stdout, /--template/)
+  assert.match(help.stdout, /--yes/)
+  assert.match(help.stdout, /--no-git/)
 
   const versionResult = runCli(['--version'])
   assert.equal(versionResult.status, 0, versionResult.stderr)
@@ -56,7 +58,8 @@ for (const framework of ['react', 'vue']) {
 
     assert.equal(result.status, 0, result.stderr)
     assert.match(result.stdout, /lve v\d+\.\d+\.\d+/)
-    assert.match(result.stdout, /项目创建完成/)
+    assert.match(result.stdout, /Ready in \d+\.\d+s/)
+    assert.doesNotMatch(result.stdout, /代码已格式化/)
     assert.doesNotMatch(result.stdout, /你的起点/)
     assert.equal(existsSync(path.join(target, '.gitignore')), true)
     assert.equal(existsSync(path.join(target, '_gitignore')), false)
@@ -70,8 +73,42 @@ for (const framework of ['react', 'vue']) {
     assert.equal(pkg.name, `${framework}-starter`)
     assert.equal(pkg.packageManager, expectedPackageManager)
     assert.equal(pkg.engines.node, '^22.18.0 || >=24.12.0')
+    assert.match(
+      readFileSync(path.join(target, 'index.html'), 'utf8'),
+      new RegExp(`<title>${framework}-starter</title>`),
+    )
   })
 }
+
+test('--yes uses the React defaults without another selection', (t) => {
+  const parent = temporaryDirectory(t)
+  const target = path.join(parent, 'yes-starter')
+  const result = runCli([target, '--yes', '--no-install'])
+
+  assert.equal(result.status, 0, result.stderr)
+  assert.match(result.stdout, /项目目录/)
+  assert.match(result.stdout, /技术栈  React/)
+  assert.equal(existsSync(path.join(target, 'src/features/landing/LandingPage.tsx')), true)
+})
+
+test('--no-git skips repository initialization', (t) => {
+  const parent = temporaryDirectory(t)
+  const target = path.join(parent, 'no-git-starter')
+  const result = runCli([target, '--template', 'react', '--no-install', '--no-git'])
+
+  assert.equal(result.status, 0, result.stderr)
+  assert.equal(existsSync(path.join(target, '.git')), false)
+})
+
+test('does not create a nested repository below an existing Git root', (t) => {
+  const parent = temporaryDirectory(t)
+  mkdirSync(path.join(parent, '.git'))
+  const target = path.join(parent, 'apps', 'web')
+  const result = runCli([target, '--template', 'react', '--no-install'])
+
+  assert.equal(result.status, 0, result.stderr)
+  assert.equal(existsSync(path.join(target, '.git')), false)
+})
 
 test('refuses a non-empty directory without modifying it in a non-interactive terminal', (t) => {
   const parent = temporaryDirectory(t)

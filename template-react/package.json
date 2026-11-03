@@ -10,8 +10,8 @@
     "dev": "vite",
     "routes:generate": "node scripts/generate-routes.mjs",
     "build": "pnpm typecheck && vite build",
-    "typecheck": "pnpm routes:generate && tsrs -b --noEmit",
-    "typecheck:ts": "pnpm routes:generate && tsc -b --noEmit",
+    "typecheck": "pnpm routes:generate && tsc -b --noEmit",
+    "typecheck:tsrs": "pnpm routes:generate && tsrs -b --noEmit",
     "fmt": "oxfmt",
     "fmt:check": "oxfmt --check",
     "lint": "oxlint --deny-warnings",
@@ -20,23 +20,19 @@
     "test:watch": "pnpm routes:generate && vitest",
     "test:coverage": "pnpm routes:generate && vitest run --coverage",
     "test:e2e": "playwright test",
-    "check": "pnpm fmt:check && pnpm lint && pnpm typecheck && pnpm test"
+    "check": "pnpm fmt:check && pnpm lint && pnpm typecheck && pnpm typecheck:tsrs && pnpm test"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
     "@fontsource-variable/inter": "^5.2.8",
     "@tanstack/react-query": "^5.101.3",
     "@tanstack/react-router": "^1.170.17",
-    "@tanstack/react-virtual": "^3.14.7",
     "class-variance-authority": "^0.7.1",
     "cn": "^0.2.6",
-    "jotai": "^2.20.2",
     "ky": "^2.1.0",
     "lucide-react": "^1.24.0",
     "react": "^19.3.0",
-    "react-dom": "^19.3.0",
-    "tw-animate-css": "^1.4.0",
-    "zustand": "^5.0.16"
+    "react-dom": "^19.3.0"
   },
   "devDependencies": {
     "@babel/core": "^8.0.1",
@@ -57,10 +53,9 @@
     "jsdom": "^29.1.1",
     "oxfmt": "^0.67.0",
     "oxlint": "^1.90.0",
-    "shadcn": "^4.13.0",
     "tailwindcss": "^4.3.3",
-    "tsrs": "0.18.0-ts7.1.0-dev.20260929",
-    "typescript": "7.1.0-dev.20260930.4",
+    "tsrs": "0.20.1-ts7.1.0-beta",
+    "typescript": "7.1.0-beta",
     "vite": "^8.2.2",
     "vitest": "^4.1.10"
   },

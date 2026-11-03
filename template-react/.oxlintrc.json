@@ -5,5 +5,135 @@
   "rules": {
     "react/rules-of-hooks": "error",
     "react/only-export-components": ["off", { "allowConstantExport": true }]
-  }
+  },
+  "overrides": [
+    {
+      "files": ["src/features/**/*.{ts,tsx}"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["#/app", "#/app/**", "#/routes", "#/routes/**", "#/features/**"],
+                "message": "Features may not depend on app, routes, or another feature. Keep same-feature imports relative and promote shared domain code when a second feature needs it."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/components/ui/**/*.{ts,tsx}"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": [
+                  "#/app",
+                  "#/app/**",
+                  "#/routes",
+                  "#/routes/**",
+                  "#/features",
+                  "#/features/**"
+                ],
+                "message": "Shared UI primitives may not depend on application or feature code."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/lib/**/*.{ts,tsx}"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": [
+                  "#/app",
+                  "#/app/**",
+                  "#/routes",
+                  "#/routes/**",
+                  "#/features",
+                  "#/features/**",
+                  "#/components",
+                  "#/components/**"
+                ],
+                "message": "Infrastructure may not depend on application, route, feature, or UI code."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/domain/**/*.{ts,tsx}", "src/entities/**/*.{ts,tsx}"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": [
+                  "#/app",
+                  "#/app/**",
+                  "#/routes",
+                  "#/routes/**",
+                  "#/features",
+                  "#/features/**",
+                  "#/components",
+                  "#/components/**"
+                ],
+                "message": "Shared domain rules must stay framework-neutral and may not depend on application, route, feature, or UI code."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/app/**/*.{ts,tsx}"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": [
+                  "#/routes",
+                  "#/routes/**",
+                  "#/features",
+                  "#/features/**",
+                  "#/components",
+                  "#/components/**"
+                ],
+                "message": "Application composition wires providers and generated routing; product UI belongs to features."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/routes/**/*.{ts,tsx}"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["#/app", "#/app/**", "#/components", "#/components/**"],
+                "message": "Routes map URLs to feature entries; they must not own or import UI primitives directly."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
 }
