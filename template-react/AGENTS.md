@@ -56,8 +56,17 @@ utilities. Neither directory owns product UI.
 1. TanStack Query owns remote/server state.
 2. TanStack Router owns shareable URL state.
 3. React owns local interaction state.
-4. Add one global client store only when a concrete cross-feature requirement
-   cannot fit the first three owners. Do not preinstall competing store patterns.
+4. Use a small store only when a concrete client-state requirement cannot fit the
+   first three owners.
+
+Build stores with `createStore` from `#/lib/store` and read them in React with
+`useStore` from `#/lib/useStore`. Keep a store in the feature that owns it, or in
+`src/domain/<name>` when a second feature needs it. Do not add Zustand, Jotai or
+another store library unless a project has a concrete need these helpers cannot
+meet, and record that reason in the change that adds it.
+
+Selectors must return primitives or existing references. Update state immutably;
+`setState` skips subscribers when the next state is the same reference.
 
 ## Imports
 
