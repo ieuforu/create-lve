@@ -281,6 +281,7 @@ async function main() {
               'coverage',
               'playwright-report',
               'test-results',
+              'TODO.md',
             ].includes(relative.split(path.sep)[0])
           )
         },

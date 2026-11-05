@@ -159,6 +159,7 @@ test('the npm package contains required files without generated artifacts', () =
   assert.equal(paths.has('template-react/_gitignore'), true)
   assert.equal(paths.has('template-vue/_gitignore'), true)
   assert.equal(paths.has('template-react/src/routeTree.gen.ts'), false)
+  assert.equal(paths.has('template-vue/TODO.md'), false)
   assert.equal(
     [...paths].some((file) => file.endsWith('pnpm-lock.yaml')),
     false,
