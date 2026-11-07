@@ -385,7 +385,7 @@
 }
 
 .landing-code-line i {
-  font-family: Inter, sans-serif;
+  font-family: var(--font-sans);
   font-size: 24px;
   font-style: normal;
 }
