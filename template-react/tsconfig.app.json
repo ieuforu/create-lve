@@ -26,7 +26,7 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
 
-    /* Paths mapping for tsc */
+    /* Import path aliases */
     "paths": {
       "#/*": ["./src/*"]
     }

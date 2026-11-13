@@ -10,8 +10,7 @@
     "dev": "vite",
     "routes:generate": "node scripts/generate-routes.mjs",
     "build": "pnpm typecheck && vite build",
-    "typecheck": "pnpm routes:generate && tsc -b --noEmit",
-    "typecheck:tsrs": "pnpm routes:generate && tsrs -b --noEmit",
+    "typecheck": "pnpm routes:generate && tsrs -b --noEmit",
     "fmt": "oxfmt",
     "fmt:check": "oxfmt --check",
     "lint": "oxlint --deny-warnings",
@@ -20,7 +19,7 @@
     "test:watch": "pnpm routes:generate && vitest",
     "test:coverage": "pnpm routes:generate && vitest run --coverage",
     "test:e2e": "playwright test",
-    "check": "pnpm fmt:check && pnpm lint && pnpm typecheck && pnpm typecheck:tsrs && pnpm test"
+    "check": "pnpm fmt:check && pnpm lint && pnpm typecheck && pnpm test"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",

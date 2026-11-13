@@ -30,7 +30,7 @@ state. Add a store only when the application develops a real cross-feature need.
 
 - React 19 and React Compiler
 - Vite 8
-- TypeScript and `tsrs`
+- TypeScript with `tsrs` for type checking
 - TanStack Router and Query
 - Base UI, Tailwind CSS v4 and CVA
 - Vitest, Testing Library, Oxlint and Oxfmt
@@ -41,7 +41,6 @@ state. Add a store only when the application develops a real cross-feature need.
 pnpm dev
 pnpm check
 pnpm typecheck
-pnpm typecheck:tsrs
 pnpm build
 pnpm test:e2e
 ```
@@ -57,8 +56,8 @@ project structure.
 retry policy; Ky retries are disabled by default to prevent multiplied attempts.
 Set the public API base URL in `.env.example`.
 
-The official TypeScript compiler is the source of truth. `tsrs` checks the same
-pinned TypeScript 7.1 baseline as a second implementation; `pnpm check` runs both.
+`pnpm typecheck` uses `tsrs` against the pinned TypeScript 7.1 baseline. Both
+`pnpm check` and `pnpm build` call it.
 
 UI component source is owned by the project. The Tailwind additions used by the
 component layer are vendored in `src/styles/shadcn.css`, so the full shadcn CLI is

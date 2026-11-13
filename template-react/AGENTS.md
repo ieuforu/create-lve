@@ -79,8 +79,7 @@ Selectors must return primitives or existing references. Update state immutably;
 
 - `pnpm fmt` formats the project.
 - `pnpm lint` runs Oxlint with warnings treated as failures.
-- `pnpm typecheck` generates routes and checks with the official TypeScript compiler.
-- `pnpm typecheck:tsrs` checks the same pinned TypeScript baseline with `tsrs`.
+- `pnpm typecheck` generates routes and checks types with `tsrs`.
 - `pnpm test` runs unit tests.
 - `pnpm check` runs the complete local verification set.
 - `pnpm test:e2e` runs the production Playwright checks.
