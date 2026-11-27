@@ -1,0 +1,41 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  width: auto;
+  height: auto;
+  margin: 0;
+  background: rgb(25 20 37 / 0.28);
+}
+.content {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  height: fit-content;
+  width: min(27rem, calc(100vw - 2rem));
+  max-height: calc(100dvh - 2rem);
+  overflow: auto;
+  padding: 1.4rem;
+  border: 1px solid var(--forma-line);
+  border-radius: var(--forma-radius-card);
+  background: var(--forma-surface);
+  color: var(--forma-ink);
+  box-shadow: var(--forma-shadow-panel);
+}
+.content[data-size='compact'] {
+  width: min(21rem, calc(100vw - 2rem));
+}
+.title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.description {
+  color: var(--forma-muted);
+  font-size: var(--forma-text-sm);
+  margin-bottom: 1rem;
+}
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}

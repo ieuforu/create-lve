@@ -109,8 +109,10 @@ Also:
 ## Project entry
 
 This Solid 2 app uses file-based routes in `src/routes` and shared UI in `src/components`.
-Style gallery components with Tailwind CSS v4. Shared theme tokens and ui-sdk state
-selectors live in `src/App.css`, loaded by the app and compiled by `@tailwindcss/vite`.
+Import Forma controls from `src/design-system`. Define shared visual tokens in
+`src/design-system/theme.css` and component appearance in CSS Modules. Use ui-sdk
+parts and their documented state attributes for interactions. Use Tailwind CSS v4
+utilities for page layout. The application loads the theme once in `src/App.css`.
 Use the package manager recorded in `package.json` for dependencies and scripts (Bun or pnpm). See [the current project summary](README.md#current-project-summary) for the baseline and verification commands.
 
 ## ui-sdk

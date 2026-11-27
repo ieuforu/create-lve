@@ -1,0 +1,75 @@
+.panel {
+  width: min(100%, 14.5rem);
+  padding: calc(3.5 * var(--forma-space)) calc(4 * var(--forma-space));
+  border: 1px solid var(--forma-line);
+  border-radius: var(--forma-radius-panel);
+  font-size: var(--forma-text-sm);
+  line-height: 1.25rem;
+  background: var(--forma-surface);
+  box-shadow: var(--forma-shadow-panel);
+}
+.actions,
+.row,
+.between,
+.values,
+.checkRow {
+  display: flex;
+  align-items: center;
+  gap: calc(2 * var(--forma-space));
+}
+.between,
+.values {
+  justify-content: space-between;
+  gap: calc(3 * var(--forma-space));
+}
+.values {
+  align-items: flex-end;
+}
+.rowLabel {
+  flex: 1;
+  font-weight: 600;
+}
+.bell {
+  display: grid;
+  flex: none;
+  width: 2.25rem;
+  height: 2.25rem;
+  place-items: center;
+  border-radius: var(--forma-radius-control);
+  background: var(--forma-success-soft);
+  color: var(--forma-success);
+}
+.caption {
+  color: var(--forma-muted);
+  font-size: var(--forma-text-xs);
+  font-weight: 500;
+}
+.tabPanel {
+  margin-top: calc(2 * var(--forma-space));
+}
+.visits {
+  font-size: 1.65rem;
+  line-height: 1;
+}
+.chart {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--forma-space);
+  height: 1.75rem;
+}
+.chart i {
+  width: 0.5rem;
+  border-radius: 2px 2px 0 0;
+  background: var(--forma-clay);
+}
+.readout {
+  font-variant-numeric: tabular-nums;
+}
+.checks {
+  display: grid;
+  gap: calc(2.5 * var(--forma-space));
+}
+.checkRow {
+  gap: calc(2.5 * var(--forma-space));
+  cursor: pointer;
+}

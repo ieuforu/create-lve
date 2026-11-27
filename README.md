@@ -81,6 +81,8 @@ output and a copyable command to continue manually.
 
 ## Current project summary
 
+The [v0.9.0 release](https://github.com/ieuforu/create-lve/releases/tag/v0.9.0) expands the Solid starter with a searchable gallery of 20 examples, four layout samples, a print portfolio, and a studio dashboard. The [design system](template-solid/src/design-system/index.ts) exports responsive navigation, form controls, menus, dialogs, and notifications. The portfolio and dashboard share a browser-local studio profile. On 2026-11-27 the Bun project passed its production build and nine tests. Desktop and mobile Chrome checks on the production preview covered navigation, filters, validation, and saved profile changes.
+
 On 2026-11-27, the Vue template raised its `vue-tsc` minimum to 3.3.14. A fresh install resolved both `vue-tsc` and `@vue/language-core` to 3.3.14 and passed type checking, the production build, the unit test and three Chromium tests. Both packages include the fix for [CVE-2026-135398](https://github.com/vuejs/language-tools/security/advisories/GHSA-vgrw-xjpj-wh8r).
 
 The Solid template now uses the React template’s pinned `tsrs` and TypeScript 7.1 beta versions for type checking. On 2026-11-27, generated Solid projects passed checks and production builds with pnpm on Node 22.18.0 and 26.13.1 and with Bun 1.4.5. An invalid Solid JSX prop produced a type error and stopped the build before Vite ran.

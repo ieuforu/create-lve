@@ -1,4 +1,5 @@
-import { Toggle } from '@ui-sdk/solid/toggle'
+import styles from './DemoCard.module.css'
+import { IconToggle } from '../design-system/controls'
 import type { Demo } from './ComponentDemos'
 import Icon from './Icon'
 
@@ -8,34 +9,27 @@ export default function DemoCard(props: {
   onBookmark: (pressed: boolean) => void
 }) {
   return (
-    <article
-      aria-labelledby={`title-${props.demo.id}`}
-      class="overflow-hidden rounded-[18px] border border-line bg-white"
-    >
-      <div class={`demo-canvas ${props.demo.canvas}`}>
+    <article id={props.demo.id} aria-labelledby={`title-${props.demo.id}`} class={styles.card}>
+      <div class={styles.canvas} data-tone={props.demo.tone}>
         <props.demo.preview />
       </div>
-      <div class="flex items-center justify-between gap-2 px-5 py-4">
+      <div class={styles.footer}>
         <div>
-          <h3 id={`title-${props.demo.id}`} class="flex flex-wrap items-baseline gap-x-2">
-            <span
-              lang="en"
-              class="font-display text-[1.35rem] leading-tight font-bold tracking-tight"
-            >
+          <h3 id={`title-${props.demo.id}`} class={styles.heading}>
+            <span lang="en" class={styles.title}>
               {props.demo.title}
             </span>
-            <span class="text-xs font-medium text-muted">{props.demo.name}</span>
+            <span class={styles.name}>{props.demo.name}</span>
           </h3>
-          <p class="mt-1 text-xs leading-5 text-muted">{props.demo.description}</p>
+          <p class={styles.description}>{props.demo.description}</p>
         </div>
-        <Toggle
+        <IconToggle
           aria-label={`收藏${props.demo.name}`}
-          class="bookmark"
           pressed={props.saved}
           onPressedChange={(pressed) => props.onBookmark(pressed)}
         >
           <Icon name={props.saved ? 'bookmarkCheck' : 'bookmark'} />
-        </Toggle>
+        </IconToggle>
       </div>
     </article>
   )

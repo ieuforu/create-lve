@@ -1,0 +1,28 @@
+.heading {
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+@media (min-width: 40rem) {
+  .heading {
+    font-size: 1.85rem;
+  }
+}
+.count {
+  display: inline-grid;
+  min-width: 1.75rem;
+  place-items: center;
+  padding: calc(0.5 * var(--forma-space)) calc(2 * var(--forma-space));
+  border-radius: var(--forma-radius-pill);
+  background: var(--forma-accent-soft);
+  color: var(--forma-accent);
+  font-size: var(--forma-text-sm);
+  line-height: 1.25rem;
+  font-weight: 600;
+}
+.empty {
+  border: 1px dashed var(--forma-line);
+  border-radius: var(--forma-radius-card);
+  font-size: var(--forma-text-sm);
+  color: var(--forma-muted);
+}

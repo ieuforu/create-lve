@@ -1,0 +1,100 @@
+.hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: calc(6 * var(--forma-space));
+  background: var(--forma-lilac-canvas);
+}
+.art {
+  position: absolute;
+  inset: 0 0 0 46%;
+  background: center 52% / cover no-repeat url('/forma-blocks.webp');
+  mask-image: linear-gradient(90deg, transparent, #000 22%);
+}
+.copy {
+  position: relative;
+  z-index: 1;
+  padding: clamp(1.6rem, 2.8vw, 2.7rem) clamp(1.4rem, 4.2vw, 4.25rem);
+  width: fit-content;
+}
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: calc(2 * var(--forma-space));
+  margin-bottom: calc(3 * var(--forma-space));
+  font-size: var(--forma-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.025em;
+  color: var(--forma-accent-hover);
+}
+.dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: var(--forma-radius-pill);
+  background: var(--forma-accent);
+}
+.title {
+  font-size: clamp(3rem, 5.3vw, 5rem);
+  font-weight: 700;
+  letter-spacing: -0.065em;
+  line-height: 0.92;
+}
+.title span {
+  color: var(--forma-accent);
+}
+.description {
+  margin-top: calc(3 * var(--forma-space));
+  font-size: var(--forma-text-base);
+  color: var(--forma-muted);
+  line-height: 1.625;
+}
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(2 * var(--forma-space));
+  margin-top: calc(5 * var(--forma-space));
+  padding: calc(2.5 * var(--forma-space)) calc(4 * var(--forma-space));
+  border-radius: var(--forma-radius-pill);
+  background: var(--forma-ink);
+  color: var(--forma-on-accent);
+  font-size: var(--forma-text-sm);
+  line-height: 1.25rem;
+  font-weight: 600;
+  --forma-icon-size: 1rem;
+}
+.link:hover {
+  background: var(--forma-accent-hover);
+}
+@media (width < 40rem) {
+  .description {
+    font-size: var(--forma-text-sm);
+  }
+}
+@media (max-width: 43rem) {
+  .art {
+    inset-inline-start: 32%;
+    opacity: 0.76;
+    mask-image: linear-gradient(90deg, transparent 8%, black 66%);
+  }
+  .copy {
+    padding: 1.65rem 1.3rem;
+  }
+}
+@media (max-width: 32rem) {
+  .hero {
+    display: flex;
+    flex-direction: column;
+  }
+  .art {
+    position: relative;
+    order: 1;
+    inset: auto;
+    height: clamp(9rem, 54vw, 14rem);
+    opacity: 1;
+    background-position: center 49%;
+    mask-image: linear-gradient(180deg, transparent, black 20%);
+  }
+  .copy {
+    padding-bottom: 0.5rem;
+  }
+}

@@ -1,5 +1,11 @@
 @layer ui-sdk;
 @import 'tailwindcss' source('./');
+@import './design-system/theme.css';
+
+@theme inline {
+  --spacing: var(--forma-space);
+  --font-sans: var(--forma-font);
+}
 
 @font-face {
   font-family: 'Bricolage Grotesque';
@@ -9,256 +15,22 @@
   font-display: swap;
 }
 
-@theme {
-  --color-paper: #faf9f6;
-  --color-ink: #25232a;
-  --color-muted: #67616e;
-  --color-line: #dfdcd8;
-  --color-violet: #6544b4;
-  --color-violet-dark: #4d328d;
-  --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
-}
-
-@layer components {
-  .studio {
-    font-family: 'Bricolage Grotesque', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+@layer base {
+  body {
+    background: var(--forma-page);
+    color: var(--forma-ink);
+    font-family: var(--forma-font);
   }
-
-  .page-width {
-    width: min(75rem, calc(100% - clamp(2rem, 9vw, 9rem)));
-    margin-inline: auto;
+  :where(button, a, input, [tabindex]):focus-visible {
+    outline: var(--forma-ring);
+    outline-offset: var(--forma-ring-offset);
   }
-
-  .studio :where(button, a, input, [tabindex]):focus-visible {
-    outline: 3px solid #8057c8;
-    outline-offset: 3px;
-  }
-  .studio button,
-  .studio [role='switch'],
-  .studio [role='checkbox'] {
+  :where(button, [role='switch'], [role='checkbox']):not(:disabled) {
     cursor: pointer;
   }
+}
 
-  .icon {
-    display: inline-block;
-    flex: none;
-    width: 1.15em;
-    height: 1.15em;
-    mask: center / contain no-repeat;
-    background-color: currentColor;
-  }
-  .brand-mark {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.4px;
-    width: 26px;
-    height: 26px;
-    transform: rotate(-8deg);
-  }
-  .brand-mark i {
-    background: #7652bd;
-    border-radius: 2px 7px 2px 7px;
-  }
-  .brand-mark i:nth-child(2),
-  .brand-mark i:nth-child(3) {
-    transform: rotate(90deg);
-  }
-  .nav-link {
-    @apply relative inline-flex items-center gap-1 text-sm font-semibold text-muted;
-  }
-  .nav-link[aria-pressed='true'] {
-    @apply text-violet;
-  }
-  .nav-link[aria-pressed='true']::after {
-    content: '';
-    position: absolute;
-    inset: auto 0 -1px;
-    height: 2px;
-    background: currentColor;
-  }
-  .nav-count {
-    @apply rounded-full bg-[#e9e3f4] px-1.5 text-xs text-violet;
-  }
-
-  .studio-hero {
-    background: #eae3f8;
-  }
-  .hero-art {
-    position: absolute;
-    inset: 0 0 0 46%;
-    background: center 52% / cover no-repeat url('/forma-blocks.webp');
-    mask-image: linear-gradient(90deg, transparent, #000 22%);
-  }
-  .hero-copy {
-    padding: clamp(1.6rem, 2.8vw, 2.7rem) clamp(1.4rem, 4.2vw, 4.25rem);
-    width: fit-content;
-  }
-  .hero-title {
-    font-size: clamp(3rem, 5.3vw, 5rem);
-    letter-spacing: -0.065em;
-    line-height: 0.92;
-  }
-  .hero-link .icon {
-    width: 1rem;
-    height: 1rem;
-  }
-
-  .search-field {
-    width: min(17rem, 100%);
-  }
-  .search-field [data-slot='input-group']:focus-within {
-    outline: 2px solid var(--color-violet);
-  }
-  .studio .search-field input:focus-visible {
-    outline: none;
-  }
-  /* The SDK supplies the clear action in browsers with a native search button. */
-  .search-field input::-webkit-search-cancel-button {
-    -webkit-appearance: none;
-  }
-
-  .count {
-    @apply inline-grid min-w-7 place-items-center rounded-full bg-[#ece8f2] px-2 py-0.5 text-sm font-semibold text-violet;
-  }
-  .filter-chip {
-    @apply inline-flex items-center gap-1.5 rounded-full border border-line bg-white px-4 py-1.5 text-sm font-medium text-muted hover:border-violet;
-  }
-  .filter-chip[aria-pressed='true'] {
-    @apply border-ink bg-ink text-white;
-  }
-  .demo-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
-    gap: 1.25rem;
-  }
-  .demo-canvas {
-    display: grid;
-    min-height: 10.4rem;
-    place-items: center;
-    padding: 1.25rem;
-    background-color: var(--canvas);
-    background-image: radial-gradient(var(--dot) 0.7px, transparent 0.8px);
-    background-size: 9px 9px;
-  }
-  .canvas-lilac {
-    --canvas: #ece6fa;
-    --dot: #c8b9df;
-  }
-  .canvas-mint {
-    --canvas: #e8efdc;
-    --dot: #bdcdae;
-  }
-  .canvas-peach {
-    --canvas: #f7e6db;
-    --dot: #dec4b3;
-  }
-  .canvas-butter {
-    --canvas: #f5edce;
-    --dot: #d7c99f;
-  }
-  .canvas-rose {
-    --canvas: #f5e3e9;
-    --dot: #d9bac8;
-  }
-  .canvas-sky {
-    --canvas: #e2edf3;
-    --dot: #bbd0dc;
-  }
-
-  .demo-action {
-    @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-[10px] px-4 text-sm font-semibold;
-    box-shadow: 0 2px 4px #30224014;
-  }
-  .sample-panel {
-    @apply rounded-[13px] border border-black/8 bg-white px-4 py-3.5 text-sm;
-    width: min(100%, 14.5rem);
-    box-shadow:
-      0 3px 6px #30224009,
-      0 1px 2px #3022400c;
-  }
-  .bookmark {
-    @apply grid size-9 shrink-0 place-items-center rounded-lg text-muted hover:bg-[#f2eef9] hover:text-violet;
-  }
-  .bookmark[data-pressed] {
-    @apply bg-[#eee8fa] text-violet;
-  }
-  .switch-track {
-    @apply inline-flex h-6 w-10 shrink-0 items-center rounded-full bg-stone-400 p-[3px];
-  }
-  .switch-track[data-checked] {
-    background: #526839;
-  }
-  .switch-thumb {
-    @apply block size-[18px] rounded-full bg-white shadow-xs;
-  }
-  .switch-thumb[data-checked] {
-    transform: translateX(16px);
-  }
-  .period-tab {
-    @apply rounded px-2 py-1 text-[11px] font-medium text-muted;
-  }
-  .period-tab[data-selected] {
-    @apply bg-white text-ink shadow-xs;
-  }
-  .slider-thumb {
-    @apply size-4 rounded-full border-[3px] border-[#845c1e] bg-white;
-  }
-  .slider-thumb:has(:focus-visible) {
-    outline: 3px solid var(--color-violet);
-    outline-offset: 3px;
-  }
-  .check-box {
-    @apply grid size-5 place-items-center rounded-md border border-[#a58c99] bg-white text-white;
-  }
-  .check-box[data-checked] {
-    @apply border-[#8e4869] bg-[#8e4869];
-  }
-  .check-box .icon {
-    @apply block size-3.5;
-  }
-  .accordion-trigger[data-open] .icon {
-    transform: rotate(180deg);
-  }
-
-  @media (max-width: 43rem) {
-    .page-width {
-      width: calc(100% - 2rem);
-    }
-    .hero-art {
-      inset-inline-start: 32%;
-      opacity: 0.76;
-      mask-image: linear-gradient(90deg, transparent 0%, transparent 8%, black 66%);
-    }
-    .hero-copy {
-      padding: 1.65rem 1.3rem;
-    }
-    .search-field {
-      width: 100%;
-    }
-  }
-  @media (max-width: 32rem) {
-    .brand-mark {
-      width: 21px;
-      height: 21px;
-    }
-    .nav-link {
-      font-size: 0.8rem;
-    }
-    .studio-hero {
-      display: flex;
-      flex-direction: column;
-    }
-    .hero-art {
-      position: relative;
-      order: 1;
-      inset: auto;
-      height: clamp(9rem, 54vw, 14rem);
-      opacity: 1;
-      background-position: center 49%;
-      mask-image: linear-gradient(180deg, transparent, black 20%);
-    }
-    .hero-copy {
-      padding-bottom: 0.5rem;
-    }
-  }
+@utility page-width {
+  width: var(--forma-content-width);
+  margin-inline: auto;
 }

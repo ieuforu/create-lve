@@ -1,10 +1,11 @@
+import { StudioFooter } from '../components/StudioSite'
 import { Title } from '@solidjs/meta'
-import { Button } from '@ui-sdk/solid/button'
+import { Button, Icon, SearchField } from '../design-system'
+import styles from '../components/Catalog.module.css'
 import DemoCard from '../components/DemoCard'
 import { createMemo, createSignal, For, onSettled } from 'solid-js'
 import { categories, demos, type Category } from '../components/ComponentDemos'
-import Icon from '../components/Icon'
-import SearchField from '../components/SearchField'
+import LayoutShowcase from '../components/LayoutShowcase'
 import StudioHero from '../components/StudioHero'
 import StudioHeader from '../components/StudioHeader'
 
@@ -56,7 +57,7 @@ export default function Home() {
   }
 
   return (
-    <div id="studio-top" lang="zh-CN" class="studio min-h-screen bg-paper text-ink">
+    <div id="studio-top" lang="zh-CN" class="min-h-screen">
       <Title>Forma Studio · 组件陈列室</Title>
       <StudioHeader
         onHome={() => openCollection(false)}
@@ -68,19 +69,18 @@ export default function Home() {
         }}
       />
 
-      <main class="page-width pb-16">
+      <main class="page-width pt-6 pb-16 sm:pt-8">
         <StudioHero onExplore={() => openCollection(false)} />
+
+        <LayoutShowcase />
 
         <section id="catalog" aria-labelledby="catalog-title" class="scroll-mt-5 pt-9 sm:pt-11">
           <div class="flex flex-wrap items-center justify-between gap-4">
             <div class="flex items-center gap-3">
-              <h2
-                id="catalog-title"
-                class="text-[1.6rem] font-bold tracking-tight sm:text-[1.85rem]"
-              >
+              <h2 id="catalog-title" class={styles.heading}>
                 {savedOnly() ? '我的收藏' : '组件目录'}
               </h2>
-              <span aria-live="polite" aria-atomic="true" class="count">
+              <span aria-live="polite" aria-atomic="true" class={styles.count}>
                 <span class="sr-only">当前显示 </span>
                 {visible().length}
                 <span class="sr-only"> 个组件</span>
@@ -97,7 +97,7 @@ export default function Home() {
             <For each={categories}>
               {(item) => (
                 <Button
-                  class="filter-chip"
+                  variant="chip"
                   aria-pressed={category() === item ? 'true' : 'false'}
                   onClick={() => setCategory(item)}
                 >
@@ -107,21 +107,23 @@ export default function Home() {
               )}
             </For>
           </div>
-          <div class="demo-grid">
+          <div class="grid grid-cols-[repeat(auto-fill,minmax(min(100%,18rem),1fr))] gap-5">
             <For
               each={visible()}
               fallback={
-                <div class="col-span-full grid min-h-48 place-content-center justify-items-center gap-3 rounded-2xl border border-dashed border-line text-sm text-muted">
+                <div
+                  class={[
+                    styles.empty,
+                    'col-span-full grid min-h-48 place-content-center justify-items-center gap-3',
+                  ]}
+                >
                   <Icon name={savedOnly() ? 'bookmark' : 'search'} />
                   <p>
                     {savedOnly() && !bookmarks().length
                       ? '收藏夹为空，点击组件卡片的书签即可收藏。'
                       : '没有匹配的组件。'}
                   </p>
-                  <Button
-                    class="font-semibold text-violet underline underline-offset-4"
-                    onClick={() => openCollection(false)}
-                  >
+                  <Button variant="link" onClick={() => openCollection(false)}>
                     查看全部组件
                   </Button>
                 </div>
@@ -138,6 +140,7 @@ export default function Home() {
           </div>
         </section>
       </main>
+      <StudioFooter active="/" onHome={() => openCollection(false)} />
     </div>
   )
 }

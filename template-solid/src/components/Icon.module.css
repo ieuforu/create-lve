@@ -1,0 +1,13 @@
+.icon {
+  display: inline-block;
+  flex: none;
+  inline-size: var(--forma-icon-size, 1.15em);
+  block-size: var(--forma-icon-size, 1.15em);
+  mask: center / contain no-repeat;
+  background-color: currentColor;
+}
+@media (forced-colors: active) {
+  .icon {
+    forced-color-adjust: none;
+  }
+}

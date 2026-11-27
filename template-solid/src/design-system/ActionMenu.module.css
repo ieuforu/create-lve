@@ -1,0 +1,90 @@
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  min-height: 2.25rem;
+  padding: 0.35rem 0.7rem;
+  border: 1px solid var(--forma-line);
+  border-radius: var(--forma-radius-control);
+  background: var(--forma-surface);
+  color: var(--forma-ink);
+  font-size: var(--forma-text-sm);
+  font-weight: 600;
+}
+.trigger[data-variant='icon'] {
+  width: 2.1rem;
+  min-height: 2.1rem;
+  padding: 0;
+  --forma-icon-size: 1.1rem;
+}
+.trigger:hover,
+.trigger[data-open] {
+  background: var(--forma-hover);
+  border-color: var(--forma-control-edge);
+}
+.popup {
+  padding: 0.3rem;
+  border: 1px solid var(--forma-line);
+  border-radius: var(--forma-radius-panel);
+  background: var(--forma-surface);
+  color: var(--forma-ink);
+  box-shadow:
+    0 8px 28px #3022401c,
+    var(--forma-shadow-panel);
+  font: 500 var(--forma-text-sm)/1.4 var(--forma-font);
+}
+.popup[data-presentation='popover'] {
+  width: min(10.75rem, var(--available-width, 95vw));
+  max-height: var(--available-height, 85dvh);
+  overflow-y: auto;
+}
+.popup [role='menuitem'] {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  min-height: 2.15rem;
+  padding: 0.4rem 0.65rem;
+  border-radius: var(--forma-radius-sm);
+  cursor: default;
+  text-align: start;
+  white-space: nowrap;
+}
+.popup [role='menuitem']:is([data-highlighted], [data-open], :focus-visible) {
+  background: var(--forma-accent-soft);
+  color: var(--forma-accent-hover);
+  outline: 0;
+}
+.popup [role='menuitem'][aria-disabled='true'] {
+  color: var(--forma-muted);
+  opacity: 0.7;
+}
+.popup [role='separator'] {
+  height: 1px;
+  margin: 0.25rem 0.45rem;
+  background: var(--forma-line);
+}
+.chevron {
+  display: grid;
+  place-items: center;
+  transform: rotate(-90deg);
+  --forma-icon-size: 0.9rem;
+}
+.chevron:dir(rtl) {
+  transform: rotate(90deg);
+}
+.popup[data-presentation='sheet'] {
+  padding: 0.65rem max(0.75rem, env(safe-area-inset-right))
+    max(0.75rem, env(safe-area-inset-bottom));
+  border-radius: var(--forma-radius-card) var(--forma-radius-card) 0 0;
+}
+.popup[data-presentation='sheet'] [role='menuitem'] {
+  min-height: 2.75rem;
+}
+@media (forced-colors: active) {
+  .popup [role='menuitem']:is([data-highlighted], :focus-visible) {
+    outline: 1px solid Highlight;
+    outline-offset: -2px;
+  }
+}

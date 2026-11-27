@@ -1,0 +1,49 @@
+.field {
+  width: min(17rem, 100%);
+}
+.group {
+  display: flex;
+  align-items: center;
+  gap: calc(2.5 * var(--forma-space));
+  padding-inline: calc(3 * var(--forma-space));
+  border: 1px solid var(--forma-control-edge);
+  border-radius: var(--forma-radius-panel);
+  background: var(--forma-surface);
+  color: var(--forma-muted);
+}
+.input {
+  flex: 1;
+  min-width: 0;
+  padding-block: calc(2.5 * var(--forma-space));
+  color: var(--forma-ink);
+  font-size: var(--forma-text-sm);
+  line-height: 1.25rem;
+  background: transparent;
+}
+.group:has(.input:focus-visible) {
+  outline: var(--forma-ring);
+  outline-offset: var(--forma-ring-offset);
+}
+.input:focus-visible {
+  outline: none;
+}
+.input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+}
+.clear {
+  flex: none;
+  padding: var(--forma-space) calc(1.5 * var(--forma-space));
+  border-radius: var(--forma-radius-sm);
+  font-size: var(--forma-text-xs);
+  line-height: 1rem;
+  font-weight: 600;
+  color: var(--forma-accent);
+}
+.clear:hover {
+  background: var(--forma-hover);
+}
+@media (max-width: 43rem) {
+  .field {
+    width: 100%;
+  }
+}

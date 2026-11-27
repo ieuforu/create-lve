@@ -1,0 +1,47 @@
+.split,
+.shell {
+  display: flex;
+  flex-wrap: wrap;
+  height: 100%;
+}
+.visual {
+  flex: 4 1 9rem;
+  display: grid;
+}
+.content {
+  flex: 5 1 12rem;
+  min-inline-size: 0;
+}
+.sidebar {
+  flex: 1 1 7rem;
+  min-inline-size: 0;
+}
+.shell > .content {
+  flex: 3 1 12rem;
+}
+
+.collection {
+  display: grid;
+}
+.collection > li {
+  padding-block: 0.65rem;
+}
+.collection[data-layout='list'] > li + li {
+  border-top: 1px solid var(--forma-line);
+}
+.collection[data-layout='grid'] {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
+  gap: 0.65rem;
+  padding-block: 0.55rem;
+}
+.collection[data-layout='grid'] > li {
+  padding: 0.45rem;
+  border: 1px solid var(--forma-line);
+  border-radius: var(--forma-radius-control);
+}
+.inspector {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
+  gap: 1.2rem;
+  padding-top: 0.8rem;
+}
