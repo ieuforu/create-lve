@@ -83,6 +83,8 @@ output and a copyable command to continue manually.
 
 On 2026-11-27, the Vue template raised its `vue-tsc` minimum to 3.3.14. A fresh install resolved both `vue-tsc` and `@vue/language-core` to 3.3.14 and passed type checking, the production build, the unit test and three Chromium tests. Both packages include the fix for [CVE-2026-135398](https://github.com/vuejs/language-tools/security/advisories/GHSA-vgrw-xjpj-wh8r).
 
+The Solid template now uses the React template’s pinned `tsrs` and TypeScript 7.1 beta versions for type checking. On 2026-11-27, generated Solid projects passed checks and production builds with pnpm on Node 22.18.0 and 26.13.1 and with Bun 1.4.5. An invalid Solid JSX prop produced a type error and stopped the build before Vite ran.
+
 The [v0.8.1 release](https://github.com/ieuforu/create-lve/releases/tag/v0.8.1) sets the Vite dependency to `^8.4.0` in the React, Vue and Solid templates. On 2026-11-27, all three built and passed their checks with Vite 8.4.0 on Node 26.13.1. React and Vue also passed their Chromium end-to-end tests. The Solid template passed its checks and production build with Bun 1.4.5 as well.
 
 The [v0.8.0 release](https://github.com/ieuforu/create-lve/releases/tag/v0.8.0) adds the Forma Studio Solid template with Bun support. Generated projects include six interactive examples, search, categories and browser-local bookmarks. See [the Solid template](template-solid/README.md) for its commands and structure.

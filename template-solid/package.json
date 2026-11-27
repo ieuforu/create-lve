@@ -7,13 +7,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit && vite build",
+    "build": "tsrs --noEmit && vite build",
     "serve": "vite preview",
     "test": "vitest run",
     "lint": "oxlint --config oxlint.solid.ts --deny-warnings src",
     "fmt": "oxfmt",
-    "typecheck": "tsc --noEmit",
-    "check": "oxfmt --check && oxlint --config oxlint.solid.ts --deny-warnings src && tsc --noEmit && vitest run",
+    "typecheck": "tsrs --noEmit",
+    "check": "oxfmt --check && oxlint --config oxlint.solid.ts --deny-warnings src && tsrs --noEmit && vitest run",
     "preview": "vite preview",
     "test:watch": "vitest",
     "fmt:check": "oxfmt --check"
@@ -40,7 +40,8 @@
     "oxfmt": "^0.80.0",
     "oxlint": "~1.92.0",
     "tailwindcss": "^4.3.5",
-    "typescript": "^7.0.2",
+    "tsrs": "0.20.1-ts7.1.0-beta",
+    "typescript": "7.1.0-beta",
     "vite": "^8.4.0",
     "vitest": "^5.0.0"
   },
