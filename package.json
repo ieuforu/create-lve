@@ -1,11 +1,12 @@
 {
   "name": "create-lve",
   "version": "0.7.3",
-  "description": "A fast, opinionated frontend project scaffolder for React, and Vue.",
+  "description": "A fast, opinionated frontend project scaffolder for React, Vue and Solid.",
   "keywords": [
     "create",
     "react",
     "scaffolding",
+    "solidjs",
     "tailwindcss",
     "typescript",
     "vite",
@@ -28,6 +29,7 @@
     "config.js",
     "template-react",
     "template-vue",
+    "template-solid",
     "!template-*/.tanstack",
     "!template-*/coverage",
     "!template-*/dist",

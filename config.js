@@ -53,7 +53,10 @@ async function applyProjectTransform(ctx) {
   if (ctx.pnpmVersion) pkg.packageManager = `pnpm@${ctx.pnpmVersion}`
   await fs.writeJson(pkgPath, pkg, { spaces: 2 })
 
-  const documentPath = path.join(targetDir, 'index.html')
+  const documentPath = path.join(
+    targetDir,
+    ctx.framework === 'solid' ? 'src/Document.tsx' : 'index.html',
+  )
   if (fs.existsSync(documentPath)) {
     let content = await fs.readFile(documentPath, 'utf-8')
     content = content.replace(/<title>.*?<\/title>/, `<title>${ctx.name}</title>`)

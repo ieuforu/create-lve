@@ -23,7 +23,7 @@ function run(command, args, cwd = repoDir) {
 }
 
 try {
-  for (const framework of ['react', 'vue']) {
+  for (const framework of ['react', 'vue', 'solid']) {
     const target = path.join(workspace, `${framework}-app`)
 
     run(process.execPath, [cliPath, target, '--template', framework])
@@ -48,7 +48,8 @@ try {
     } else {
       run(pnpm, ['--dir', target, 'build'])
       run(pnpm, ['--dir', target, 'check'])
-      if (process.env.LVE_BROWSER_TESTS === '1') run(pnpm, ['test:e2e'], target)
+      if (process.env.LVE_BROWSER_TESTS === '1' && pkg.scripts['test:e2e'])
+        run(pnpm, ['test:e2e'], target)
     }
   }
 } finally {

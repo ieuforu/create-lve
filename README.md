@@ -14,6 +14,7 @@ pnpm create lve
 | -------- | -------------------------------------- |
 | React 19 | TanStack Router + React Query + Vite 8 |
 | Vue 3    | Vue Router + Pinia + Reka UI + Vite 8  |
+| Solid 2  | Solid Router + ui-sdk + Vite 8         |
 
 All templates ship with **Tailwind CSS v4** out of the box.
 
@@ -36,6 +37,9 @@ pnpm create lve my-app --yes
 
 # Choose a template directly
 pnpm create lve my-app --template vue
+
+# Start with the Forma Studio Solid component gallery
+pnpm create lve my-app --template solid
 
 # Generate files and install dependencies later
 pnpm create lve my-app --template react --no-install
@@ -62,7 +66,7 @@ output and a copyable command to continue manually.
 
 ## What's Inside
 
-- React 19 / Vue 3
+- React 19 / Vue 3 / Solid 2
 - Tailwind CSS v4
 - TypeScript
 - Vite 8
@@ -71,6 +75,10 @@ output and a copyable command to continue manually.
 - oxfmt + oxlint
 - Vitest
 - pnpm
+
+## Current project summary
+
+The Solid template contains the Forma Studio gallery as of 2026-11-27. Its six interactive examples, search, categories and browser-local bookmarks are included in generated projects. See [the Solid template](template-solid/README.md) for its commands and structure.
 
 ## License
 

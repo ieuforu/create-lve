@@ -1,0 +1,12 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "ignorePatterns": [
+    ".agents/skills/ui-sdk/**",
+    "AGENTS.md",
+    "file-routes.d.ts",
+    "dist",
+    "pnpm-lock.yaml"
+  ],
+  "semi": false,
+  "singleQuote": true
+}

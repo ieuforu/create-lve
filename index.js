@@ -16,7 +16,9 @@ const { version } = fs.readJsonSync(new URL('./package.json', import.meta.url))
 const templates = [
   { value: 'react', label: 'React', hint: 'TanStack Router · React Query · Tailwind CSS' },
   { value: 'vue', label: 'Vue', hint: 'Vue Router · Pinia · Reka UI · Tailwind CSS' },
+  { value: 'solid', label: 'Solid 2', hint: 'Solid Router · ui-sdk · Tailwind CSS' },
 ]
+const templateNames = templates.map(({ value }) => value)
 const interactive = Boolean(process.stdin.isTTY && process.stdout.isTTY)
 p.updateSettings({ withGuide: true })
 
@@ -43,8 +45,8 @@ function parseArgs(args) {
     else positional.push(arg)
   }
   if (positional.length > 1) throw new Error('一次只能创建一个项目，请只提供一个项目目录。')
-  if (flags.template !== undefined && !templates.some((t) => t.value === flags.template)) {
-    throw new Error('--template 需要指定 react 或 vue。')
+  if (flags.template !== undefined && !templateNames.includes(flags.template)) {
+    throw new Error(`--template 需要指定以下模板之一：${templateNames.join('、')}。`)
   }
   return { flags, directory: positional[0] }
 }
@@ -56,7 +58,7 @@ function printHelp() {
 
   -y, --yes            使用默认目录和 React，已提供的目录或模板优先
   --default            --yes 的兼容别名
-  -t, --template <名>  指定 react 或 vue，跳过模板选择
+  -t, --template <名>  指定 ${templateNames.join('|')}，跳过模板选择
   --no-install         只生成项目，稍后手动安装依赖
   --no-git             不初始化 Git 仓库
   -h, --help           查看帮助
@@ -66,6 +68,7 @@ function printHelp() {
   pnpm create lve
   pnpm create lve my-app
   pnpm create lve my-app --template vue
+  pnpm create lve my-app --template solid
   pnpm create lve my-app --yes --no-install
 
 非空目录始终需要确认；选择保留或取消会直接结束。`)
@@ -204,7 +207,9 @@ async function main() {
   if (flags.help) return printHelp()
   if (flags.version) return console.log(version)
   if (!interactive && ((!directory && !flags.default) || (!flags.template && !flags.default))) {
-    throw new Error('当前终端无法交互。请提供项目目录，并使用 --template react|vue 或 --yes。')
+    throw new Error(
+      `当前终端无法交互。请提供项目目录，并使用 --template ${templateNames.join('|')} 或 --yes。`,
+    )
   }
 
   printIntro()

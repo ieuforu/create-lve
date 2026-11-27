@@ -41,7 +41,7 @@ test('prints help and version without entering the creation flow', () => {
   const help = runCli(['--help'])
   assert.equal(help.status, 0, help.stderr)
   assert.match(help.stdout, /用法：create-lve/)
-  assert.match(help.stdout, /--template/)
+  assert.match(help.stdout, /--template.*react\|vue\|solid/)
   assert.match(help.stdout, /--yes/)
   assert.match(help.stdout, /--no-git/)
 
@@ -50,7 +50,7 @@ test('prints help and version without entering the creation flow', () => {
   assert.equal(versionResult.stdout.trim(), version)
 })
 
-for (const framework of ['react', 'vue']) {
+for (const framework of ['react', 'vue', 'solid']) {
   test(`creates the ${framework} template without installing dependencies`, (t) => {
     const parent = temporaryDirectory(t)
     const target = path.join(parent, `${framework}-starter`)
@@ -74,7 +74,10 @@ for (const framework of ['react', 'vue']) {
     assert.equal(pkg.packageManager, expectedPackageManager)
     assert.equal(pkg.engines.node, '^22.18.0 || >=24.12.0')
     assert.match(
-      readFileSync(path.join(target, 'index.html'), 'utf8'),
+      readFileSync(
+        path.join(target, framework === 'solid' ? 'src/Document.tsx' : 'index.html'),
+        'utf8',
+      ),
       new RegExp(`<title>${framework}-starter</title>`),
     )
   })
@@ -158,6 +161,16 @@ test('the npm package contains required files without generated artifacts', () =
   assert.equal(paths.has('LICENSE'), true)
   assert.equal(paths.has('template-react/_gitignore'), true)
   assert.equal(paths.has('template-vue/_gitignore'), true)
+  for (const file of [
+    '_gitignore',
+    'file-routes.d.ts',
+    'src/routes/index.tsx',
+    'public/forma-blocks.webp',
+    '.agents/skills/ui-sdk/SKILL.md',
+    'skills-lock.json',
+  ]) {
+    assert.equal(paths.has(`template-solid/${file}`), true, file)
+  }
   assert.equal(paths.has('template-react/src/routeTree.gen.ts'), false)
   assert.equal(paths.has('template-vue/TODO.md'), false)
   assert.equal(

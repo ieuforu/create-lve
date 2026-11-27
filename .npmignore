@@ -13,6 +13,7 @@ my-app/
 # 确保以下模板被包含
 !template-react/
 !template-vue/
+!template-solid/
 
 # 模板锁文件只用于仓库维护，生成项目时会重新创建
 template-*/pnpm-lock.yaml

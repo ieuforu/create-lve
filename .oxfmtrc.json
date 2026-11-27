@@ -1,6 +1,11 @@
 {
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
-  "ignorePatterns": ["template-react/src/routeTree.gen.ts"],
+  "ignorePatterns": [
+    "template-react/src/routeTree.gen.ts",
+    "template-solid/.agents/skills/ui-sdk/**",
+    "template-solid/AGENTS.md",
+    "template-solid/file-routes.d.ts"
+  ],
   "semi": false,
   "singleQuote": true
 }
