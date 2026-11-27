@@ -81,7 +81,7 @@ output and a copyable command to continue manually.
 
 ## Current project summary
 
-On 2026-11-27, all three templates built and passed their checks with Vite 8.4.0 on Node 26.13.1. React and Vue also passed their Chromium end-to-end tests. The Solid template passed its checks and production build with Bun 1.4.5 as well.
+The [v0.8.1 release](https://github.com/ieuforu/create-lve/releases/tag/v0.8.1) sets the Vite dependency to `^8.4.0` in the React, Vue and Solid templates. On 2026-11-27, all three built and passed their checks with Vite 8.4.0 on Node 26.13.1. React and Vue also passed their Chromium end-to-end tests. The Solid template passed its checks and production build with Bun 1.4.5 as well.
 
 The [v0.8.0 release](https://github.com/ieuforu/create-lve/releases/tag/v0.8.0) adds the Forma Studio Solid template with Bun support. Generated projects include six interactive examples, search, categories and browser-local bookmarks. See [the Solid template](template-solid/README.md) for its commands and structure.
 
