@@ -7,13 +7,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "pnpm typecheck && vite build",
+    "build": "tsc --noEmit && vite build",
     "serve": "vite preview",
     "test": "vitest run",
     "lint": "oxlint --config oxlint.solid.ts --deny-warnings src",
     "fmt": "oxfmt",
     "typecheck": "tsc --noEmit",
-    "check": "pnpm fmt:check && pnpm lint && pnpm typecheck && pnpm test",
+    "check": "oxfmt --check && oxlint --config oxlint.solid.ts --deny-warnings src && tsc --noEmit && vitest run",
     "preview": "vite preview",
     "test:watch": "vitest",
     "fmt:check": "oxfmt --check"

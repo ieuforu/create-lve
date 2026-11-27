@@ -32,15 +32,17 @@ async function runTask(command, args, cwd, { signal } = {}) {
   })
 }
 
-function getPnpmVersion() {
+function getPackageManagerVersion(pkgManager) {
   try {
-    return execSync('pnpm --version', {
+    return execSync(`${pkgManager} --version`, {
       encoding: 'utf-8',
       timeout: 5000,
       stdio: ['ignore', 'pipe', 'pipe'],
     }).trim()
   } catch {
-    throw new Error('未找到可用的 pnpm。请先安装 pnpm，或添加 --no-install 仅生成项目文件。')
+    throw new Error(
+      `未找到可用的 ${pkgManager}。请先安装 ${pkgManager}，或添加 --no-install 仅生成项目文件。`,
+    )
   }
 }
 
@@ -50,7 +52,7 @@ async function applyProjectTransform(ctx) {
   const pkgPath = path.join(targetDir, 'package.json')
   const pkg = await fs.readJson(pkgPath)
   pkg.name = ctx.name
-  if (ctx.pnpmVersion) pkg.packageManager = `pnpm@${ctx.pnpmVersion}`
+  if (ctx.pkgManagerVersion) pkg.packageManager = `${ctx.pkgManager}@${ctx.pkgManagerVersion}`
   await fs.writeJson(pkgPath, pkg, { spaces: 2 })
 
   const documentPath = path.join(
@@ -68,6 +70,8 @@ async function applyProjectTransform(ctx) {
 async function cleanupTemplate(ctx) {
   const toRemove = [
     'pnpm-lock.yaml',
+    'bun.lock',
+    'bun.lockb',
     'node_modules',
     'dist',
     '.tanstack',
@@ -101,7 +105,7 @@ async function installDependencies(
 export {
   __dirname,
   runTask,
-  getPnpmVersion,
+  getPackageManagerVersion,
   applyProjectTransform,
   cleanupTemplate,
   installDependencies,

@@ -9,6 +9,8 @@ dist
 *.log
 
 template-*/pnpm-lock.yaml
+template-*/bun.lock
+template-*/bun.lockb
 template-*/.tanstack/
 template-*/coverage/
 template-*/playwright-report/

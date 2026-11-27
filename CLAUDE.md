@@ -4,11 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo is
 
-`create-lve` is a pnpm-only scaffolding CLI (`index.js` + `config.js`, plain ESM JS, no build step). `template-react/`, `template-vue/` and `template-solid/` are copied verbatim into users' new projects, so every file there ships to end users. Each template has its own `AGENTS.md` describing its architecture — follow it when editing that template: @template-react/AGENTS.md @template-vue/AGENTS.md @template-solid/AGENTS.md
+`create-lve` is a scaffolding CLI maintained with pnpm (`index.js` + `config.js`, plain ESM JS, no build step). `template-react/`, `template-vue/` and `template-solid/` are copied verbatim into users' new projects, so every file there ships to end users. Invoking the CLI with Bun selects Bun for Solid projects. Each template has its own `AGENTS.md` describing its architecture — follow it when editing that template: @template-react/AGENTS.md @template-vue/AGENTS.md @template-solid/AGENTS.md
 
 ## Gotchas
 
-- The list of template artifacts to exclude (`node_modules`, `dist`, `.tanstack`, `pnpm-lock.yaml`, `coverage`, `playwright-report`, `test-results`, `src/routeTree.gen.ts`) is duplicated in: the copy filter in `index.js`, `cleanupTemplate` in `config.js`, `files` in `package.json`, and `.gitignore`. Keep them in sync. The root `.npmignore` has no effect while `files` is set.
+- The list of template artifacts to exclude (`node_modules`, `dist`, `.tanstack`, `pnpm-lock.yaml`, `bun.lock`, `bun.lockb`, `coverage`, `playwright-report`, `test-results`, `src/routeTree.gen.ts`) is duplicated in: the copy filter in `index.js`, `cleanupTemplate` in `config.js`, `files` in `package.json`, and `.gitignore`. Keep them in sync. The root `.npmignore` has no effect while `files` is set.
 - `template-vue/TODO.md` is a maintainer note, excluded from the npm package and from generated projects.
 - Templates use `_gitignore` (npm drops `.gitignore` from packages); the CLI renames it. Never add a `.gitignore` inside a template.
 - The CLI rewrites the generated `package.json` `name` / `packageManager` and replaces `<title>` and `__APP_NAME__` in `index.html` (the Solid document shell is `src/Document.tsx`).

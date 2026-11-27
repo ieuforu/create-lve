@@ -83,6 +83,24 @@ for (const framework of ['react', 'vue', 'solid']) {
   })
 }
 
+test('a Solid project created with Bun keeps Bun when installation is deferred', (t) => {
+  const cwd = temporaryDirectory(t)
+  const target = path.join(cwd, 'bun-starter')
+  const result = runCli([target, '-t', 'solid', '--no-install', '--no-git'], {
+    cwd,
+    env: { npm_config_user_agent: 'bun/1.4.5 npm/? node/v26.3.0' },
+  })
+
+  assert.equal(result.status, 0, output(result))
+  assert.match(result.stdout, /bun install(?: &&|;) bun dev/)
+  const pkg = JSON.parse(readFileSync(path.join(target, 'package.json'), 'utf8'))
+  assert.equal(pkg.packageManager, 'bun@1.4.5')
+  assert.doesNotMatch(Object.values(pkg.scripts).join(' '), /\bpnpm\b/)
+  for (const file of ['bun.lock', 'bun.lockb', 'pnpm-lock.yaml', 'node_modules']) {
+    assert.equal(existsSync(path.join(target, file)), false, file)
+  }
+})
+
 test('--yes uses the React defaults without another selection', (t) => {
   const parent = temporaryDirectory(t)
   const target = path.join(parent, 'yes-starter')
@@ -174,7 +192,9 @@ test('the npm package contains required files without generated artifacts', () =
   assert.equal(paths.has('template-react/src/routeTree.gen.ts'), false)
   assert.equal(paths.has('template-vue/TODO.md'), false)
   assert.equal(
-    [...paths].some((file) => file.endsWith('pnpm-lock.yaml')),
+    [...paths].some((file) =>
+      ['pnpm-lock.yaml', 'bun.lock', 'bun.lockb'].includes(path.posix.basename(file)),
+    ),
     false,
   )
   assert.equal(

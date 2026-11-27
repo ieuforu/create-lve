@@ -8,7 +8,7 @@ import {
   __dirname,
   applyProjectTransform,
   cleanupTemplate,
-  getPnpmVersion,
+  getPackageManagerVersion,
   installDependencies,
 } from './config.js'
 
@@ -69,6 +69,7 @@ function printHelp() {
   pnpm create lve my-app
   pnpm create lve my-app --template vue
   pnpm create lve my-app --template solid
+  bun create lve my-app --template solid
   pnpm create lve my-app --yes --no-install
 
 非空目录始终需要确认；选择保留或取消会直接结束。`)
@@ -179,11 +180,11 @@ function directoryCommand(targetDir) {
   return [`cd ${quoted}`]
 }
 
-function nextCommand(targetDir, needsInstall) {
+function nextCommand({ targetDir, pkgManager }, needsInstall) {
   const commands = [
     ...directoryCommand(targetDir),
-    ...(needsInstall ? ['pnpm install'] : []),
-    'pnpm dev',
+    ...(needsInstall ? [`${pkgManager} install`] : []),
+    `${pkgManager} dev`,
   ]
   return commands.join(process.platform === 'win32' ? '; ' : ' && ')
 }
@@ -246,18 +247,25 @@ async function main() {
   if (flags.template || flags.default) {
     p.log.step(`技术栈  ${templates.find((template) => template.value === framework).label}`)
   }
+  // bun create can launch this Node-shebang CLI under Node and identifies itself in the user agent.
+  const bunVersion =
+    framework === 'solid'
+      ? (process.versions.bun ??
+        process.env.npm_config_user_agent?.match(/^bun\/(\d+\.\d+\.\d+(?:-[\w.-]+)?)(?:\s|$)/)?.[1])
+      : undefined
   const ctx = {
     name: packageName(targetDir),
     framework,
     targetDir,
     templateDir: path.join(__dirname, `template-${framework}`),
-    pkgManager: 'pnpm',
+    pkgManager: bunVersion ? 'bun' : 'pnpm',
+    pkgManagerVersion: bunVersion,
     initGit: flags.git && !hasGitAncestor(targetDir),
   }
   if (!fs.existsSync(ctx.templateDir))
     throw new Error(`未找到 ${framework} 模板，请重新安装 create-lve。`)
   // Check the installer before making any changes to the target directory.
-  if (flags.install) ctx.pnpmVersion = getPnpmVersion()
+  if (flags.install) ctx.pkgManagerVersion = getPackageManagerVersion(ctx.pkgManager)
 
   const controller = new AbortController()
   const interrupt = () => controller.abort()
@@ -283,6 +291,8 @@ async function main() {
               '.git',
               '.tanstack',
               'pnpm-lock.yaml',
+              'bun.lock',
+              'bun.lockb',
               'coverage',
               'playwright-report',
               'test-results',
@@ -309,7 +319,7 @@ async function main() {
     const elapsed = ((performance.now() - startedAt) / 1000).toFixed(1)
     p.log.success(`Ready in ${elapsed}s`)
     p.note(
-      nextCommand(targetDir, !flags.install),
+      nextCommand(ctx, !flags.install),
       process.platform === 'win32' ? '下一步（PowerShell）' : '下一步',
     )
   } catch (error) {
@@ -320,7 +330,7 @@ async function main() {
     if (fs.existsSync(targetDir)) p.log.warn(`已保留项目目录：${targetDir}`)
     if (ready) {
       p.note(
-        nextCommand(targetDir, !installed),
+        nextCommand(ctx, !installed),
         process.platform === 'win32' ? '手动继续（PowerShell）' : '手动继续',
       )
     }

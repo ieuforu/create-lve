@@ -21,7 +21,7 @@ All templates ship with **Tailwind CSS v4** out of the box.
 ## Requirements
 
 - Node.js `^22.18.0` or `>=24.12.0`
-- pnpm available on `PATH` unless using `--no-install`
+- The installer on `PATH`: pnpm by default, or Bun when creating a Solid project with Bun. Use `--no-install` to generate files only.
 
 ## Quick Start
 
@@ -40,6 +40,9 @@ pnpm create lve my-app --template vue
 
 # Start with the Forma Studio Solid component gallery
 pnpm create lve my-app --template solid
+
+# Use Bun for a Solid project
+bun create lve my-app --template solid
 
 # Generate files and install dependencies later
 pnpm create lve my-app --template react --no-install
@@ -74,11 +77,15 @@ output and a copyable command to continue manually.
 - React Compiler (React template)
 - oxfmt + oxlint
 - Vitest
-- pnpm
+- pnpm, with Bun also supported for Solid
 
 ## Current project summary
 
-The Solid template contains the Forma Studio gallery as of 2026-11-27. Its six interactive examples, search, categories and browser-local bookmarks are included in generated projects. See [the Solid template](template-solid/README.md) for its commands and structure.
+The [v0.8.0 release](https://github.com/ieuforu/create-lve/releases/tag/v0.8.0) adds the Forma Studio Solid template with Bun support. Generated projects include six interactive examples, search, categories and browser-local bookmarks. See [the Solid template](template-solid/README.md) for its commands and structure.
+
+Verified against the 0.7.3 CLI baseline (`c9a1fcc`) using a local npm tarball. The Solid project passed installation, type checking, lint, four component tests and production builds on Node 22.18.0 and 26.13.1. Chrome checks covered the generated gallery, keyboard interactions, filters, persistent bookmarks and responsive layouts.
+
+Bun 1.4.5 and pnpm 12.4.2 each generated a Solid project with its own lockfile and passed checks and production builds. The Bun build was also served from `dist/client/` using a plain static HTTP server and verified in Chrome.
 
 ## License
 

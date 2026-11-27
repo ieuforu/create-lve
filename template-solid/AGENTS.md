@@ -111,7 +111,7 @@ Also:
 This Solid 2 app uses file-based routes in `src/routes` and shared UI in `src/components`.
 Style gallery components with Tailwind CSS v4. Shared theme tokens and ui-sdk state
 selectors live in `src/App.css`, loaded by the app and compiled by `@tailwindcss/vite`.
-Use pnpm for dependencies and scripts. See [the current project summary](README.md#current-project-summary) for the baseline and verification commands.
+Use the package manager recorded in `package.json` for dependencies and scripts (Bun or pnpm). See [the current project summary](README.md#current-project-summary) for the baseline and verification commands.
 
 ## ui-sdk
 
